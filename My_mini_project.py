@@ -47,61 +47,67 @@
 [4. Kết thúc (Exit)]
    │ - Nhập 0 → thoát
    │ - In lời chào tạm biệt"""
+#Tôi sẽ chạy theo logic theo sơ đồ bên trên, bài này bước 1 là tự làm 100%, à trừ vẽ =)))
+#Cố gắng tự làm tất cả công đoạn nhiều nhất có thể, chủ yếu hỏi AI về syntax là chính
 
 from collections import defaultdict
 import logging
-#Set basicConfig
+
+#Tôi đang không biết là dùng cái exception và các mức level logging đúng chưa
 logging.basicConfig(
     level = logging.DEBUG,
     format = '%(levelname)s - %(message)s')
 
-#Starting title
+#Tiêu đề - tôi mới học đến chapter dict, chưa học chia file nên tạm thời để code trong 1 file duy nhất
 logging.debug('Dự án quản lý lớp học - Start')
 
-#Global variables
+#Mỗi học sinh là một dict điểm, tự tạo dict khi học sinh chưa tồn tại
+#Chỉ giới hạn ở 5 học sinh, để dễ kiểm tra
 students = defaultdict(dict)
 MAX = 5
 
-#Func add student
+#Thêm học sinh, đồng thời tạo dict rỗng cho hs
 def add_student():
-    #Check: List is full
+    #Hiện tại MAX chỉ được dùng duy nhất ở đây, nếu mai sau nâng cấp cách dùng thì tốt
     if len(students) >= MAX:
         return logging.error('Danh sách đã đầy!')
     
     else:
         name = input('Nhập tên học sinh: ')
-        #Check: Input error
+        #Ngăn chặn người dùng nhập tên quá dài, hoặc bị trùng
         if len(name) > 20:
             return logging.warning('Tên quá dài, khả năng nhập sai.')
-        #Check: Duplicated name
         else:
             for k in students:
                 if name == k:
                     return logging.warning('Học sinh đã có sẵn, kiểm tra lại!')
                 
             else:
+                #Tạo dict cho name tạo sẵn key 'điểm trung bình' để phục vụ nhiều chức năng có thể mở rộng
                 students[name] = {'ĐTB' : 0} 
     return logging.debug(f'Thêm thành công học sinh {name}!')
 
-#Func add score (Toán, Lý, Anh)
+#Hiện tại chỉ giới hạn ở (Toán, Lý, Hoá, Anh, Văn)
 def add_score():
-    #Declare variables
+    #Hiện tại sum chỉ phục vụ 1 mục đích duy nhất là để tính điểm trung bình
+    #count hiện tại cũng vậy, nhưng tôi chắc sẽ làm thêm biến nữa để xếp hạng hs
+    #Theo giỏi - khá - tb, và nếu mở rộng thì xếp hạng theo nhiều lớp trong cùng khối
     sum = 0
     count = 0
 
     name = input('Nhập tên học sinh: ')
-    #Check: student in system
+    #Cover các lỗi có thể xảy ra trong phần này
     if name not in students:
             return logging.warning('Không có học sinh này trong hệ thống!')
     
     else:
-        #Check : ValueError and Score range
+        #Vào vòng lặp để thêm điểm, và tính tb
         while True:
-            #Add score for each subject
+            #Hạn chế viết HOA, viết thường chưa được linh hoạt
             SUBJECTS = ('Toán', 'Lý', 'Hoá', 'Anh', 'Văn')
             subj = input('Điểm môn học (Toán, Lý, Hoá, Anh, Văn hoặc quit): ')
 
-            #Exit sign
+            #Tạo lối thoát, cho mọi phần có 'quit'
             if subj == 'quit':
                 logging.debug('Thoát module thêm điểm.\n')
                 break
@@ -111,7 +117,7 @@ def add_score():
 
             else:
 
-               #Cover error
+               #Hình như đoạn này nên dùng try-except
                 try:
                     score = float(input(f'Nhập điểm môn {subj}: '))
                 except ValueError:
@@ -122,12 +128,14 @@ def add_score():
                     print('Lỗi: Điểm phải nằm trong khoảng (0-10). Nhập lại.\n')
 
                 else:
-                    #Assign score to student
+                    #Tránh ghi đề điểm
                     if subj not in students[name]: 
                         students[name][subj] = score
                         sum += score
                         count += 1
-    #Avarage score
+
+    #Tính điểm trung bình và cover lỗi
+    #Nên mở rộng chức năng với điểm trung bình
     logging.debug(f'Số môn đã thêm điểm là: {count}')
     if count == 0:
         logging.error('Lỗi: Chia cho 0')
@@ -137,9 +145,9 @@ def add_score():
 
     return logging.debug(f'Thêm điểm thành công cho học sinh {name}.')
 
-#Func all info
+#Đang làm đến phần này. Nhưng mà khi in ra thì chưa đẹp lắm
 def all_info():
-    #Empty list
+    
     if len(students) == 0:
         return logging.warning('Lỗi: Danh sách trống!\n')
     
@@ -148,7 +156,8 @@ def all_info():
         for i, (k, v) in enumerate(students.items(), 1):
             print(f'{i}. {k}: {v}') 
 
-#Option menu
+#Bắt đầu vào main
+#Làm UX/UI xíu cho đẹp
 while True:
     print ('---------------------------------------------')
     print('1. Thêm tên\n2. Thêm điểm\n3. In thông tin\n4. Tìm kiếm học sinh\n5. Xoá tên\n6. Thay đổi điểm\n0. Thoát''')
@@ -156,7 +165,7 @@ while True:
     choice = input('Lựa chọn: ')
     logging.debug(f'Option của người dùng: {choice}')
     
-    #Invalid choice
+    #Tôi hình như nghe nói làm dev thì ko đc tin input của người dùng à =))
     if choice not in '123456':
         print('Lỗi: Phải trong khoảng 0-6, vui lòng chọn lại.')
 
@@ -164,16 +173,14 @@ while True:
     if  choice == '0':
         break
 
-    #call (add student)
     if choice == '1':
         add_student()
 
-    #call (add score)
     if choice == '2':
         add_score()
 
-    #call (info)
     if choice == '3':
         all_info()
 
+#Cuối cùng cũng xong phần thô rồi
 logging.debug('Chương trình kết thúc - Over')
