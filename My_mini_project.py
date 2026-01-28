@@ -1,3 +1,4 @@
+#Cái defaultdict này không có trong sách nên tôi học tạm trên mạng, đang không biết nên dùng hay nên tạo dict rỗng bình thường
 from collections import defaultdict
 import logging
 
@@ -22,23 +23,24 @@ def add_student():
          logging.error('Danh sách đã đầy!')
          return
     
-    else:
-        name = input('Nhập tên học sinh: ')
-        # Ngăn chặn người dùng nhập tên quá dài, hoặc bị trùng
+    while True:
+        name = input('Nhập tên học sinh (hoặc quit): ').strip()
+
+        # Ngăn chặn người dùng nhập tên quá dài, hoặc bị trùng, hoặc để trống
+        if not name:
+            logging.warning('Lỗi: Tên không được để trống.')
+            continue
         if len(name) > 20:
-            logging.warning('Tên quá dài, khả năng nhập sai.')
-            return
-        else:
-            for k in students:
-                if name == k:
-                    logging.warning('Học sinh đã có sẵn, kiểm tra lại!')
-                    return
-                
-            else:
-                # Tạo dict cho name tạo sẵn key 'điểm trung bình' để phục vụ nhiều chức năng có thể mở rộng
-                students[name] = {'ĐTB' : 0} 
-    logging.debug(f'Thêm thành công học sinh {name}!')
-    return
+            logging.warning('Lỗi: Tên quá dài.')
+            continue
+        if name in students:
+            logging.warning('Học sinh đã có sẵn, kiểm tra lại!')
+            continue                                    
+
+        # Tạo dict cho name tạo sẵn key 'điểm trung bình' để phục vụ nhiều chức năng có thể mở rộng
+        students[name] = {'ĐTB' : 0} 
+        logging.debug(f'Thêm thành công học sinh {name}!')
+        return
 
 # Lọc ra những môn học hiện có điểm
 def avg_and_ranking(name):
@@ -165,7 +167,7 @@ def check_student():
         logging.warning('Lỗi: Danh sách trống!')
         return
     
-    name = input('Nhập tên học sinh: ')
+    name = input('Nhập tên học sinh: ').strip()
     if name not in students:
         logging.warning ('Lỗi: Không có tên học sinh này!')
         return
@@ -192,7 +194,7 @@ def del_student():
     for i, k in enumerate(students, 1):
         print(f'{i}. Học sinh {k}')
     
-    name = input('Nhập tên học sinh cần xoá: ')
+    name = input('Nhập tên học sinh cần xoá: ').strip()
     if name not in students:
         logging.warning ('Lỗi: Không có tên học sinh này!')
         return
