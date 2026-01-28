@@ -13,6 +13,8 @@ logging.debug('Dự án quản lý lớp học - Start')
 # Chỉ giới hạn ở 5 học sinh, để dễ kiểm tra
 students = defaultdict(dict)
 MAX = 5
+#Nên để tuple này là biến global thì chuẩn hơn
+SUBJECTS = ('Toán', 'Lý', 'Hoá', 'Anh', 'Văn')
 
 # Thêm học sinh, đồng thời tạo dict rỗng cho hs
 def add_student():
@@ -35,12 +37,52 @@ def add_student():
             else:
                 # Tạo dict cho name tạo sẵn key 'điểm trung bình' để phục vụ nhiều chức năng có thể mở rộng
                 students[name] = {'ĐTB' : 0} 
-    return logging.debug(f'Thêm thành công học sinh {name}!')
+    logging.debug(f'Thêm thành công học sinh {name}!')
+    return
+
+# Lọc ra những môn học hiện có điểm
+def avg_and_ranking(name):
+    all_current_scores = [students[name][s] for s in SUBJECTS if s in students[name]]
+    total_count = len(all_current_scores)
+
+    if total_count == 0:
+        students[name]['ĐTB'] = 0
+        students[name]['Band'] = 'Chưa có điểm'
+        return
+    
+    # Tính ĐTB chuẩn - nên tách ra 2 hàm nhỏ là hàm tính tb và xếp loại
+    # Toàn quên mất là có hàm sum()
+    avg = sum(all_current_scores) / total_count
+    students[name]['ĐTB'] = round(avg, 2) # Làm tròn 2 chữ số
+
+    # Xếp loại (Band)
+    # Tạo danh sách môn liệt (<4d)
+    weak_subj = [s for s in SUBJECTS if s in students[name] and students[name][s] < 4 ]
+    if total_count >= 3:
+        # Hạn chế do học sinh bị điểm liệt
+        if avg >= 8:
+            band = 'Giỏi' if len(weak_subj) == 0 else 'Khá (Điểm liệt)'
+        elif avg >= 6.5: # Rút gọn logic: nếu không >=8 thì check >=6.5
+            band = 'Khá'
+        else:
+            band = 'Trung bình'
+    else:
+        band = 'Chưa xếp hạng (Cần tối thiểu 3 môn)'
+        
+    students[name]['Band'] = band
+    
+    print("-" * 20)
+    print(f"Học sinh: {name}")
+    print(f"Số môn hiện có: {total_count}")
+    if len (weak_subj) > 0:
+        print(f'Học sinh có ({len(weak_subj)}) môn bị liệt : {weak_subj}')
+    print(f"ĐTB: {students[name]['ĐTB']}")
+    print(f"Xếp loại: {band}")
+
 
 # Hiện tại chỉ giới hạn ở (Toán, Lý, Hoá, Anh, Văn)
 def add_score():
-    # Thay vì để trong vòng lặp thì thiết lập ngay từ đầu luôn
-    SUBJECTS = ('Toán', 'Lý', 'Hoá', 'Anh', 'Văn')
+    global SUBJECTS
 
     name = input('Nhập tên học sinh: ')
 
@@ -76,46 +118,7 @@ def add_score():
             except ValueError:
                 print('Lỗi: Vui lòng nhập số thực.')
 
-    # Lọc ra những môn học hiện có điểm
-    all_current_scores = [students[name][s] for s in SUBJECTS if s in students[name]]
-    total_count = len(all_current_scores)
-
-    if total_count == 0:
-        students[name]['ĐTB'] = 0
-        students[name]['Band'] = 'Chưa có điểm'
-        return
-    
-    # Tính ĐTB chuẩn - nên tách ra 2 hàm nhỏ là hàm tính tb và xếp loại
-    # Toàn quên mất là có hàm sum()
-    avg = sum(all_current_scores) / total_count
-    students[name]['ĐTB'] = round(avg, 2) # Làm tròn 2 chữ số
-
-    # Xếp loại (Band)
-    # Tạo danh sách môn liệt (<4d)
-    weak_subj = [s for s in SUBJECTS if s in students[name] and students[name][s] < 4 ]
-    if total_count >= 3:
-        # Hạn chế do học sinh bị điểm liệt
-        if avg >= 8 and len(weak_subj) > 0:
-            #lỗi typo "bang"
-            band = 'Khá'
-        elif avg >= 8:
-            band = 'Giỏi'
-        elif avg >= 6.5: # Rút gọn logic: nếu không >=8 thì check >=6.5
-            band = 'Khá'
-        else:
-            band = 'Trung bình'
-    else:
-        band = 'Chưa xếp hạng (Cần tối thiểu 3 môn)'
-        
-    students[name]['Band'] = band
-
-    print("-" * 20)
-    print(f"Học sinh: {name}")
-    print(f"Số môn hiện có: {total_count}")
-    if len (weak_subj) > 0:
-        print(f'Học sinh có ({len(weak_subj)}) môn bị liệt : {weak_subj}')
-    print(f"ĐTB: {students[name]['ĐTB']}")
-    print(f"Xếp loại: {band}")
+    avg_and_ranking(name)
 
 def all_info():
 
@@ -209,7 +212,7 @@ while True:
     choice = input('Lựa chọn: ')
     logging.debug(f'Option của người dùng: {choice}')
     
-    if choice not in '12345':
+    if choice not in ['1','2','3','4','5','0']:
         print('Lỗi: Phải trong khoảng 0-5, vui lòng chọn lại.')
 
     #Exit sign
