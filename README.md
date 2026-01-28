@@ -1,3 +1,4 @@
+### Level : Beginner
 ## Classroom Manager (Python)
 
 Mini project luyện:
@@ -5,6 +6,5 @@ Mini project luyện:
 - function
 - input validation
 - logging
-- level beginner
   
 Mục tiêu: luyện tư duy chia nhỏ bài toán.
