@@ -176,6 +176,29 @@ def check_student():
         for k, v in data.items():
             if k not in ('ĐTB', 'Band'):
                 print(f'{k}: {v}')
+
+def del_student():
+    logging.debug(f'Số học sinh hiện tại là: {len(students)}')
+
+    if len(students) == 0:
+        logging.warning('Lỗi: Danh sách trống!')
+        return
+    
+    print('-' * 20)
+    for i, k in enumerate(students, 1):
+        print(f'{i}. Học sinh {k}')
+    
+    name = input('Nhập tên học sinh cần xoá: ')
+    if name not in students:
+        logging.warning ('Lỗi: Không có tên học sinh này!')
+        return
+    
+    else:
+        del students[name]
+        logging.debug(f'Xoá thông tin về học sinh {name} thành công.')
+        return
+    
+    
     
 # Bắt đầu vào main
 while True:
@@ -203,5 +226,8 @@ while True:
     
     if choice == '4':
         check_student()
+    
+    if choice == '5':
+        del_student()
 
 logging.debug('Chương trình kết thúc - Over')
