@@ -4,7 +4,7 @@ import logging
 # Tôi đang không biết là dùng cái exception và các mức level logging đúng chưa
 logging.basicConfig(
     level = logging.DEBUG,
-    format = '%(levelname)s - %(message)s')
+    format = '%(asctime)s - %(levelname)s - %(message)s')
 
 # Tiêu đề - tôi mới học đến chapter dict, chưa học chia file nên tạm thời để code trong 1 file duy nhất
 logging.debug('Dự án quản lý lớp học - Start')
@@ -85,7 +85,7 @@ def add_score():
         students[name]['Band'] = 'Chưa có điểm'
         return
     
-    # Tính ĐTB chuẩn
+    # Tính ĐTB chuẩn - nên tách ra 2 hàm nhỏ là hàm tính tb và xếp loại
     # Toàn quên mất là có hàm sum()
     avg = sum(all_current_scores) / total_count
     students[name]['ĐTB'] = round(avg, 2) # Làm tròn 2 chữ số
@@ -96,7 +96,8 @@ def add_score():
     if total_count >= 3:
         # Hạn chế do học sinh bị điểm liệt
         if avg >= 8 and len(weak_subj) > 0:
-            bang = 'Khá'
+            #lỗi typo "bang"
+            band = 'Khá'
         elif avg >= 8:
             band = 'Giỏi'
         elif avg >= 6.5: # Rút gọn logic: nếu không >=8 thì check >=6.5
