@@ -1,173 +1,192 @@
-"""[START]
-   │
-   ▼
-[1. Khởi tạo & Cài đặt]
-   │ - Tạo list rỗng
-   │ - MAX = 20 (hoặc tùy chỉnh)
-   │ - Các biến trạng thái (level, log, warning)
-   │
-   ▼
-[2. Menu chính (UX/UI)]
-   │ - Hiển thị menu
-   │ - Nhận lựa chọn người dùng (1-6, 0)
-   │ - Xử lý input sai → Warning/Error
-   │
-   ▼
-[3. Các chức năng chính (Core Logic)]
-   ├── 3.1 Thêm phần tử (Add)
-   │   ├── Kiểm tra MAX (vượt → Error)
-   │   ├── Kiểm tra trùng tên (trùng → Warning)
-   │   └── Append → Success + log
-   │
-   ├── 3.2 Xóa phần tử (Remove)
-   │   ├── Hiển thị list có số thứ tự
-   │   ├── Nhập STT → kiểm tra hợp lệ
-   │   └── Xóa + shift list → Success + log
-   │
-   ├── 3.3 Tìm kiếm (Search)
-   │   ├── Nhập từ khóa
-   │   ├── Duyệt list → tìm theo tên
-   │   └── In kết quả (có/không) + info
-   │
-   ├── 3.4 Sửa thông tin (Edit)
-   │   ├── Hiển thị list có STT
-   │   ├── Nhập STT + thông tin mới
-   │   └── Cập nhật → Success + log
-   │
-   ├── 3.5 In danh sách (List / Info)
-   │   ├── In đầy đủ (STT + chi tiết)
-   │   └── In ngắn gọn (chỉ tên)
-   │
-   └── 3.6 Error & Logging
-          ├── Error: vượt MAX, trùng, input rỗng, STT sai
-          ├── Warning: gần đầy list, tên dài quá
-          └── Log: level (INFO, WARNING, ERROR), formatted output
-   │
-   ▼
-[4. Kết thúc (Exit)]
-   │ - Nhập 0 → thoát
-   │ - In lời chào tạm biệt"""
-#Tôi sẽ chạy theo logic theo sơ đồ bên trên, bài này bước 1 là tự làm 100%, à trừ vẽ =)))
-#Cố gắng tự làm tất cả công đoạn nhiều nhất có thể, chủ yếu hỏi AI về syntax là chính
-
 from collections import defaultdict
 import logging
 
-#Tôi đang không biết là dùng cái exception và các mức level logging đúng chưa
+# Tôi đang không biết là dùng cái exception và các mức level logging đúng chưa
 logging.basicConfig(
     level = logging.DEBUG,
     format = '%(levelname)s - %(message)s')
 
-#Tiêu đề - tôi mới học đến chapter dict, chưa học chia file nên tạm thời để code trong 1 file duy nhất
+# Tiêu đề - tôi mới học đến chapter dict, chưa học chia file nên tạm thời để code trong 1 file duy nhất
 logging.debug('Dự án quản lý lớp học - Start')
 
-#Mỗi học sinh là một dict điểm, tự tạo dict khi học sinh chưa tồn tại
-#Chỉ giới hạn ở 5 học sinh, để dễ kiểm tra
+# Mỗi học sinh là một dict điểm, tự tạo dict khi học sinh chưa tồn tại
+# Chỉ giới hạn ở 5 học sinh, để dễ kiểm tra
 students = defaultdict(dict)
 MAX = 5
 
-#Thêm học sinh, đồng thời tạo dict rỗng cho hs
+# Thêm học sinh, đồng thời tạo dict rỗng cho hs
 def add_student():
-    #Hiện tại MAX chỉ được dùng duy nhất ở đây, nếu mai sau nâng cấp cách dùng thì tốt
     if len(students) >= MAX:
-        return logging.error('Danh sách đã đầy!')
+         logging.error('Danh sách đã đầy!')
+         return
     
     else:
         name = input('Nhập tên học sinh: ')
-        #Ngăn chặn người dùng nhập tên quá dài, hoặc bị trùng
+        # Ngăn chặn người dùng nhập tên quá dài, hoặc bị trùng
         if len(name) > 20:
-            return logging.warning('Tên quá dài, khả năng nhập sai.')
+            logging.warning('Tên quá dài, khả năng nhập sai.')
+            return
         else:
             for k in students:
                 if name == k:
-                    return logging.warning('Học sinh đã có sẵn, kiểm tra lại!')
+                    logging.warning('Học sinh đã có sẵn, kiểm tra lại!')
+                    return
                 
             else:
-                #Tạo dict cho name tạo sẵn key 'điểm trung bình' để phục vụ nhiều chức năng có thể mở rộng
+                # Tạo dict cho name tạo sẵn key 'điểm trung bình' để phục vụ nhiều chức năng có thể mở rộng
                 students[name] = {'ĐTB' : 0} 
     return logging.debug(f'Thêm thành công học sinh {name}!')
 
-#Hiện tại chỉ giới hạn ở (Toán, Lý, Hoá, Anh, Văn)
+# Hiện tại chỉ giới hạn ở (Toán, Lý, Hoá, Anh, Văn)
 def add_score():
-    #Hiện tại sum chỉ phục vụ 1 mục đích duy nhất là để tính điểm trung bình
-    #count hiện tại cũng vậy, nhưng tôi chắc sẽ làm thêm biến nữa để xếp hạng hs
-    #Theo giỏi - khá - tb, và nếu mở rộng thì xếp hạng theo nhiều lớp trong cùng khối
-    sum = 0
-    count = 0
+    # Thay vì để trong vòng lặp thì thiết lập ngay từ đầu luôn
+    SUBJECTS = ('Toán', 'Lý', 'Hoá', 'Anh', 'Văn')
 
     name = input('Nhập tên học sinh: ')
-    #Cover các lỗi có thể xảy ra trong phần này
+
     if name not in students:
-            return logging.warning('Không có học sinh này trong hệ thống!')
+            logging.warning('Không có học sinh này trong hệ thống!')
+            return
     
     else:
-        #Vào vòng lặp để thêm điểm, và tính tb
+        # Vào vòng lặp để thêm điểm, và tính tb
         while True:
-            #Hạn chế viết HOA, viết thường chưa được linh hoạt
-            SUBJECTS = ('Toán', 'Lý', 'Hoá', 'Anh', 'Văn')
-            subj = input('Điểm môn học (Toán, Lý, Hoá, Anh, Văn hoặc quit): ')
+            # Hạn chế: viết HOA, viết thường chưa được linh hoạt
+            subj = input(f'Nhập môn ({", ".join(SUBJECTS)} hoặc quit): ')
 
-            #Tạo lối thoát, cho mọi phần có 'quit'
-            if subj == 'quit':
-                logging.debug('Thoát module thêm điểm.\n')
+            # Tạo lối thoát, cho mọi phần có 'quit'
+            if subj.lower() == 'quit':
                 break
                 
             elif subj not in SUBJECTS:
-                print('Lỗi: Vui lòng nhập lại.\n')
+                print('Lỗi: Môn học không hợp lệ.\n')
+                continue
 
-            else:
-
-               #Hình như đoạn này nên dùng try-except
-                try:
-                    score = float(input(f'Nhập điểm môn {subj}: '))
-                except ValueError:
-                    print('Lỗi: Điểm phải là số!\n')
-                    continue
-
-                if score < 0 or score > 10:
-                    print('Lỗi: Điểm phải nằm trong khoảng (0-10). Nhập lại.\n')
-
+            # Đoạn này dùng Gemini để tính score vào count chuẩn hơn
+            # Bản cũ bị đặt lại bộ đếm (local variables)
+            try:
+                score = float(input(f'Nhập điểm môn {subj}: '))
+                # Không biết có cách so sánh này, trước cứ phải tách ra dùng and
+                if 0 <= score <= 10:
+                # Ghi đè hoặc thêm mới điểm môn đó vào dictionary của HS
+                    students[name][subj] = score
+                    print(f"Đã cập nhật điểm môn {subj}.")
                 else:
-                    #Tránh ghi đề điểm
-                    if subj not in students[name]: 
-                        students[name][subj] = score
-                        sum += score
-                        count += 1
+                    print('Lỗi: Điểm phải từ 0-10.')
+            except ValueError:
+                print('Lỗi: Vui lòng nhập số thực.')
 
-    #Tính điểm trung bình và cover lỗi
-    #Nên mở rộng chức năng với điểm trung bình
-    logging.debug(f'Số môn đã thêm điểm là: {count}')
-    if count == 0:
-        logging.error('Lỗi: Chia cho 0')
+    # Lọc ra những môn học hiện có điểm
+    all_current_scores = [students[name][s] for s in SUBJECTS if s in students[name]]
+    total_count = len(all_current_scores)
+
+    if total_count == 0:
+        students[name]['ĐTB'] = 0
+        students[name]['Band'] = 'Chưa có điểm'
+        return
+    
+    # Tính ĐTB chuẩn
+    # Toàn quên mất là có hàm sum()
+    avg = sum(all_current_scores) / total_count
+    students[name]['ĐTB'] = round(avg, 2) # Làm tròn 2 chữ số
+
+    # Xếp loại (Band)
+    # Tạo danh sách môn liệt (<4d)
+    weak_subj = [s for s in SUBJECTS if s in students[name] and students[name][s] < 4 ]
+    if total_count >= 3:
+        # Hạn chế do học sinh bị điểm liệt
+        if avg >= 8 and len(weak_subj) > 0:
+            bang = 'Khá'
+        elif avg >= 8:
+            band = 'Giỏi'
+        elif avg >= 6.5: # Rút gọn logic: nếu không >=8 thì check >=6.5
+            band = 'Khá'
+        else:
+            band = 'Trung bình'
     else:
-        students[name]['ĐTB'] = float(sum / count)
-    logging.debug(f'Điểm trung bình là: {students[name]['ĐTB']}')
+        band = 'Chưa xếp hạng (Cần tối thiểu 3 môn)'
+        
+    students[name]['Band'] = band
 
-    return logging.debug(f'Thêm điểm thành công cho học sinh {name}.')
+    print("-" * 20)
+    print(f"Học sinh: {name}")
+    print(f"Số môn hiện có: {total_count}")
+    if len (weak_subj) > 0:
+        print(f'Học sinh có ({len(weak_subj)}) môn bị liệt : {weak_subj}')
+    print(f"ĐTB: {students[name]['ĐTB']}")
+    print(f"Xếp loại: {band}")
 
-#Đang làm đến phần này. Nhưng mà khi in ra thì chưa đẹp lắm
 def all_info():
-    
+
+    logging.debug(f'Số học sinh hiện tại là: {len(students)}')
+
     if len(students) == 0:
-        return logging.warning('Lỗi: Danh sách trống!\n')
+        logging.warning('Lỗi: Danh sách trống!\n') 
+        return
     
     else:
-        print('Danh sách học sinh:\n')
-        for i, (k, v) in enumerate(students.items(), 1):
-            print(f'{i}. {k}: {v}') 
+        while True:
 
-#Bắt đầu vào main
-#Làm UX/UI xíu cho đẹp
+            print('1.Chỉ in tên\n2.In đầy đủ thông tin\n0.Quit')
+            choice = input('Lựa chọn: ')
+
+            if choice not in '12':
+                print('Lỗi: Phải trong khoảng 0-2, vui lòng chọn lại.')
+
+            if choice == '0':
+                break
+            if choice == '1':
+                print('-' * 20)
+                for i, k in enumerate(students, 1):
+                    print(f'{i}. Học sinh {k}')
+                return
+            
+            if choice == '2':
+                #Cách này lấy từ Gemini, trông gọn phết
+                print(f"{'STT':<5} {'Họ Tên':<15} {'ĐTB':<10} {'Xếp loại'}")
+                print('-' * 45)
+    
+                for i, (name, data) in enumerate(students.items(), 1):
+                    # Lấy ĐTB và Band, nếu chưa có thì để "N/A"
+                    dtb = data.get('ĐTB', 'N/A')
+                    band = data.get('Band', 'N/A')
+        
+                    # In theo cột cho thẳng hàng
+                    print(f"{i:<5} {name:<15} {dtb:<10} {band}")
+            return
+
+#Hàm này hiện tại chưa có nhiều tác dụng lắm, nhưng nếu tăng MAX thì chắc ok
+def check_student():
+    if len(students) == 0:
+        logging.warning('Lỗi: Danh sách trống!')
+        return
+    
+    name = input('Nhập tên học sinh: ')
+    if name not in students:
+        logging.warning ('Lỗi: Không có tên học sinh này!')
+        return
+    else:
+        data = students[name]
+        print('-' * 20)
+        print(f'Học sinh: {name}')
+        print(f'ĐTB: {data.get("ĐTB", "N/A")}')
+        print(f'Xếp loại: {data.get("Band", "N/A")}')
+
+        # In các môn học
+        for k, v in data.items():
+            if k not in ('ĐTB', 'Band'):
+                print(f'{k}: {v}')
+    
+# Bắt đầu vào main
 while True:
-    print ('---------------------------------------------')
-    print('1. Thêm tên\n2. Thêm điểm\n3. In thông tin\n4. Tìm kiếm học sinh\n5. Xoá tên\n6. Thay đổi điểm\n0. Thoát''')
+    print ('-' * 36)
+    print('1. Thêm tên\n2. Thêm (Thay đổi) điểm\n3. In thông tin\n4. Kiểm tra học sinh\n5. Xoá tên\n0. Thoát''')
 
     choice = input('Lựa chọn: ')
     logging.debug(f'Option của người dùng: {choice}')
     
-    #Tôi hình như nghe nói làm dev thì ko đc tin input của người dùng à =))
-    if choice not in '123456':
-        print('Lỗi: Phải trong khoảng 0-6, vui lòng chọn lại.')
+    if choice not in '12345':
+        print('Lỗi: Phải trong khoảng 0-5, vui lòng chọn lại.')
 
     #Exit sign
     if  choice == '0':
@@ -181,6 +200,8 @@ while True:
 
     if choice == '3':
         all_info()
+    
+    if choice == '4':
+        check_student()
 
-#Cuối cùng cũng xong phần thô rồi
 logging.debug('Chương trình kết thúc - Over')
