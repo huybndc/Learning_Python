@@ -7,10 +7,12 @@ BASE_REST = 15
 WARRIOR_HP = 120
 WARRIOR_REST = 25
 SKILL_POWER_BUFF = 15
+WARRIOR_SKILL = {'power_up', 'critical_strike'}
 
 #Mage stats
 MAGE_ATK = 25
 HEAL_ALLY = 35
+MAGE_SKILL = {'heal_ally', 'aoe_attack'}
 
 # BM stats
 MAX_POOL = 5

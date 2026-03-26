@@ -5,7 +5,9 @@ logging.basicConfig(
 )
 from config import (BASE_HP, BASE_ATK, BASE_REST, 
                           WARRIOR_HP, WARRIOR_REST, SKILL_POWER_BUFF,
-                          MAGE_ATK, HEAL_ALLY)
+                          MAGE_ATK, HEAL_ALLY,
+                          MAX_POOL, SKILL_TARGET_TYPE, NO_COST_SKILLS
+                          )
 
 # Class base để tạo ra các character sau này
 # Không được dùng để spawn trực tiếp
@@ -22,7 +24,7 @@ class Character:
         self.max_hp = hp
         self.is_alive = True
         self.is_buffed = False
-        self.buff_turns_left = 0    
+        self.buff_turns_left = 0
 
     # Tạo ra một khung để buộc class con phải override để sử dụng
     # Có thể raise NotImplementError - nhưng chưa cần xài tới, cũng chưa học kĩ
@@ -66,6 +68,7 @@ class Character:
         return f'{self.ID:8} - {self.hp:3}/{self.max_hp:3} - atk : {self.atk}'
     
 class Warrior(Character):
+    role = 'tank'
 
     # Class được kế thừa từ class Character 
     def __init__(self) -> None:
@@ -94,6 +97,7 @@ class Warrior(Character):
         return super().rest(rest)
     
 class Mage(Character):
+    role = 'dps'
 
     # Class cũng được kế thừa từ class Character - nhưng không thay đổi gì cả
     # Cảm giác nên thay đổi attribute gì đó để cân bằng
