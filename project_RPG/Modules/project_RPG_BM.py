@@ -28,6 +28,7 @@ class BattleManager:
         self.turn_count = 0
         # current_turn
         self.current_turn = None
+        
     
     def spawn(self, team_key, char_class):
         
@@ -56,6 +57,7 @@ class BattleManager:
             team_data['cd'].setdefault('heal_ally', 0)
 
         print(f"[+] Spawned {new_char.ID}  (pool left: {team_data['pool']})\n")
+        
 
     def setup_phase(self):
         print(SEP)
@@ -82,6 +84,7 @@ class BattleManager:
                 print(f"{SEP2}\n")
         self.turn_count += 1
 
+
     def start_turn(self):
         # Kiểm tra turn hiện tại và in ra
         if self.turn_count % 2 == 1:
@@ -100,6 +103,7 @@ class BattleManager:
                     status = ' [BUFFED]' if char.is_buffed else 'NORMAL'
                     print(f"    {char} - {status}")
             print(SEP2)
+            
     
     def _update_team_status(self):
         # Use current_turn ('A' or 'B') to fetch the right sub-dictionary
@@ -113,6 +117,7 @@ class BattleManager:
         for skill in current_CD:
             if current_CD[skill] > 0:
                 current_CD[skill] -= 1
+                
     
     def run_turn(self):
         self._update_team_status()  # đầu lượt — giảm cooldown, buff/debuff
@@ -129,6 +134,7 @@ class BattleManager:
             self.apply_action(actor, action, target, skill_name)
         self.turn_count += 1        # cuối lượt - cộng turn
         self.check_win()
+        
 
     # Sử dụng hàm phụ để đỡ phải copy nhiều, để lấy skill    
     def _get_skill_pool(self, actor):
@@ -138,6 +144,7 @@ class BattleManager:
         if isinstance(actor, CHAR.Warrior):
             return {skill : cd for skill, cd in current_CD.items() if skill in WARRIOR_SKILL}
         return {skill : cd for skill, cd in current_CD.items() if skill in MAGE_SKILL}
+        
         
     def _helper_spawn_get_input(self):
         while True:
@@ -154,6 +161,7 @@ class BattleManager:
             self.spawn(self.current_turn, CHAR.Mage) # type: ignore
             return None, 'spawn', None, None
     
+    
     def _helper_surrender_get_input(self):
         while True:
             surrender = input('Are you (S)ure or (N)ot: ').lower().strip()
@@ -165,6 +173,7 @@ class BattleManager:
         team_surrender = self.current_turn + ' surrender' # type: ignore
         self.check_win(team_surrender) # type: ignore
         return True
+
 
     def _helper_choose_actor(self, current_alive):
         # Hiện danh sách quân còn sống của team hiện tại / Tạo sẵn biến cho opp
@@ -186,8 +195,10 @@ class BattleManager:
             
         return current_alive[choice_char - 1]
     
+    
     def get_opp_team(self):
         return 'B' if self.current_turn == 'A' else 'A'
+    
     
     def target_tank(self, opp_alive):
         for char in opp_alive:
@@ -195,11 +206,13 @@ class BattleManager:
                 return True
         return False
 
+
     def target_dps(self, opp_alive):
         for char in opp_alive:
             if self._get_role(char) == 'dps':
                 return True
         return False
+    
     
     def _get_available_targets(self, actor, opp_alive):
         # Function: show_enemy(self, actor, opp_alive)
@@ -279,6 +292,7 @@ class BattleManager:
         
         return targets
     
+    
     def _helper_choose_ally(self, current_alive):
         # hỏi 1 đồng minh
         print('\nAllied units:')
@@ -294,6 +308,7 @@ class BattleManager:
         
         target = current_alive[choice_ally - 1]
         return [target]
+    
     
     def _helper_show_skill(self, actor):
         #1. Hiện danh sách skill của actor — kèm trạng thái cooldown
@@ -416,8 +431,10 @@ class BattleManager:
                 else:
                     return actor, 'rest', None, None
 
+
     def _get_role(self, char):
        return char.role
+
 
     def _calculate_damage(self, actor, t, has_tank):
         damage = actor.atk
@@ -427,6 +444,7 @@ class BattleManager:
         if actor_role == 'dps' and target_role == 'dps' and has_tank:
             damage *= 0.4
         return round(damage)
+
 
     def apply_action(self, actor, action, target, skill_name):
         # Biến tái sử dụng
@@ -489,8 +507,8 @@ class BattleManager:
             actor.rest()
             print(f"  >> {actor.ID} rested  [+{round(actor.hp - before)} HP → {actor.hp}/{actor.max_hp}]")
 
+
     def check_win(self, SURRENDER = None):
-        # Check all teams dynamically
         results = {}
         for key, data in self.teams.items():
             alive_count = len([char for char in data['units'] if char.is_alive])
