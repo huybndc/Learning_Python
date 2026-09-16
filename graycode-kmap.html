@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gray code &amp; K-map — Logic Circuit</title>
+<style>
+/* ===================== Design tokens ===================== */
+:root{
+  --bg:#f6f7fb; --panel:#ffffff; --panel2:#f0f2f8; --ink:#1b1f2a; --ink-dim:#5a6376;
+  --line:#d8dde8; --line-strong:#b6bfd0; --accent:#3f5bd9; --accent-ink:#ffffff;
+  --ok:#137a4a; --warn:#9a6400; --bad:#b3261e;
+  --ok-bg:#e3f6ec; --warn-bg:#fdf2dc; --bad-bg:#fdeceb;
+  --cell-1:#dde6ff; --cell-x:#f2eadb; --shadow:0 1px 2px rgba(20,25,40,.08),0 6px 18px rgba(20,25,40,.06);
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --grp-l:42%; --grp-s:72%; --grp-a:.15;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#11141c; --panel:#191d28; --panel2:#212635; --ink:#e7eaf2; --ink-dim:#9aa3b8;
+    --line:#2e3547; --line-strong:#454e66; --accent:#7a92ff; --accent-ink:#0d1017;
+    --ok:#5fd39b; --warn:#f0be5e; --bad:#ff8a80;
+    --ok-bg:#15281f; --warn-bg:#2b2416; --bad-bg:#2c1a19;
+    --cell-1:#25314f; --cell-x:#33301f; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
+    --grp-l:66%; --grp-s:85%; --grp-a:.20;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  font-size:16px; line-height:1.55; -webkit-text-size-adjust:100%;
+}
+.mono{font-family:var(--mono)}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 16px 72px}
+header h1{font-size:1.35rem;margin:.2em 0 .1em}
+header p.sub{margin:0 0 14px;color:var(--ink-dim);font-size:.92rem}
+
+/* ===================== Tabs ===================== */
+.tabs{display:flex;gap:6px;background:var(--panel2);padding:5px;border-radius:12px;border:1px solid var(--line);overflow-x:auto}
+.tabs button{
+  flex:1 1 auto;white-space:nowrap;border:0;background:transparent;color:var(--ink-dim);
+  font:inherit;font-weight:600;padding:9px 12px;border-radius:9px;cursor:pointer;
+}
+.tabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.page{display:none;margin-top:16px}
+.page.active{display:block}
+
+/* ===================== Generic blocks ===================== */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 14px;box-shadow:var(--shadow)}
+.card > h2{font-size:1.02rem;margin:0 0 10px;letter-spacing:.01em}
+.card > h3{font-size:.95rem;margin:14px 0 8px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.tight{gap:6px}
+.spacer{flex:1 1 auto}
+.muted{color:var(--ink-dim)}
+.small{font-size:.85rem}
+.note{background:var(--panel2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;font-size:.9rem}
+button.btn{
+  font:inherit;font-weight:600;padding:8px 13px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--line-strong);background:var(--panel2);color:var(--ink);
+}
+button.btn:hover{border-color:var(--accent)}
+button.btn:active{transform:translateY(1px)}
+button.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+button.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=text],select{
+  font:inherit;padding:8px 10px;border-radius:9px;border:1px solid var(--line-strong);
+  background:var(--panel);color:var(--ink);
+}
+input[type=text]{font-family:var(--mono)}
+input[type=text]:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+label.inline{display:inline-flex;align-items:center;gap:6px;font-size:.9rem}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:9px;overflow:hidden}
+.seg button{font:inherit;font-weight:600;border:0;background:var(--panel2);color:var(--ink-dim);padding:7px 12px;cursor:pointer}
+.seg button + button{border-left:1px solid var(--line-strong)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.ok{color:var(--ok)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+.msg{border-radius:10px;padding:9px 11px;margin:6px 0;font-size:.9rem}
+.msg.ok{background:var(--ok-bg);color:var(--ok)}
+.msg.bad{background:var(--bad-bg);color:var(--bad)}
+.msg.warn{background:var(--warn-bg);color:var(--warn)}
+
+/* ===================== Tables ===================== */
+.tblbox{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.grid{border-collapse:collapse;font-family:var(--mono);font-size:.9rem}
+table.grid th,table.grid td{border:1px solid var(--line);padding:5px 10px;text-align:center;white-space:nowrap}
+table.grid thead th{background:var(--panel2);font-weight:700;position:sticky;top:0}
+table.grid tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel2) 55%,transparent)}
+.bitchg{color:var(--bad);font-weight:700;border-bottom:2px solid var(--bad)}
+.tt-row{cursor:pointer}
+.tt-row:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.tt-row.on td{background:color-mix(in srgb,var(--cell-1) 70%,transparent)}
+.val-0{color:var(--ink-dim)} .val-1{color:var(--accent);font-weight:700} .val-x{color:var(--warn);font-weight:700}
+
+/* ===================== Gray builder ===================== */
+.gb-list{display:flex;flex-direction:column;gap:3px;font-family:var(--mono);font-size:.95rem;max-width:280px}
+.gb-item{
+  display:flex;align-items:center;gap:8px;padding:3px 8px;border-radius:7px;background:var(--panel2);
+  border:1px solid transparent;transition:transform .28s ease,background .28s ease,border-color .28s ease,opacity .28s ease;
+}
+.gb-item .idx{color:var(--ink-dim);font-size:.78rem;min-width:2.2em;text-align:right}
+.gb-item.mirror{background:color-mix(in srgb,var(--warn) 18%,transparent);border-color:var(--warn)}
+.gb-item.fresh{animation:pop .4s ease}
+.gb-item .pfx{display:inline-block;transition:opacity .3s ease}
+.gb-item .pfx.p0{color:var(--accent);font-weight:700}
+.gb-item .pfx.p1{color:var(--warn);font-weight:700}
+@keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.gb-mid{height:2px;background:var(--line-strong);margin:5px 0;border-radius:2px}
+
+/* ===================== Converter ===================== */
+.conv-steps{font-family:var(--mono);font-size:.88rem;display:flex;flex-direction:column;gap:3px}
+.conv-steps .hl{color:var(--accent);font-weight:700}
+.bitbar{display:flex;gap:4px;flex-wrap:wrap}
+.bitbar span{
+  font-family:var(--mono);min-width:1.9em;text-align:center;padding:4px 2px;border-radius:6px;
+  background:var(--panel2);border:1px solid var(--line)
+}
+.bitbar span.act{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* ===================== K-map ===================== */
+.maps{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.mapbox{flex:0 1 auto;width:100%;max-width:360px;min-width:0}
+.mapbox h4{margin:0 0 6px;font-size:.9rem;color:var(--ink-dim);font-family:var(--mono)}
+.ktable{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:4px}
+.kcols,.krows,.kcells{display:grid;gap:4px}
+.krows{align-self:stretch}
+.karea{position:relative}
+.kcorner,.klab{
+  font-family:var(--mono);font-size:.78rem;color:var(--ink-dim);
+  display:flex;align-items:center;justify-content:center;
+}
+.kcorner{font-size:.72rem}
+.kcell{
+  position:relative;aspect-ratio:1/1;border:1px solid var(--line-strong);border-radius:8px;
+  background:var(--panel2);cursor:pointer;user-select:none;-webkit-user-select:none;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:700;font-size:clamp(.95rem,4.2vw,1.25rem);
+  transition:background .12s ease,border-color .12s ease;
+}
+.kcell:hover{border-color:var(--accent)}
+.kcell[data-v="1"]{background:var(--cell-1)}
+.kcell[data-v="2"]{background:var(--cell-x)}
+.kidx{position:absolute;inset:0;display:grid;gap:4px;pointer-events:none}
+.kidx .mi{
+  font-family:var(--mono);font-size:.62rem;font-weight:600;color:var(--ink-dim);
+  line-height:1;padding:3px 0 0 5px;align-self:start;justify-self:start;
+  background:color-mix(in srgb,var(--panel) 72%,transparent);border-radius:0 0 5px 0;
+}
+.kcell.sel{outline:3px solid var(--accent);outline-offset:-3px}
+.kcell.picky{touch-action:none}
+.kcell.flash{animation:flash .6s ease}
+@keyframes flash{0%,100%{background:var(--panel2)}50%{background:color-mix(in srgb,var(--accent) 35%,transparent)}}
+.overlay{position:absolute;inset:0;pointer-events:none}
+.grp{
+  position:absolute;border-radius:10px;border:2px dashed hsl(var(--gh) var(--grp-s) var(--grp-l));
+  background:hsl(var(--gh) var(--grp-s) var(--grp-l) / var(--grp-a));
+  transition:opacity .15s ease,box-shadow .15s ease;
+}
+.grp.ess{border-style:solid;border-width:3px}
+.grp.dim{opacity:.18}
+.grp.hot{box-shadow:0 0 0 3px hsl(var(--gh) var(--grp-s) var(--grp-l) / .45)}
+.grp.posgrp{display:none}
+.grp.posgrp.hot{display:block}
+
+/* expression chips */
+.expr{font-family:var(--mono);font-size:1.02rem;display:flex;flex-wrap:wrap;gap:6px;align-items:center;line-height:2}
+.term{
+  padding:2px 7px;border-radius:7px;cursor:default;
+  border:1px solid hsl(var(--gh) var(--grp-s) var(--grp-l));
+  background:hsl(var(--gh) var(--grp-s) var(--grp-l) / var(--grp-a));
+}
+.term.ess{font-weight:700;border-width:2px}
+.term.hot{box-shadow:0 0 0 3px hsl(var(--gh) var(--grp-s) var(--grp-l) / .4)}
+.plus{color:var(--ink-dim)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:.82rem}
+.legend .lg{display:inline-flex;align-items:center;gap:5px}
+.legend .sw{width:14px;height:14px;border-radius:4px;border:2px solid hsl(var(--gh) var(--grp-s) var(--grp-l));background:hsl(var(--gh) var(--grp-s) var(--grp-l) / var(--grp-a))}
+
+.steps-box{background:var(--panel2);border-radius:10px;padding:11px 13px;min-height:74px;font-size:.92rem}
+.steps-box h4{margin:0 0 5px;font-size:.9rem}
+.steps-box .mono{font-size:.88rem}
+.chart{font-family:var(--mono);font-size:.8rem}
+.chart td.cov{background:color-mix(in srgb,var(--accent) 30%,transparent);font-weight:700}
+.chart td.ess{background:color-mix(in srgb,var(--ok) 30%,transparent)}
+
+@media (max-width:560px){
+  .wrap{padding:12px 12px 64px}
+  .card{padding:11px}
+  .maps{gap:16px}
+  .kidx .mi{font-size:.56rem;padding:2px 0 0 3px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Gray code &amp; Karnaugh map</h1>
+  <p class="sub">Công cụ trực quan hỗ trợ môn Logic Circuit — chạy hoàn toàn offline trong trình duyệt.</p>
+</header>
+
+<div class="tabs" role="tablist">
+  <button role="tab" id="tab-gray"  aria-selected="true"  aria-controls="page-gray">Gray code</button>
+  <button role="tab" id="tab-kmap"  aria-selected="false" aria-controls="page-kmap">K-map</button>
+  <button role="tab" id="tab-prac"  aria-selected="false" aria-controls="page-prac">Luyện tập</button>
+</div>
+
+<!-- ============================ PAGE 1: GRAY CODE ============================ -->
+<section class="page active" id="page-gray" role="tabpanel" aria-labelledby="tab-gray">
+
+  <div class="card">
+    <h2>1. Bảng Gray code</h2>
+    <div class="row">
+      <label class="inline">Số bit n:
+        <select id="g-n"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+      </label>
+      <span class="muted small">Bit <span class="bad">đỏ gạch chân</span> là bit đổi so với hàng ngay trên (hàng đầu so với hàng cuối — vòng tròn).</span>
+    </div>
+    <div class="tblbox" style="margin-top:10px;max-height:420px;overflow-y:auto">
+      <table class="grid" id="g-table"></table>
+    </div>
+    <p class="small muted" id="g-cyclic"></p>
+  </div>
+
+  <div class="card">
+    <h2>2. Xây dựng bằng “reflect and prefix”</h2>
+    <p class="small muted" style="margin-top:0">
+      Gray n bit = (Gray n−1 bit, thêm tiền tố <b>0</b>) nối với (Gray n−1 bit <b>lật ngược</b>, thêm tiền tố <b>1</b>).
+      Chỗ nối ở giữa là hai bản sao của cùng một chuỗi n−1 bit, nên chỉ khác nhau đúng ở bit tiền tố.
+    </p>
+    <div class="row">
+      <button class="btn primary" id="gb-next">Bước tiếp ▶</button>
+      <button class="btn" id="gb-reset">Về đầu</button>
+      <span class="mono small muted" id="gb-state"></span>
+    </div>
+    <div class="steps-box" style="margin-top:10px"><div id="gb-msg"></div></div>
+    <div class="gb-list" id="gb-list" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <h2>3. Chuyển đổi hai chiều</h2>
+    <div class="row">
+      <div class="seg" id="conv-dir">
+        <button data-d="b2g" aria-pressed="true">Binary → Gray</button>
+        <button data-d="g2b" aria-pressed="false">Gray → Binary</button>
+      </div>
+      <label class="inline"><span id="conv-lab">Binary</span>:
+        <input type="text" id="conv-in" value="1011" size="10" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+    <div id="conv-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <h4 id="conv-formula" class="mono"></h4>
+      <div class="conv-steps" id="conv-steps"></div>
+      <div style="margin-top:9px" class="row tight">
+        <span class="small muted" id="conv-outlab"></span>
+        <div class="bitbar" id="conv-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. Vì sao K-map dùng thứ tự Gray?</h2>
+    <div class="note">
+      <p style="margin:.2em 0">
+        Trong K-map, hai ô <b>kề nhau</b> phải khác nhau đúng <b>1 biến</b> — khi đó ghép chúng lại thì biến đó bị triệt tiêu:
+        <span class="mono">A′BC + ABC = BC(A′+A) = BC</span>.
+      </p>
+      <p style="margin:.2em 0">
+        Nếu dán nhãn theo thứ tự nhị phân thường (00, 01, <b>10</b>, 11) thì bước 01→10 đổi tới 2 bit ⇒ hai ô kề nhau
+        <i>không</i> gộp được. Thứ tự Gray (00, 01, <b>11</b>, 10) đảm bảo mọi bước chỉ đổi 1 bit, và vì Gray là chu trình
+        khép kín nên cột cuối cũng kề cột đầu ⇒ sinh ra các nhóm <b>wrap-around</b> (ví dụ 4 góc của K-map 4 biến).
+      </p>
+      <p style="margin:.2em 0">Nói cách khác: K-map chính là hình vẽ của <b>siêu khối n chiều</b> trải phẳng, và Gray code là cách trải giữ nguyên quan hệ kề.</p>
+      <p style="margin:.6em 0 .2em"><button class="btn" id="goto-kmap">Sang phần K-map ▶</button></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PAGE 2: K-MAP ============================ -->
+<section class="page" id="page-kmap" role="tabpanel" aria-labelledby="tab-kmap">
+
+  <div class="card">
+    <h2>Nhập hàm</h2>
+    <div class="row">
+      <label class="inline">Số biến:
+        <select id="k-n"><option>2</option><option>3</option><option selected>4</option><option>5</option></select>
+      </label>
+      <button class="btn" id="k-clear">Xoá về 0</button>
+      <button class="btn" id="k-rand">Hàm ngẫu nhiên</button>
+      <span class="spacer"></span>
+      <span class="small muted">Click ô K-map hoặc hàng truth table để đổi 0 → 1 → X</span>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="inline" style="flex:1 1 320px">
+        <span class="small">Biểu thức:</span>
+        <input type="text" id="k-spec" style="flex:1 1 auto;min-width:200px" autocomplete="off" spellcheck="false"
+               placeholder="Σm(1,3,5,7) + d(0,2)   hoặc   ΠM(0,2,4)">
+      </label>
+      <button class="btn" id="k-apply">Áp dụng</button>
+    </div>
+    <div id="k-specerr" class="small bad"></div>
+  </div>
+
+  <div class="card">
+    <h2>K-map</h2>
+    <div class="maps" id="k-maps"></div>
+    <div class="legend" id="k-legend" style="margin-top:12px"></div>
+    <p class="small muted" style="margin-bottom:0">Viền <b>liền &amp; đậm</b> = essential prime implicant · viền <b>nét đứt</b> = prime implicant được chọn thêm.</p>
+  </div>
+
+  <div class="card">
+    <h2>Truth table</h2>
+    <p class="small muted" style="margin-top:0">Click một hàng để đổi giá trị — K-map và biểu thức tự cập nhật.</p>
+    <div class="tblbox" id="k-tt" style="max-height:430px;overflow-y:auto"></div>
+  </div>
+
+  <div class="card">
+    <h2>Kết quả rút gọn</h2>
+    <div class="row tight" style="align-items:flex-start"><b class="small" style="min-width:5.5em;padding-top:6px">SOP:</b>
+      <div class="expr" id="k-sop"></div></div>
+    <div class="row tight" style="align-items:flex-start;margin-top:6px"><b class="small" style="min-width:5.5em;padding-top:6px">POS:</b>
+      <div class="expr" id="k-pos"></div></div>
+    <p class="small muted" id="k-cost" style="margin-bottom:0"></p>
+    <p class="small muted" style="margin:.2em 0 0">POS được tìm bằng cách rút gọn các ô <b>0</b> thành SOP của F′ rồi lấy bù (De Morgan).</p>
+  </div>
+
+  <div class="card">
+    <h2>Giải thích từng bước</h2>
+    <div class="row">
+      <button class="btn primary" id="st-next">Next ▶</button>
+      <button class="btn" id="st-prev">◀ Back</button>
+      <button class="btn" id="st-reset">Bắt đầu lại</button>
+      <span class="mono small muted" id="st-count"></span>
+    </div>
+    <div class="steps-box" style="margin-top:10px" id="st-box"></div>
+  </div>
+</section>
+
+<!-- ============================ PAGE 3: PRACTICE ============================ -->
+<section class="page" id="page-prac" role="tabpanel" aria-labelledby="tab-prac">
+  <div class="card">
+    <h2>Đề bài</h2>
+    <div class="row">
+      <label class="inline">Số biến:
+        <select id="p-n"><option>2</option><option>3</option><option selected>4</option></select>
+      </label>
+      <label class="inline"><input type="checkbox" id="p-dc"> kèm don't care</label>
+      <button class="btn primary" id="p-gen">Tạo hàm ngẫu nhiên</button>
+    </div>
+    <p class="mono small" id="p-spec" style="margin:.6em 0 0"></p>
+  </div>
+
+  <div class="card">
+    <h2>Chọn nhóm</h2>
+    <p class="small muted" style="margin-top:0">
+      <b>Kéo</b> để quét một vùng chữ nhật · <b>click</b> (hoặc Shift+click) để bật/tắt từng ô — dùng cách này cho nhóm
+      <b>wrap-around</b> · rồi bấm “Chốt nhóm”.
+    </p>
+    <div class="maps" id="p-maps"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="p-commit">Chốt nhóm</button>
+      <button class="btn" id="p-clearsel">Bỏ chọn</button>
+      <button class="btn" id="p-undo">Xoá nhóm cuối</button>
+      <button class="btn" id="p-clearg">Xoá hết nhóm</button>
+    </div>
+    <div class="legend" id="p-legend" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Biểu thức của bạn</h2>
+    <div class="row">
+      <input type="text" id="p-expr" style="flex:1 1 260px" autocomplete="off" spellcheck="false" placeholder="ví dụ: A'B + BD' + C">
+      <button class="btn primary" id="p-check">Kiểm tra</button>
+      <button class="btn" id="p-show">Xem đáp án</button>
+    </div>
+    <p class="small muted" style="margin:.3em 0 0">Cú pháp: <span class="mono">A'</span> hoặc <span class="mono">!A</span> là NOT · viết liền là AND · <span class="mono">+</span> là OR · dùng được ngoặc.</p>
+    <div id="p-result"></div>
+  </div>
+</section>
+
+<footer class="small muted" style="text-align:center;padding:10px 0">
+  Mở console và gõ <span class="mono">runTests()</span> để chạy bộ test tự kiểm tra.
+</footer>
+</div>
+
+<script>
+/* =====================================================================
+   PHẦN LÕI THUẬT TOÁN (thuần tuý, không đụng DOM) — có thể chạy ở Node
+   ===================================================================== */
+// ==== CORE LOGIC START ====
+'use strict';
+
+/* ---------------------------------------------------------------
+   1. GRAY CODE
+   --------------------------------------------------------------- */
+
+/** Đổi số nguyên v thành chuỗi nhị phân n bit (MSB ở đầu). */
+function toBits(v, n) {
+  let s = '';
+  for (let i = n - 1; i >= 0; i--) s += (v >> i) & 1;
+  return s;
+}
+
+/** Binary → Gray theo công thức g_i = b_{i+1} XOR b_i (b_{n} = 0 cho MSB). */
+function binToGray(bin) {
+  let g = bin[0];                       // MSB giữ nguyên (vì b_n = 0)
+  for (let i = 1; i < bin.length; i++) {
+    g += (+bin[i - 1] ^ +bin[i]);       // XOR với bit đứng ngay trước (trọng số cao hơn)
+  }
+  return g;
+}
+
+/** Gray → Binary theo công thức b_i = b_{i+1} XOR g_i (tích luỹ XOR từ MSB). */
+function grayToBin(gray) {
+  let b = gray[0];
+  for (let i = 1; i < gray.length; i++) {
+    b += (+b[i - 1] ^ +gray[i]);        // dùng bit binary vừa tính được, không phải bit gray
+  }
+  return b;
+}
+
+/**
+ * Sinh danh sách Gray code n bit bằng "reflect and prefix":
+ * L(n) = ["0"+x for x in L(n-1)] ++ ["1"+x for x in reverse(L(n-1))]
+ */
+function grayList(n) {
+  let list = [''];
+  for (let k = 0; k < n; k++) {
+    const rev = list.slice().reverse();
+    list = list.map(s => '0' + s).concat(rev.map(s => '1' + s));
+  }
+  return list;
+}
+
+/** Các bước XOR của Binary → Gray, phục vụ hiển thị. */
+function binToGraySteps(bin) {
+  const out = [];
+  for (let i = 0; i < bin.length; i++) {
+    const hi = i === 0 ? '0' : bin[i - 1];
+    out.push({ i, a: hi, b: bin[i], r: String(+hi ^ +bin[i]), first: i === 0 });
+  }
+  return out;
+}
+
+/** Các bước XOR của Gray → Binary, phục vụ hiển thị. */
+function grayToBinSteps(gray) {
+  const out = [];
+  let prev = '0';
+  for (let i = 0; i < gray.length; i++) {
+    const r = String(+prev ^ +gray[i]);
+    out.push({ i, a: prev, b: gray[i], r, first: i === 0 });
+    prev = r;
+  }
+  return out;
+}
+
+/** Vị trí các bit khác nhau giữa hai chuỗi cùng độ dài. */
+function diffPositions(a, b) {
+  const d = [];
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d.push(i);
+  return d;
+}
+
+/* ---------------------------------------------------------------
+   2. IMPLICANT & QUINE–McCLUSKEY
+   Implicant biểu diễn bằng {v, d}:
+     d = mask các bit "-" (biến bị loại),  v = giá trị các bit còn lại
+   Minterm m thuộc implicant  <=>  (m & ~d) === v
+   --------------------------------------------------------------- */
+
+const VAR_NAMES = ['A', 'B', 'C', 'D', 'E'];
+
+/** Tên biến cho hàm n biến: A là MSB. */
+function varNames(n) { return VAR_NAMES.slice(0, n); }
+
+function popcount(x) { let c = 0; while (x) { x &= x - 1; c++; } return c; }
+
+/** Số literal của một implicant = số biến chưa bị loại. */
+function literalCount(imp, n) { return n - popcount(imp.d); }
+
+/** Liệt kê mọi minterm nằm trong implicant. */
+function implicantMinterms(imp, n) {
+  const free = [];
+  for (let i = 0; i < n; i++) if ((imp.d >> i) & 1) free.push(i);
+  const out = [];
+  for (let s = 0; s < (1 << free.length); s++) {
+    let m = imp.v;
+    for (let j = 0; j < free.length; j++) if ((s >> j) & 1) m |= (1 << free[j]);
+    out.push(m);
+  }
+  return out.sort((a, b) => a - b);
+}
+
+function impCovers(imp, m) { return (m & ~imp.d) === imp.v; }
+function impKey(imp) { return imp.v + '/' + imp.d; }
+
+/** imp A có chứa trọn imp B không (B ⊆ A)? */
+function impContains(a, b) {
+  // A chứa B khi: (1) mọi biến A đã loại thì B cũng loại được -> b.d ⊆ a.d,
+  //               (2) trên các biến A giữ lại, B mang đúng giá trị đó.
+  return ((a.d & b.d) === b.d) && ((b.v & ~a.d) === a.v);
+}
+
+/**
+ * Quine–McCluskey: tìm TẤT CẢ prime implicant.
+ * ones + dontcares đều được dùng để mở rộng nhóm.
+ */
+function primeImplicants(ones, dontcares, n) {
+  const seedSet = new Set([...ones, ...dontcares]);
+  if (seedSet.size === 0) return [];
+  let current = [...seedSet].map(m => ({ v: m, d: 0 }));
+  const primes = new Map();
+
+  while (current.length) {
+    const used = new Array(current.length).fill(false);
+    const nextMap = new Map();
+    // nhóm theo mask "-" để chỉ ghép các term cùng dạng
+    const byDash = new Map();
+    current.forEach((t, i) => {
+      if (!byDash.has(t.d)) byDash.set(t.d, []);
+      byDash.get(t.d).push(i);
+    });
+    for (const idxs of byDash.values()) {
+      for (let a = 0; a < idxs.length; a++) {
+        for (let b = a + 1; b < idxs.length; b++) {
+          const ta = current[idxs[a]], tb = current[idxs[b]];
+          const x = ta.v ^ tb.v;
+          if (x && (x & (x - 1)) === 0) {           // khác đúng 1 bit → ghép được
+            used[idxs[a]] = used[idxs[b]] = true;
+            const nt = { v: ta.v & tb.v, d: ta.d | x };
+            nextMap.set(impKey(nt), nt);
+          }
+        }
+      }
+    }
+    current.forEach((t, i) => { if (!used[i]) primes.set(impKey(t), t); });
+    current = [...nextMap.values()];
+  }
+  return [...primes.values()].sort((a, b) => (a.v - b.v) || (a.d - b.d));
+}
+
+/**
+ * Chọn phủ tối thiểu: essential PI trước, phần còn lại dùng branch & bound
+ * (nhánh theo minterm khó nhất — ít PI phủ nhất). Tiêu chí: ít term nhất,
+ * hoà thì ít literal nhất. Don't care KHÔNG bắt buộc phải phủ.
+ */
+function minimalCover(pis, ones, n) {
+  if (ones.length === 0) return { cover: [], essential: [] };
+
+  // bảng: minterm -> các PI phủ nó
+  const covering = new Map();
+  for (const m of ones) {
+    const list = [];
+    pis.forEach((p, i) => { if (impCovers(p, m)) list.push(i); });
+    covering.set(m, list);
+  }
+
+  // essential PI: minterm chỉ được phủ bởi đúng 1 PI
+  const essIdx = new Set();
+  for (const [, list] of covering) if (list.length === 1) essIdx.add(list[0]);
+
+  const covered = new Set();
+  for (const i of essIdx) for (const m of implicantMinterms(pis[i], n)) covered.add(m);
+  const remaining = ones.filter(m => !covered.has(m));
+
+  const candidates = pis.map((_, i) => i).filter(i => !essIdx.has(i));
+  const essArr = [...essIdx];
+  const cost = idxs => idxs.reduce((s, i) => s + literalCount(pis[i], n), 0);
+
+  let best = null, bestTerms = Infinity, bestLits = Infinity;
+
+  function branch(rem, chosen) {
+    if (rem.length === 0) {
+      const t = chosen.length, l = cost(chosen);
+      if (t < bestTerms || (t === bestTerms && l < bestLits)) {
+        best = chosen.slice(); bestTerms = t; bestLits = l;
+      }
+      return;
+    }
+    // cắt nhánh: đã dùng nhiều term hơn lời giải tốt nhất
+    if (chosen.length + 1 > bestTerms) return;
+    // chọn minterm còn lại có ít PI phủ nhất để nhánh hẹp
+    let target = rem[0], bestLen = Infinity;
+    for (const m of rem) {
+      const k = candidates.filter(i => impCovers(pis[i], m)).length;
+      if (k < bestLen) { bestLen = k; target = m; }
+    }
+    for (const i of candidates) {
+      if (chosen.includes(i) || !impCovers(pis[i], target)) continue;
+      const nrem = rem.filter(m => !impCovers(pis[i], m));
+      branch(nrem, chosen.concat(i));
+    }
+  }
+  branch(remaining, []);
+
+  const extra = best || [];
+  return { cover: essArr.concat(extra).sort((a, b) => a - b), essential: essArr };
+}
+
+/** Chuỗi literal của implicant dạng SOP: A B' C ... ("1" nếu rỗng). */
+function implicantToSOP(imp, n) {
+  const names = varNames(n);
+  let s = '';
+  for (let k = 0; k < n; k++) {
+    const bit = n - 1 - k;                       // biến thứ k ứng với bit n-1-k
+    if ((imp.d >> bit) & 1) continue;
+    s += names[k] + (((imp.v >> bit) & 1) ? '' : "'");
+  }
+  return s === '' ? '1' : s;
+}
+
+/** Từ implicant của F' sinh maxterm dạng POS: (A' + B + ...) — De Morgan. */
+function implicantToPOS(imp, n) {
+  const names = varNames(n);
+  const lits = [];
+  for (let k = 0; k < n; k++) {
+    const bit = n - 1 - k;
+    if ((imp.d >> bit) & 1) continue;
+    lits.push(names[k] + (((imp.v >> bit) & 1) ? "'" : ''));  // đảo dấu so với SOP
+  }
+  return lits.length === 0 ? '0' : '(' + lits.join(' + ') + ')';
+}
+
+/* ---------------------------------------------------------------
+   3. RÚT GỌN HÀM
+   values: mảng độ dài 2^n, phần tử 0 | 1 | 2 (2 = don't care)
+   --------------------------------------------------------------- */
+
+function splitValues(values) {
+  const ones = [], zeros = [], dcs = [];
+  values.forEach((v, m) => { (v === 1 ? ones : v === 0 ? zeros : dcs).push(m); });
+  return { ones, zeros, dcs };
+}
+
+/** Rút gọn SOP (phủ các ô 1). */
+function minimizeSOP(values, n) {
+  const { ones, dcs } = splitValues(values);
+  const pis = primeImplicants(ones, dcs, n);
+  const { cover, essential } = minimalCover(pis, ones, n);
+  const terms = cover.map(i => ({ idx: i, imp: pis[i], essential: essential.includes(i), text: implicantToSOP(pis[i], n) }));
+  const expr = ones.length === 0 ? '0'
+    : (terms.length === 1 && terms[0].text === '1') ? '1'
+      : terms.map(t => t.text).join(' + ');
+  return { pis, cover, essential, terms, expr, ones, dcs };
+}
+
+/** Rút gọn POS: rút gọn F' (phủ các ô 0) rồi lấy bù bằng De Morgan. */
+function minimizePOS(values, n) {
+  const { zeros, dcs } = splitValues(values);
+  const pis = primeImplicants(zeros, dcs, n);
+  const { cover, essential } = minimalCover(pis, zeros, n);
+  const terms = cover.map(i => ({ idx: i, imp: pis[i], essential: essential.includes(i), text: implicantToPOS(pis[i], n) }));
+  const expr = zeros.length === 0 ? '1'
+    : (terms.length === 1 && terms[0].text === '0') ? '0'
+      : terms.map(t => t.text).join('');
+  return { pis, cover, essential, terms, expr, zeros, dcs };
+}
+
+/** Tổng số literal của một danh sách term (dùng để so "độ tối giản"). */
+function totalLiterals(terms, n) {
+  return terms.reduce((s, t) => s + literalCount(t.imp, n), 0);
+}
+
+/* ---------------------------------------------------------------
+   4. HÌNH HỌC K-MAP
+   Bố cục: nhãn hàng / cột theo thứ tự Gray. 5 biến = 2 "sheet" (A=0, A=1).
+   --------------------------------------------------------------- */
+
+/** Mô tả bố cục K-map cho n biến. */
+function mapLayout(n) {
+  const names = varNames(n);
+  let sheetVars, rowVars, colVars;
+  if (n === 2) { sheetVars = []; rowVars = [names[0]]; colVars = [names[1]]; }
+  else if (n === 3) { sheetVars = []; rowVars = [names[0]]; colVars = names.slice(1); }
+  else if (n === 4) { sheetVars = []; rowVars = names.slice(0, 2); colVars = names.slice(2); }
+  else { sheetVars = [names[0]]; rowVars = names.slice(1, 3); colVars = names.slice(3); }
+  const rowCodes = grayList(rowVars.length);
+  const colCodes = grayList(colVars.length);
+  const sheetCodes = grayList(sheetVars.length);
+  return { n, sheetVars, rowVars, colVars, rowCodes, colCodes, sheetCodes };
+}
+
+/** minterm tại ô (sheet, row, col). Bit ghép theo thứ tự sheet + row + col. */
+function cellMinterm(L, s, r, c) {
+  return parseInt(L.sheetCodes[s] + L.rowCodes[r] + L.colCodes[c], 2);
+}
+
+/** Bảng tra ngược: minterm -> {s, r, c}. */
+function mintermPositions(L) {
+  const pos = [];
+  for (let s = 0; s < L.sheetCodes.length; s++)
+    for (let r = 0; r < L.rowCodes.length; r++)
+      for (let c = 0; c < L.colCodes.length; c++)
+        pos[cellMinterm(L, s, r, c)] = { s, r, c };
+  return pos;
+}
+
+/**
+ * Tách một tập chỉ số thành các đoạn liên tiếp theo thứ tự tuyến tính.
+ * Nhóm quấn biên (ví dụ {0,3} với size 4) tự nhiên tách thành 2 mảnh ở hai mép.
+ */
+function contiguousSegments(idxs, size) {
+  const set = new Set(idxs);
+  if (set.size === size) return [[0, size]];
+  const segs = [];
+  let i = 0;
+  while (i < size) {
+    if (!set.has(i)) { i++; continue; }
+    let j = i;
+    while (j + 1 < size && set.has(j + 1)) j++;
+    segs.push([i, j - i + 1]);
+    i = j + 1;
+  }
+  return segs;
+}
+
+/** Các hình chữ nhật cần vẽ cho một implicant (nhiều mảnh nếu quấn biên). */
+function implicantRects(imp, n) {
+  const L = mapLayout(n);
+  const pos = mintermPositions(L);
+  const bySheet = new Map();
+  for (const m of implicantMinterms(imp, n)) {
+    const p = pos[m];
+    if (!bySheet.has(p.s)) bySheet.set(p.s, { rows: new Set(), cols: new Set() });
+    bySheet.get(p.s).rows.add(p.r);
+    bySheet.get(p.s).cols.add(p.c);
+  }
+  const rects = [];
+  for (const [s, o] of bySheet) {
+    const rSegs = contiguousSegments([...o.rows], L.rowCodes.length);
+    const cSegs = contiguousSegments([...o.cols], L.colCodes.length);
+    for (const [r0, rh] of rSegs) for (const [c0, cw] of cSegs) rects.push({ s, r: r0, c: c0, h: rh, w: cw });
+  }
+  return rects;
+}
+
+/* ---------------------------------------------------------------
+   5. PHÂN TÍCH CÚ PHÁP BIỂU THỨC BOOLEAN
+   Ngữ pháp:  or := and ('+' and)* ;  and := not+ ;
+              not := ('!'|'~')* atom "'"* ;  atom := '(' or ')' | VAR | '0' | '1'
+   --------------------------------------------------------------- */
+
+function parseBoolExpr(text, n) {
+  const names = varNames(n);
+  const src = text.replace(/[·*.×∧&]/g, '').replace(/[|∨]/g, '+').replace(/[¬]/g, '!');
+  let i = 0;
+  const skip = () => { while (i < src.length && /\s/.test(src[i])) i++; };
+  const peek = () => { skip(); return i < src.length ? src[i] : null; };
+  const fail = msg => { throw new Error(msg + ' (vị trí ' + (i + 1) + ')'); };
+
+  function parseOr() {
+    const parts = [parseAnd()];
+    while (peek() === '+') { i++; parts.push(parseAnd()); }
+    return parts.length === 1 ? parts[0] : m => parts.some(f => f(m)) ? 1 : 0;
+  }
+  function startsFactor() {
+    const c = peek();
+    if (c === null) return false;
+    return c === '(' || c === '!' || c === '~' || c === '0' || c === '1' ||
+      names.includes(c.toUpperCase()) && /[a-z]/i.test(c);
+  }
+  function parseAnd() {
+    const parts = [];
+    while (startsFactor()) parts.push(parseNot());
+    if (parts.length === 0) fail('thiếu toán hạng');
+    return parts.length === 1 ? parts[0] : m => parts.every(f => f(m)) ? 1 : 0;
+  }
+  function parseNot() {
+    let neg = false;
+    while (peek() === '!' || peek() === '~') { i++; neg = !neg; }
+    let f = parseAtom();
+    skip();
+    while (i < src.length && (src[i] === "'" || src[i] === '’' || src[i] === '`')) { i++; const g = f; f = m => g(m) ^ 1; skip(); }
+    if (neg) { const g = f; f = m => g(m) ^ 1; }
+    return f;
+  }
+  function parseAtom() {
+    const c = peek();
+    if (c === null) fail('biểu thức kết thúc sớm');
+    if (c === '(') {
+      i++;
+      const f = parseOr();
+      if (peek() !== ')') fail('thiếu dấu )');
+      i++;
+      return f;
+    }
+    if (c === '0') { i++; return () => 0; }
+    if (c === '1') { i++; return () => 1; }
+    const up = c.toUpperCase();
+    const k = names.indexOf(up);
+    if (k < 0) fail('ký tự không hợp lệ "' + c + '" — chỉ dùng ' + names.join(', '));
+    i++;
+    const bit = n - 1 - k;
+    return m => (m >> bit) & 1;
+  }
+
+  const f = parseOr();
+  skip();
+  if (i < src.length) fail('thừa ký tự "' + src[i] + '"');
+  return f;
+}
+
+/** Bảng chân trị của một biểu thức chuỗi. */
+function exprTruthTable(text, n) {
+  const f = parseBoolExpr(text, n);
+  const out = new Array(1 << n);
+  for (let m = 0; m < (1 << n); m++) out[m] = f(m) ? 1 : 0;
+  return out;
+}
+
+/** Đếm số term và số literal của biểu thức viết ở dạng SOP phẳng. */
+function sopStats(text, n) {
+  const names = varNames(n);
+  const parts = text.split('+').map(s => s.trim()).filter(s => s.length);
+  if (text.includes('(')) return null;               // có ngoặc ⇒ không phải SOP phẳng
+  let literals = 0;
+  for (const p of parts) {
+    const toks = p.match(/[A-Ea-e]\s*['’`]?|[!~]\s*[A-Ea-e]|[01]/g) || [];
+    for (const t of toks) {
+      const v = t.replace(/[^A-Ea-e]/g, '').toUpperCase();
+      if (v && !names.includes(v)) return null;
+      if (v) literals++;
+    }
+  }
+  return { terms: parts.length, literals };
+}
+
+/* ---------------------------------------------------------------
+   6. ĐỌC CHUỖI Σm(...) / ΠM(...) / d(...)
+   --------------------------------------------------------------- */
+
+function parseSpec(text, n) {
+  const size = 1 << n;
+  const grab = re => {
+    const mm = text.match(re);
+    if (!mm) return null;
+    const body = mm[1].trim();
+    if (body === '') return [];
+    return body.split(/[,\s;]+/).filter(s => s.length).map(s => {
+      const v = Number(s);
+      if (!Number.isInteger(v) || v < 0 || v >= size) throw new Error('chỉ số "' + s + '" không hợp lệ (phải trong 0..' + (size - 1) + ')');
+      return v;
+    });
+  };
+  const dcs = grab(/[dDxX]\s*\(([^)]*)\)/) || [];
+  const mins = grab(/(?:^|[^A-Za-z])m\s*\(([^)]*)\)/) || (/[Σ∑S]/.test(text) ? grab(/[Σ∑S]\s*\(([^)]*)\)/) : null);
+  const maxs = grab(/(?:^|[^A-Za-z])M\s*\(([^)]*)\)/) || (/[Π∏P]/.test(text) ? grab(/[Π∏P]\s*\(([^)]*)\)/) : null);
+
+  if (!mins && !maxs) throw new Error('không tìm thấy m(...) hoặc M(...)');
+  if (mins && maxs) throw new Error('chỉ dùng một trong hai: m(...) hoặc M(...)');
+
+  const values = new Array(size).fill(0);
+  if (mins) {
+    for (const m of mins) values[m] = 1;
+  } else {
+    values.fill(1);
+    for (const m of maxs) values[m] = 0;   // maxterm ⇒ ô đó bằng 0
+  }
+  for (const m of dcs) values[m] = 2;
+  return values;
+}
+
+/** Sinh lại chuỗi Σm(...) + d(...) từ values. */
+function formatSpec(values) {
+  const { ones, dcs } = splitValues(values);
+  let s = 'Σm(' + ones.join(',') + ')';
+  if (dcs.length) s += ' + d(' + dcs.join(',') + ')';
+  return s;
+}
+
+/* ---------------------------------------------------------------
+   7. HỖ TRỢ CHẾ ĐỘ LUYỆN TẬP
+   --------------------------------------------------------------- */
+
+/** Từ một tập ô, suy ra implicant nhỏ nhất chứa nó (bit nào khác nhau thì thành "-"). */
+function cellsToImplicant(cells, n) {
+  const m0 = cells[0];
+  let d = 0;
+  for (const m of cells) d |= (m ^ m0);
+  return { v: m0 & ~d, d };
+}
+
+/**
+ * Kiểm tra một nhóm người học khoanh.
+ * Trả về {ok, size, imp, errors:[], notes:[]}
+ */
+function checkGroup(cells, values, n, allPIs) {
+  const errors = [], notes = [];
+  const uniq = [...new Set(cells)].sort((a, b) => a - b);
+  const imp = cellsToImplicant(uniq, n);
+  const size = uniq.length;
+
+  if (size === 0) { errors.push('nhóm rỗng'); return { ok: false, size, imp, errors, notes }; }
+  if ((size & (size - 1)) !== 0) errors.push('kích thước ' + size + ' không phải luỹ thừa của 2');
+  // hình chữ nhật trên mặt torus ⇔ tập ô đúng bằng implicant sinh ra nó
+  const spanned = 1 << popcount(imp.d);
+  if (spanned !== size) errors.push('không phải hình chữ nhật trên mặt torus (nhóm nhỏ nhất bao nó có ' + spanned + ' ô)');
+  const zeros = uniq.filter(m => values[m] === 0);
+  if (zeros.length) errors.push('chứa ô giá trị 0: ' + zeros.join(', '));
+
+  if (errors.length === 0) {
+    // đã hợp lệ → nhóm đã lớn nhất chưa?
+    const bigger = allPIs.filter(p => impContains(p, imp) && p.d !== imp.d);
+    if (bigger.length) {
+      notes.push('chưa phải nhóm lớn nhất — có thể mở rộng thành ' + bigger.map(p => implicantToSOP(p, n)).join(' hoặc '));
+    }
+    if (uniq.every(m => values[m] === 2)) notes.push('nhóm này chỉ toàn don\'t care — không cần thiết');
+  }
+  return { ok: errors.length === 0, size, imp, errors, notes };
+}
+
+// ==================================================================
+//                          BỘ TEST
+// ==================================================================
+
+/** Chạy toàn bộ test; gọi runTests() trong console. */
+function runTests(opts) {
+  const quiet = opts && opts.quiet;
+  let pass = 0; const fails = [];
+  const ok = (name, cond, extra) => {
+    if (cond) pass++; else fails.push(name + (extra ? ' — ' + extra : ''));
+  };
+  const eq = (name, a, b) => ok(name, a === b, 'nhận "' + a + '", mong đợi "' + b + '"');
+
+  /* --- T1: danh sách Gray code --- */
+  for (let n = 1; n <= 5; n++) {
+    const L = grayList(n);
+    ok('T1 n=' + n + ' đủ 2^n phần tử', L.length === (1 << n));
+    ok('T1 n=' + n + ' không trùng', new Set(L).size === L.length);
+    let adj = true;
+    for (let i = 0; i < L.length; i++) {
+      const j = (i + 1) % L.length;                       // kể cả vòng về đầu
+      if (diffPositions(L[i], L[j]).length !== 1) adj = false;
+    }
+    ok('T1 n=' + n + ' mỗi bước đổi đúng 1 bit (kể cả wrap)', adj);
+  }
+
+  /* --- T2: Binary <-> Gray --- */
+  for (let n = 1; n <= 5; n++) {
+    const L = grayList(n);
+    let allOk = true, listOk = true;
+    for (let v = 0; v < (1 << n); v++) {
+      const b = toBits(v, n);
+      const g = binToGray(b);
+      if (grayToBin(g) !== b) allOk = false;               // khứ hồi
+      if (L[v] !== g) listOk = false;                      // khớp reflect-and-prefix
+      if (binToGraySteps(b).map(s => s.r).join('') !== g) allOk = false;
+      if (grayToBinSteps(g).map(s => s.r).join('') !== b) allOk = false;
+    }
+    ok('T2 n=' + n + ' bin↔gray khứ hồi + các bước XOR', allOk);
+    ok('T2 n=' + n + ' binToGray khớp grayList', listOk);
+  }
+
+  /* --- T3: hàm ngẫu nhiên — SOP/POS phải khớp bảng chân trị --- */
+  let rndFail = 0, rndCases = 0;
+  for (let n = 2; n <= 4; n++) {
+    for (let t = 0; t < 120; t++) {
+      const size = 1 << n;
+      const values = new Array(size);
+      for (let m = 0; m < size; m++) {
+        const r = Math.random();
+        values[m] = r < 0.12 ? 2 : (r < 0.56 ? 1 : 0);      // ~12% don't care
+      }
+      rndCases++;
+      const S = minimizeSOP(values, n), P = minimizePOS(values, n);
+      const ts = exprTruthTable(S.expr, n), tp = exprTruthTable(P.expr, n);
+      for (let m = 0; m < size; m++) {
+        if (values[m] === 2) continue;                     // don't care: bỏ qua
+        if (ts[m] !== values[m] || tp[m] !== values[m]) {
+          rndFail++;
+          if (rndFail < 4) fails.push('T3 n=' + n + ' sai tại m=' + m + ' | ' + formatSpec(values) + ' | SOP=' + S.expr + ' | POS=' + P.expr);
+          break;
+        }
+      }
+      // mọi term trong cover phải là prime implicant hợp lệ (không phủ ô 0)
+      for (const term of S.terms) {
+        if (implicantMinterms(term.imp, n).some(m => values[m] === 0)) {
+          rndFail++; fails.push('T3 n=' + n + ' term ' + term.text + ' phủ ô 0');
+          break;
+        }
+      }
+    }
+  }
+  ok('T3 ' + rndCases + ' hàm ngẫu nhiên (n=2..4) SOP & POS đúng', rndFail === 0, rndFail + ' ca sai');
+
+  /* --- T4: các case kinh điển --- */
+  // 4 góc K-map 4 biến: m0,m2,m8,m10 → B'D'
+  {
+    const v = new Array(16).fill(0); [0, 2, 8, 10].forEach(m => v[m] = 1);
+    const S = minimizeSOP(v, 4);
+    eq('T4 bốn góc → B\'D\'', S.expr, "B'D'");
+    const rects = implicantRects(S.terms[0].imp, 4);
+    ok('T4 bốn góc vẽ thành 4 mảnh ở mép', rects.length === 4, 'nhận ' + rects.length);
+    ok('T4 bốn góc mỗi mảnh 1 ô', rects.every(r => r.w === 1 && r.h === 1));
+  }
+  // hằng 1 và hằng 0
+  for (let n = 2; n <= 4; n++) {
+    const one = new Array(1 << n).fill(1), zero = new Array(1 << n).fill(0);
+    eq('T4 n=' + n + ' hàm luôn 1 → SOP "1"', minimizeSOP(one, n).expr, '1');
+    eq('T4 n=' + n + ' hàm luôn 1 → POS "1"', minimizePOS(one, n).expr, '1');
+    eq('T4 n=' + n + ' hàm luôn 0 → SOP "0"', minimizeSOP(zero, n).expr, '0');
+    eq('T4 n=' + n + ' hàm luôn 0 → POS "0"', minimizePOS(zero, n).expr, '0');
+  }
+  // XOR / parity: không rút gọn được, luôn 2^(n-1) term đủ n literal
+  for (let n = 2; n <= 4; n++) {
+    const v = new Array(1 << n);
+    for (let m = 0; m < (1 << n); m++) v[m] = popcount(m) % 2;
+    const S = minimizeSOP(v, n);
+    ok('T4 XOR n=' + n + ' có 2^(n-1) term', S.terms.length === (1 << (n - 1)), 'nhận ' + S.terms.length);
+    ok('T4 XOR n=' + n + ' mọi term đủ n literal', S.terms.every(t => literalCount(t.imp, n) === n));
+    ok('T4 XOR n=' + n + ' mọi term là essential', S.terms.every(t => t.essential));
+    const tt = exprTruthTable(S.expr, n);
+    ok('T4 XOR n=' + n + ' biểu thức đúng', tt.every((x, m) => x === v[m]));
+  }
+  // don't care thật sự giúp rút gọn: Σm(1,3,5,7,9) + d(11,13,15) → nhóm to hơn
+  {
+    const v = new Array(16).fill(0);
+    [1, 3, 5, 7, 9].forEach(m => v[m] = 1);
+    [11, 13, 15].forEach(m => v[m] = 2);
+    const S = minimizeSOP(v, 4);
+    eq('T4 don\'t care mở rộng nhóm → D', S.expr, 'D');
+  }
+  // essential prime implicant kinh điển: Σm(0,1,2,5,6,7,8,9,10,14)
+  {
+    const v = new Array(16).fill(0);
+    [0, 1, 2, 5, 6, 7, 8, 9, 10, 14].forEach(m => v[m] = 1);
+    const S = minimizeSOP(v, 4);
+    const tt = exprTruthTable(S.expr, 4);
+    ok('T4 ca essential: biểu thức đúng', tt.every((x, m) => x === v[m]));
+    ok('T4 ca essential: rút được về 3 term', S.terms.length === 3, S.expr);
+    ok('T4 ca essential: 7 literal', totalLiterals(S.terms, 4) === 7, String(totalLiterals(S.terms, 4)));
+  }
+
+  /* --- T5: parser & spec --- */
+  {
+    eq('T5 parse Σm', formatSpec(parseSpec('Σm(1,3,5,7) + d(0,2)', 3)), 'Σm(1,3,5,7) + d(0,2)');
+    const v = parseSpec('ΠM(0,2,4)', 3);
+    ok('T5 ΠM: các maxterm = 0', [0, 2, 4].every(m => v[m] === 0));
+    ok('T5 ΠM: còn lại = 1', [1, 3, 5, 6, 7].every(m => v[m] === 1));
+    ok('T5 spec sai báo lỗi', (() => { try { parseSpec('m(99)', 3); return false; } catch (e) { return true; } })());
+    // biểu thức
+    const f = exprTruthTable("A'B + AB'", 2);
+    ok('T5 eval XOR 2 biến', f.join('') === '0110', f.join(''));
+    ok('T5 eval có ngoặc', exprTruthTable("(A + B)(A' + B')", 2).join('') === '0110');
+    ok('T5 eval !A', exprTruthTable('!A', 1).join('') === '10');
+    const st = sopStats("A'B + BD' + C", 4);
+    ok('T5 sopStats', st && st.terms === 3 && st.literals === 5, JSON.stringify(st));
+    ok('T5 biểu thức sai báo lỗi', (() => { try { exprTruthTable("A' +", 2); return false; } catch (e) { return true; } })());
+  }
+
+  /* --- T6: hình học các nhóm --- */
+  {
+    let geomOk = true;
+    for (let n = 2; n <= 5; n++) {
+      const size = 1 << n;
+      const v = new Array(size).fill(1);
+      const pis = primeImplicants([...Array(size).keys()], [], n);
+      for (const p of pis) {
+        const rects = implicantRects(p, n);
+        const area = rects.reduce((s, r) => s + r.w * r.h, 0);
+        if (area !== implicantMinterms(p, n).length) geomOk = false;
+      }
+      // mọi implicant 1 ô cũng phải ra 1 hình 1x1
+      for (let m = 0; m < size; m++) {
+        const r = implicantRects({ v: m, d: 0 }, n);
+        if (r.length !== 1 || r[0].w !== 1 || r[0].h !== 1) geomOk = false;
+      }
+      void v;
+    }
+    ok('T6 tổng diện tích các mảnh = số ô của nhóm', geomOk);
+    // kiểm tra layout: hai ô cạnh nhau trên K-map khác đúng 1 bit
+    for (let n = 2; n <= 5; n++) {
+      const L = mapLayout(n);
+      const R = L.rowCodes.length, C = L.colCodes.length;
+      let adjOk = true;
+      for (let s = 0; s < L.sheetCodes.length; s++)
+        for (let r = 0; r < R; r++)
+          for (let c = 0; c < C; c++) {
+            const m = cellMinterm(L, s, r, c);
+            const right = cellMinterm(L, s, r, (c + 1) % C);
+            const down = cellMinterm(L, s, (r + 1) % R, c);
+            if (C > 1 && popcount(m ^ right) !== 1) adjOk = false;
+            if (R > 1 && popcount(m ^ down) !== 1) adjOk = false;
+          }
+      ok('T6 n=' + n + ' ô kề nhau khác đúng 1 biến', adjOk);
+    }
+  }
+
+  /* --- T7: kiểm tra nhóm của chế độ luyện tập --- */
+  {
+    const v = new Array(16).fill(0); [0, 2, 8, 10].forEach(m => v[m] = 1);
+    const pis = primeImplicants([0, 2, 8, 10], [], 4);
+    const g1 = checkGroup([0, 2, 8, 10], v, 4, pis);
+    ok('T7 4 góc là nhóm hợp lệ', g1.ok && g1.notes.length === 0, g1.errors.join('; '));
+    const g2 = checkGroup([0, 2], v, 4, pis);
+    ok('T7 nhóm 2 ô chưa lớn nhất', g2.ok && g2.notes.length === 1, JSON.stringify(g2.notes));
+    const g3 = checkGroup([0, 2, 8], v, 4, pis);
+    ok('T7 nhóm 3 ô bị loại', !g3.ok && g3.errors.length >= 1);
+    const g4 = checkGroup([0, 1], v, 4, pis);
+    ok('T7 nhóm chứa ô 0 bị loại', !g4.ok);
+    const g5 = checkGroup([0, 5], v, 4, pis);
+    ok('T7 nhóm 2 ô không kề bị loại', !g5.ok);
+  }
+
+  const total = pass + fails.length;
+  if (!quiet) {
+    if (fails.length === 0) console.log('%c✔ TẤT CẢ ' + total + ' TEST ĐỀU PASS', 'color:#0a0;font-weight:bold');
+    else {
+      console.log('%c✘ ' + fails.length + '/' + total + ' TEST FAIL', 'color:#c00;font-weight:bold');
+      fails.forEach(f => console.log('   ✘ ' + f));
+    }
+  }
+  return { pass, total, fails };
+}
+// ==== CORE LOGIC END ====
+
+/* =====================================================================
+   PHẦN GIAO DIỆN
+   ===================================================================== */
+
+const $ = sel => document.querySelector(sel);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const GAP = 4;                                   // khoảng cách giữa các ô K-map (px), phải khớp CSS
+const HUES = [212, 145, 28, 320, 265, 6, 178, 50, 240, 100, 195, 330];
+
+/* ---------------------- Tabs ---------------------- */
+function setupTabs() {
+  const tabs = [...document.querySelectorAll('.tabs button')];
+  tabs.forEach(t => t.addEventListener('click', () => activateTab(t.id)));
+  function activateTab(id) {
+    tabs.forEach(t => {
+      const on = t.id === id;
+      t.setAttribute('aria-selected', String(on));
+      $('#' + t.getAttribute('aria-controls')).classList.toggle('active', on);
+    });
+  }
+  $('#goto-kmap').addEventListener('click', () => { activateTab('tab-kmap'); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+}
+
+/* =====================================================================
+   PHẦN 1 — GRAY CODE
+   ===================================================================== */
+
+/** Bảng Decimal | Binary | Gray, highlight bit đổi so với hàng trước (vòng tròn). */
+function renderGrayTable() {
+  const n = +$('#g-n').value;
+  const list = grayList(n);
+  const t = $('#g-table');
+  t.innerHTML = '';
+  const thead = el('thead');
+  const hr = el('tr');
+  ['Decimal', 'Binary', 'Gray code'].forEach(h => hr.appendChild(el('th', null, h)));
+  thead.appendChild(hr); t.appendChild(thead);
+  const tb = el('tbody');
+  list.forEach((g, i) => {
+    const prev = list[(i - 1 + list.length) % list.length];   // hàng đầu so với hàng cuối
+    const changed = new Set(diffPositions(prev, g));
+    const tr = el('tr');
+    tr.appendChild(el('td', null, String(i)));
+    tr.appendChild(el('td', null, toBits(i, n)));
+    const td = el('td');
+    [...g].forEach((bit, k) => {
+      const s = el('span', changed.has(k) ? 'bitchg' : null, bit);
+      td.appendChild(s);
+    });
+    tr.appendChild(td);
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  $('#g-cyclic').textContent = 'Tổng cộng ' + list.length + ' mã, mỗi bước (kể cả từ hàng cuối quay về hàng đầu) đổi đúng 1 bit ⇒ đây là một chu trình Hamilton trên siêu khối ' + n + ' chiều.';
+}
+
+/* ------------- Reflect and prefix (có animation) ------------- */
+const gb = { k: 1, phase: 0 };                   // k = số bit của danh sách gốc; phase 0=ổn định,1=đã lật,2=đã thêm tiền tố
+const GB_MAX = 5;                                // số bit tối đa được dựng
+/** Số bit đang hiển thị: ở phase 2 đã thêm tiền tố nên là k+1. */
+function gbShownBits() { return gb.phase === 2 ? gb.k + 1 : gb.k; }
+/** Đã tới giới hạn chưa (không thể bước tiếp nữa). */
+function gbAtMax() { return gb.phase === 2 && gb.k + 1 >= GB_MAX; }
+
+function gbRender(justChanged) {
+  const box = $('#gb-list');
+  box.innerHTML = '';
+  const base = grayList(gb.k);
+  let items;
+  if (gb.phase === 0) {
+    items = base.map(s => ({ s, mirror: false, pfx: null }));
+    $('#gb-msg').innerHTML = '<b>Gray ' + gb.k + ' bit</b> — ' + base.length + ' mã. Bấm <b>Bước tiếp</b> để lật ngược danh sách và thêm vào cuối.';
+  } else if (gb.phase === 1) {
+    items = base.map(s => ({ s, mirror: false, pfx: null }))
+      .concat(base.slice().reverse().map(s => ({ s, mirror: true, pfx: null })));
+    $('#gb-msg').innerHTML = '<b>Bước 1 — reflect:</b> chép danh sách rồi <b>lật ngược</b> (phần tô vàng). Hai dòng sát chỗ nối là <span class="mono">' +
+      base[base.length - 1] + '</span> và <span class="mono">' + base[base.length - 1] + '</span> — giống hệt nhau.';
+  } else {
+    items = base.map(s => ({ s, mirror: false, pfx: '0' }))
+      .concat(base.slice().reverse().map(s => ({ s, mirror: true, pfx: '1' })));
+    $('#gb-msg').innerHTML = '<b>Bước 2 — prefix:</b> nửa trên thêm <b class="mono">0</b>, nửa dưới thêm <b class="mono">1</b>. ' +
+      'Chỗ nối giờ là <span class="mono">0' + base[base.length - 1] + '</span> → <span class="mono">1' + base[base.length - 1] + '</span>: chỉ khác bit tiền tố ⇒ vẫn đúng quy tắc 1 bit. Đã có <b>Gray ' + (gb.k + 1) + ' bit</b>.';
+  }
+  items.forEach((it, i) => {
+    const d = el('div', 'gb-item' + (it.mirror ? ' mirror' : '') + (justChanged && i >= base.length ? ' fresh' : ''));
+    d.appendChild(el('span', 'idx', String(i)));
+    const code = el('span');
+    if (it.pfx) { const p = el('span', 'pfx p' + it.pfx, it.pfx); code.appendChild(p); }
+    code.appendChild(el('span', null, it.s));
+    d.appendChild(code);
+    box.appendChild(d);
+    if (gb.phase > 0 && i === base.length - 1) box.appendChild(el('div', 'gb-mid'));  // ranh giới nửa trên / nửa lật
+  });
+  $('#gb-state').textContent = 'n = ' + gbShownBits() + (gbAtMax() ? ' (tối đa)' : '');
+  $('#gb-next').disabled = gbAtMax();
+}
+
+function gbNext() {
+  if (gbAtMax()) return;
+  if (gb.phase === 2) { gb.k++; gb.phase = 1; }   // danh sách đã prefix trở thành gốc của vòng sau
+  else gb.phase++;
+  gbRender(true);
+}
+
+/* ------------- Bộ chuyển đổi Binary ↔ Gray ------------- */
+let convDir = 'b2g';
+
+function renderConverter() {
+  const raw = $('#conv-in').value.replace(/\s+/g, '');
+  const errBox = $('#conv-err'), stepBox = $('#conv-steps'), outBox = $('#conv-out');
+  stepBox.innerHTML = ''; outBox.innerHTML = '';
+  $('#conv-lab').textContent = convDir === 'b2g' ? 'Binary' : 'Gray';
+  $('#conv-outlab').textContent = convDir === 'b2g' ? 'Gray code:' : 'Binary:';
+  $('#conv-formula').textContent = convDir === 'b2g'
+    ? 'g[i] = b[i-1] XOR b[i]   (bit trái là trọng số cao; b[-1] coi như 0)'
+    : 'b[i] = b[i-1] XOR g[i]   (dùng bit binary vừa tính ở bước trước)';
+
+  if (!/^[01]+$/.test(raw)) { errBox.textContent = raw === '' ? 'Nhập một chuỗi bit.' : 'Chỉ được dùng ký tự 0 và 1.'; return; }
+  if (raw.length > 12) { errBox.textContent = 'Tối đa 12 bit.'; return; }
+  errBox.textContent = '';
+
+  const steps = convDir === 'b2g' ? binToGraySteps(raw) : grayToBinSteps(raw);
+  const result = steps.map(s => s.r).join('');
+  const srcName = convDir === 'b2g' ? 'b' : 'g';
+  const accName = convDir === 'b2g' ? 'b' : 'b';
+
+  steps.forEach(s => {
+    const line = el('div');
+    const lhs = (convDir === 'b2g' ? 'g' : 'b') + '[' + s.i + ']';
+    const left = s.first ? '0' : accName + '[' + (s.i - 1) + ']=' + s.a;
+    const right = srcName + '[' + s.i + ']=' + s.b;
+    line.innerHTML = lhs + ' = ' + left + ' ⊕ ' + right + ' = <span class="hl">' + s.r + '</span>' +
+      (s.first ? '  <span class="muted">(bit đầu: không có bit trái ⇒ XOR với 0)</span>' : '');
+    stepBox.appendChild(line);
+  });
+  [...result].forEach(b => outBox.appendChild(el('span', 'act', b)));
+  const dec = parseInt(convDir === 'b2g' ? raw : result, 2);
+  const extra = el('div', 'small muted');
+  extra.style.marginTop = '6px';
+  extra.textContent = 'Giá trị thập phân: ' + dec + (convDir === 'b2g' ? '  (binary ' + raw + ')' : '  (binary ' + result + ')');
+  stepBox.appendChild(extra);
+}
+
+function setupGrayPage() {
+  $('#g-n').addEventListener('change', renderGrayTable);
+  renderGrayTable();
+  $('#gb-next').addEventListener('click', gbNext);
+  $('#gb-reset').addEventListener('click', () => { gb.k = 1; gb.phase = 0; gbRender(false); });
+  gbRender(false);
+  document.querySelectorAll('#conv-dir button').forEach(b => b.addEventListener('click', () => {
+    convDir = b.dataset.d;
+    document.querySelectorAll('#conv-dir button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    renderConverter();
+  }));
+  $('#conv-in').addEventListener('input', renderConverter);
+  renderConverter();
+}
+
+/* =====================================================================
+   BỘ VẼ K-MAP DÙNG CHUNG (cho cả tab K-map và tab Luyện tập)
+   ===================================================================== */
+
+/**
+ * Dựng DOM cho K-map n biến vào `host`.
+ * Trả về { L, cells:Map(minterm->el), overlays:[el theo sheet] }.
+ */
+function buildMap(host, n, onCell, onHoverCell) {
+  const L = mapLayout(n);
+  const R = L.rowCodes.length, C = L.colCodes.length;
+  host.innerHTML = '';
+  const cells = new Map(), overlays = [];
+
+  L.sheetCodes.forEach((sc, s) => {
+    const box = el('div', 'mapbox');
+    if (L.sheetVars.length) box.appendChild(el('h4', null, L.sheetVars[0] + ' = ' + sc));
+
+    const tbl = el('div', 'ktable');
+    tbl.appendChild(el('div', 'kcorner', L.rowVars.join('') + ' \\ ' + L.colVars.join('')));
+
+    const colBar = el('div', 'kcols');
+    colBar.style.gridTemplateColumns = 'repeat(' + C + ',minmax(0,1fr))';
+    L.colCodes.forEach(cc => colBar.appendChild(el('div', 'klab', cc)));
+    tbl.appendChild(colBar);
+
+    const rowBar = el('div', 'krows');
+    rowBar.style.gridTemplateRows = 'repeat(' + R + ',minmax(0,1fr))';
+    L.rowCodes.forEach(rc => rowBar.appendChild(el('div', 'klab', rc)));
+    tbl.appendChild(rowBar);
+
+    const area = el('div', 'karea');
+    const grid = el('div', 'kcells');
+    grid.style.gridTemplateColumns = 'repeat(' + C + ',minmax(0,1fr))';
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      const m = cellMinterm(L, s, r, c);
+      const cell = el('div', 'kcell');
+      cell.dataset.m = m; cell.dataset.s = s; cell.dataset.r = r; cell.dataset.c = c;
+      cell.appendChild(el('span', 'v', '0'));
+      if (onCell) cell.addEventListener('click', ev => onCell(m, ev, cell));
+      if (onHoverCell) {
+        cell.addEventListener('mouseenter', () => onHoverCell(m));
+        cell.addEventListener('mouseleave', () => onHoverCell(null));
+      }
+      cells.set(m, cell);
+      grid.appendChild(cell);
+    }
+    area.appendChild(grid);
+    const ov = el('div', 'overlay');
+    area.appendChild(ov);
+    overlays.push(ov);
+    // lớp chỉ số minterm vẽ SAU overlay để không bị viền nhóm che mất
+    const idx = el('div', 'kidx');
+    idx.style.gridTemplateColumns = 'repeat(' + C + ',minmax(0,1fr))';
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++)
+      idx.appendChild(el('span', 'mi', String(cellMinterm(L, s, r, c))));
+    area.appendChild(idx);
+    tbl.appendChild(area);
+    box.appendChild(tbl);
+    host.appendChild(box);
+  });
+  return { L, cells, overlays, R, C };
+}
+
+/** Cập nhật giá trị hiển thị của từng ô. */
+function paintValues(view, values) {
+  view.cells.forEach((cell, m) => {
+    const v = values[m];
+    cell.dataset.v = v;
+    cell.querySelector('.v').textContent = v === 2 ? 'X' : String(v);
+  });
+}
+
+/** Toạ độ CSS của một mảnh hình chữ nhật trong vùng ô (đơn vị % + px, khớp gap). */
+function rectStyle(rect, R, C, pad) {
+  const gc = (C - 1) * GAP, gr = (R - 1) * GAP;
+  const left = 'calc((100% - ' + gc + 'px) / ' + C + ' * ' + rect.c + ' + ' + (GAP * rect.c + pad) + 'px)';
+  const width = 'calc((100% - ' + gc + 'px) / ' + C + ' * ' + rect.w + ' + ' + (GAP * (rect.w - 1) - 2 * pad) + 'px)';
+  const top = 'calc((100% - ' + gr + 'px) / ' + R + ' * ' + rect.r + ' + ' + (GAP * rect.r + pad) + 'px)';
+  const height = 'calc((100% - ' + gr + 'px) / ' + R + ' * ' + rect.h + ' + ' + (GAP * (rect.h - 1) - 2 * pad) + 'px)';
+  return { left, width, top, height };
+}
+
+/**
+ * Vẽ danh sách nhóm lên overlay.
+ * group = {id, imp, essential, hue, hidden}
+ */
+function drawGroups(view, groups, n) {
+  view.overlays.forEach(o => o.innerHTML = '');
+  groups.forEach((g, gi) => {
+    const pad = 3 + (gi % 4) * 3;                       // lệch nhau để nhóm chồng nhau vẫn thấy được
+    implicantRects(g.imp, n).forEach(rect => {
+      const d = el('div', 'grp' + (g.essential ? ' ess' : '') + (g.hidden ? ' posgrp' : ''));
+      d.style.setProperty('--gh', g.hue);
+      d.dataset.gid = g.id;
+      const st = rectStyle(rect, view.R, view.C, pad);
+      Object.assign(d.style, st);
+      view.overlays[rect.s].appendChild(d);
+    });
+  });
+}
+
+/** Bật/tắt highlight cho một tập id nhóm. */
+function setHot(root, ids) {
+  const on = ids && ids.size;
+  root.querySelectorAll('.grp').forEach(g => {
+    const hit = on && ids.has(g.dataset.gid);
+    g.classList.toggle('hot', !!hit);
+    g.classList.toggle('dim', !!on && !hit);
+  });
+  document.querySelectorAll('.term').forEach(t => t.classList.toggle('hot', !!(on && ids.has(t.dataset.gid))));
+}
+
+/* =====================================================================
+   PHẦN 2 — TAB K-MAP
+   ===================================================================== */
+
+const K = { n: 4, values: new Array(16).fill(0), view: null, groups: [], steps: null, stepIdx: -1 };
+
+/** Đổi giá trị ô theo vòng 0 → 1 → X → 0. */
+function cycleValue(v) { return (v + 1) % 3; }
+
+function kSetN(n) {
+  K.n = n;
+  K.values = new Array(1 << n).fill(0);
+  K.stepIdx = -1;
+  kBuild();
+  kRefresh();
+}
+
+function kBuild() {
+  K.view = buildMap($('#k-maps'), K.n,
+    m => { K.values[m] = cycleValue(K.values[m]); K.stepIdx = -1; kRefresh(); },
+    m => {                                                 // hover ô → highlight nhóm chứa ô đó
+      if (m === null) { setHot($('#k-maps'), null); return; }
+      const ids = new Set(K.groups.filter(g => !g.hidden && impCovers(g.imp, m)).map(g => g.id));
+      setHot($('#k-maps'), ids);
+    });
+}
+
+/** Truth table có thể click để sửa. */
+function renderTruthTable() {
+  const host = $('#k-tt');
+  const names = varNames(K.n);
+  host.innerHTML = '';
+  const t = el('table', 'grid');
+  const hr = el('tr');
+  names.forEach(v => hr.appendChild(el('th', null, v)));
+  hr.appendChild(el('th', null, 'm'));
+  hr.appendChild(el('th', null, 'F'));
+  t.appendChild(el('thead')).appendChild(hr);
+  const tb = el('tbody');
+  for (let m = 0; m < (1 << K.n); m++) {
+    const tr = el('tr', 'tt-row' + (K.values[m] === 1 ? ' on' : ''));
+    tr.dataset.m = m;
+    [...toBits(m, K.n)].forEach(b => tr.appendChild(el('td', null, b)));
+    tr.appendChild(el('td', 'muted', String(m)));
+    const v = K.values[m];
+    tr.appendChild(el('td', v === 1 ? 'val-1' : v === 2 ? 'val-x' : 'val-0', v === 2 ? 'X' : String(v)));
+    tr.addEventListener('click', () => { K.values[m] = cycleValue(K.values[m]); K.stepIdx = -1; kRefresh(); });
+    tb.appendChild(tr);
+  }
+  t.appendChild(tb);
+  host.appendChild(t);
+}
+
+/** Dựng các chip term có hover đồng bộ với K-map. */
+function renderExpr(host, terms, groups, emptyText) {
+  host.innerHTML = '';
+  if (!terms.length) { host.appendChild(el('span', 'mono', emptyText)); return; }
+  terms.forEach((t, i) => {
+    if (i) host.appendChild(el('span', 'plus', groups[i].joiner));
+    const chip = el('span', 'term' + (t.essential ? ' ess' : ''), t.text);
+    chip.style.setProperty('--gh', groups[i].hue);
+    chip.dataset.gid = groups[i].id;
+    chip.title = (t.essential ? 'Essential prime implicant' : 'Prime implicant') +
+      ' — phủ các ô: ' + implicantMinterms(t.imp, K.n).join(', ');
+    chip.addEventListener('mouseenter', () => setHot($('#k-maps'), new Set([groups[i].id])));
+    chip.addEventListener('mouseleave', () => setHot($('#k-maps'), null));
+    host.appendChild(chip);
+  });
+}
+
+/** Giải thích vì sao một nhóm cho ra term đó. */
+function explainTerm(imp, n, pos) {
+  const names = varNames(n);
+  const keep = [], drop = [];
+  for (let k = 0; k < n; k++) {
+    const bit = n - 1 - k;
+    if ((imp.d >> bit) & 1) drop.push(names[k]);
+    else keep.push(names[k] + ' = ' + ((imp.v >> bit) & 1));
+  }
+  const cells = implicantMinterms(imp, n);
+  let s = 'Nhóm ' + cells.length + ' ô {' + cells.join(', ') + '}: ';
+  s += keep.length ? 'giữ nguyên ' + keep.join(', ') : 'mọi biến đều đổi giá trị';
+  s += drop.length ? ' · ' + drop.join(', ') + ' đổi giá trị nên bị loại' : '';
+  s += ' ⇒ ' + (pos ? implicantToPOS(imp, n) : implicantToSOP(imp, n));
+  return s;
+}
+
+/** Tính lại toàn bộ tab K-map. */
+function kRefresh() {
+  const S = minimizeSOP(K.values, K.n);
+  const P = minimizePOS(K.values, K.n);
+
+  // nhóm hiển thị của SOP (luôn vẽ) và của POS (ẩn, chỉ hiện khi hover)
+  const sopGroups = S.terms.map((t, i) => ({ id: 's' + i, imp: t.imp, essential: t.essential, hue: HUES[i % HUES.length], joiner: ' + ' }));
+  const posGroups = P.terms.map((t, i) => ({ id: 'p' + i, imp: t.imp, essential: t.essential, hue: HUES[(i + 5) % HUES.length], hidden: true, joiner: ' · ' }));
+  K.groups = sopGroups.concat(posGroups);
+
+  paintValues(K.view, K.values);
+  const drawn = (K.stepIdx >= 0 && K.steps) ? K.steps[K.stepIdx].groups : K.groups;
+  drawGroups(K.view, drawn, K.n);
+
+  renderExpr($('#k-sop'), S.terms, sopGroups, '0  (hàm luôn bằng 0)');
+  renderExpr($('#k-pos'), P.terms, posGroups, '1  (hàm luôn bằng 1)');
+  if (S.terms.length === 1 && S.terms[0].text === '1') $('#k-sop').innerHTML = '<span class="mono">1  (hàm luôn bằng 1)</span>';
+  if (P.terms.length === 1 && P.terms[0].text === '0') $('#k-pos').innerHTML = '<span class="mono">0  (hàm luôn bằng 0)</span>';
+
+  $('#k-cost').textContent = 'SOP: ' + S.terms.length + ' term / ' + totalLiterals(S.terms, K.n) + ' literal · ' +
+    'POS: ' + P.terms.length + ' term / ' + totalLiterals(P.terms, K.n) + ' literal · ' +
+    'tổng cộng ' + S.pis.length + ' prime implicant của F.';
+
+  // legend
+  const lg = $('#k-legend'); lg.innerHTML = '';
+  sopGroups.forEach((g, i) => {
+    const d = el('span', 'lg'); d.style.setProperty('--gh', g.hue);
+    d.appendChild(el('span', 'sw'));
+    d.appendChild(el('span', null, S.terms[i].text + (S.terms[i].essential ? ' (essential)' : '')));
+    lg.appendChild(d);
+  });
+  if (!sopGroups.length) lg.appendChild(el('span', 'small muted', 'Không có nhóm nào (hàm bằng 0).'));
+
+  renderTruthTable();
+  $('#k-spec').value = formatSpec(K.values);
+  K.steps = buildSteps(K.values, K.n, sopGroups);
+  renderStep();
+}
+
+/* ------------- Chế độ giải thích từng bước ------------- */
+function buildSteps(values, n, sopGroups) {
+  const S = minimizeSOP(values, n);
+  const { ones, dcs } = splitValues(values);
+  const steps = [];
+  const allPIGroups = S.pis.map((p, i) => ({ id: 'q' + i, imp: p, essential: false, hue: HUES[i % HUES.length] }));
+
+  steps.push({
+    title: 'Bước 0 — Đọc đề',
+    groups: [],
+    html: ones.length === 0
+      ? 'Không có ô nào bằng 1 ⇒ F = 0. Không cần rút gọn.'
+      : 'Các minterm (ô = 1): <span class="mono">' + ones.join(', ') + '</span>.<br>' +
+      (dcs.length ? 'Don\'t care: <span class="mono">' + dcs.join(', ') + '</span> — được phép dùng để <b>mở rộng</b> nhóm, nhưng <b>không bắt buộc</b> phải phủ.'
+        : 'Không có don\'t care.')
+  });
+
+  if (ones.length === 0) return steps;
+
+  steps.push({
+    title: 'Bước 1 — Tìm tất cả prime implicant (Quine–McCluskey)',
+    groups: allPIGroups,
+    html: 'Ghép các ô khác nhau đúng 1 bit, lặp lại cho tới khi không ghép được nữa. Nhóm nào không ghép thêm được nữa là <b>prime implicant</b> (nhóm lớn nhất có thể).<br>' +
+      '<ul style="margin:.4em 0 0;padding-left:1.2em">' +
+      S.pis.map(p => '<li class="mono">' + implicantToSOP(p, n) + '</li>').join('') + '</ul>'
+  });
+
+  // essential
+  const essList = S.essential;
+  const essWhy = [];
+  for (const m of ones) {
+    const cov = S.pis.map((p, i) => i).filter(i => impCovers(S.pis[i], m));
+    if (cov.length === 1) essWhy.push('ô <span class="mono">' + m + '</span> chỉ nằm trong <span class="mono">' + implicantToSOP(S.pis[cov[0]], n) + '</span>');
+  }
+  const essGroups = essList.map((pi, i) => ({ id: 'e' + i, imp: S.pis[pi], essential: true, hue: HUES[i % HUES.length] }));
+  steps.push({
+    title: 'Bước 2 — Essential prime implicant',
+    groups: essGroups,
+    html: essWhy.length
+      ? 'Ô nào chỉ được <b>đúng một</b> prime implicant phủ thì PI đó <b>bắt buộc</b> phải có mặt: <br>' + essWhy.join('<br>') +
+      '<br><br>⇒ Essential: <span class="mono">' + (essList.length ? essList.map(i => implicantToSOP(S.pis[i], n)).join(', ') : '(không có)') + '</span>'
+      : 'Không ô nào bị phủ bởi duy nhất một PI ⇒ <b>không có</b> essential prime implicant. Phải chọn thuần tuý theo tiêu chí tối ưu.'
+  });
+
+  // các PI chọn thêm
+  const extras = S.cover.filter(i => !essList.includes(i));
+  let acc = essGroups.slice();
+  const coveredByEss = new Set();
+  essList.forEach(i => implicantMinterms(S.pis[i], n).forEach(m => coveredByEss.add(m)));
+  let remaining = ones.filter(m => !coveredByEss.has(m));
+
+  if (extras.length === 0) {
+    steps.push({
+      title: 'Bước 3 — Phủ phần còn lại',
+      groups: acc,
+      html: remaining.length === 0
+        ? 'Các essential prime implicant đã phủ hết mọi ô 1 ⇒ không cần chọn thêm nhóm nào.'
+        : 'Còn lại: <span class="mono">' + remaining.join(', ') + '</span>.'
+    });
+  } else {
+    extras.forEach((pi, k) => {
+      const g = { id: 'x' + k, imp: S.pis[pi], essential: false, hue: HUES[(essGroups.length + k) % HUES.length] };
+      acc = acc.concat(g);
+      const before = remaining.slice();
+      remaining = remaining.filter(m => !impCovers(S.pis[pi], m));
+      steps.push({
+        title: 'Bước ' + (3 + k) + ' — Phủ phần còn lại',
+        groups: acc.slice(),
+        html: 'Còn chưa phủ: <span class="mono">' + before.join(', ') + '</span>.<br>' +
+          'Chọn <span class="mono">' + implicantToSOP(S.pis[pi], n) + '</span> (nhóm rẻ nhất phủ được phần này).<br>' +
+          (remaining.length ? 'Sau bước này còn: <span class="mono">' + remaining.join(', ') + '</span>.' : '✔ Đã phủ hết mọi ô 1.')
+      });
+    });
+  }
+
+  steps.push({
+    title: 'Kết quả — vì sao mỗi nhóm cho ra term đó',
+    groups: sopGroups,
+    html: '<b class="mono">F = ' + S.expr + '</b><br><br>' +
+      S.terms.map(t => '· ' + explainTerm(t.imp, n, false)).join('<br>') +
+      '<br><br><span class="muted">Quy tắc: trong một nhóm, biến nào <b>giữ nguyên</b> giá trị ở mọi ô thì được giữ lại (giá trị 1 → viết thường, 0 → viết phủ định); biến nào <b>đổi</b> giá trị thì bị triệt tiêu.</span>'
+  });
+  return steps;
+}
+
+function renderStep() {
+  const box = $('#st-box');
+  if (K.stepIdx < 0) {
+    box.innerHTML = '<span class="muted">Bấm <b>Next</b> để xem quá trình rút gọn từng bước. Khi ở chế độ này, K-map phía trên sẽ vẽ đúng các nhóm của bước hiện tại.</span>';
+    $('#st-count').textContent = '';
+  } else {
+    const st = K.steps[K.stepIdx];
+    box.innerHTML = '<h4>' + st.title + '</h4><div>' + st.html + '</div>';
+    $('#st-count').textContent = 'bước ' + (K.stepIdx + 1) + '/' + K.steps.length;
+  }
+  $('#st-prev').disabled = K.stepIdx < 0;
+  $('#st-next').disabled = K.steps && K.stepIdx >= K.steps.length - 1;
+}
+
+function stepGo(delta) {
+  if (!K.steps || !K.steps.length) return;
+  K.stepIdx = Math.max(-1, Math.min(K.steps.length - 1, K.stepIdx + delta));
+  drawGroups(K.view, K.stepIdx >= 0 ? K.steps[K.stepIdx].groups : K.groups, K.n);
+  renderStep();
+}
+
+/** Sinh hàm ngẫu nhiên "đẹp": gieo vài nhóm rồi thêm nhiễu. */
+function randomValues(n, withDC) {
+  const size = 1 << n;
+  const values = new Array(size).fill(0);
+  const seeds = 1 + Math.floor(Math.random() * 3);
+  for (let k = 0; k < seeds; k++) {
+    const d = Math.floor(Math.random() * (n));                 // số biến bị loại
+    let dash = 0;
+    const bits = [...Array(n).keys()].sort(() => Math.random() - 0.5).slice(0, d);
+    bits.forEach(b => dash |= 1 << b);
+    const v = Math.floor(Math.random() * size) & ~dash;
+    implicantMinterms({ v, d: dash }, n).forEach(m => values[m] = 1);
+  }
+  for (let m = 0; m < size; m++) if (Math.random() < 0.12) values[m] = values[m] ? 0 : 1;
+  if (withDC) for (let m = 0; m < size; m++) if (Math.random() < 0.13) values[m] = 2;
+  if (values.every(v => v !== 1)) values[Math.floor(Math.random() * size)] = 1;   // tránh hàm rỗng
+  return values;
+}
+
+function setupKmapPage() {
+  $('#k-n').addEventListener('change', () => kSetN(+$('#k-n').value));
+  $('#k-clear').addEventListener('click', () => { K.values.fill(0); K.stepIdx = -1; kRefresh(); });
+  $('#k-rand').addEventListener('click', () => { K.values = randomValues(K.n, true); K.stepIdx = -1; kRefresh(); });
+  $('#k-apply').addEventListener('click', applySpec);
+  $('#k-spec').addEventListener('keydown', e => { if (e.key === 'Enter') applySpec(); });
+  $('#st-next').addEventListener('click', () => stepGo(1));
+  $('#st-prev').addEventListener('click', () => stepGo(-1));
+  $('#st-reset').addEventListener('click', () => { K.stepIdx = -1; stepGo(0); });
+  kSetN(4);
+  K.values = [1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0];   // ví dụ mở đầu
+  kRefresh();
+}
+
+function applySpec() {
+  const err = $('#k-specerr');
+  try {
+    K.values = parseSpec($('#k-spec').value, K.n);
+    K.stepIdx = -1;
+    err.textContent = '';
+    kRefresh();
+  } catch (e) {
+    err.textContent = 'Lỗi: ' + e.message;
+  }
+}
+
+/* =====================================================================
+   PHẦN 3 — TAB LUYỆN TẬP
+   ===================================================================== */
+
+const P = { n: 4, values: new Array(16).fill(0), view: null, groups: [], sel: new Set(), drag: null };
+
+function pSetN(n) {
+  P.n = n;
+  P.values = new Array(1 << n).fill(0);
+  P.groups = []; P.sel.clear();
+  pBuild();
+  pNewProblem();
+}
+
+function pBuild() {
+  P.view = buildMap($('#p-maps'), P.n, null, null);
+  P.view.cells.forEach((cell, m) => {
+    cell.classList.add('picky');
+    cell.addEventListener('pointerdown', ev => pPointerDown(ev, m, cell));
+  });
+}
+
+/** Ô đang nằm dưới con trỏ (dùng chung cho chuột và cảm ứng). */
+function cellUnder(x, y) {
+  const e = document.elementFromPoint(x, y);
+  return e ? e.closest('#p-maps .kcell') : null;
+}
+
+function pPointerDown(ev, m, cell) {
+  ev.preventDefault();
+  const base = new Set(P.sel);
+  P.drag = { anchor: cell, base, moved: false };
+  const move = e => {
+    const c = cellUnder(e.clientX, e.clientY);
+    if (!c || c === P.drag.anchor) return;
+    P.drag.moved = true;
+    pSelectRect(P.drag.anchor, c, base);
+  };
+  const up = () => {
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+    if (!P.drag.moved) {                       // click đơn → bật/tắt ô (cho phép gom nhóm wrap-around)
+      if (P.sel.has(m)) P.sel.delete(m); else P.sel.add(m);
+      pPaint();
+    }
+    P.drag = null;
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+
+/** Quét chọn vùng chữ nhật (không quấn biên) giữa hai ô cùng một sheet. */
+function pSelectRect(aCell, bCell, base) {
+  if (aCell.dataset.s !== bCell.dataset.s) return;
+  const s = +aCell.dataset.s;
+  const r0 = Math.min(+aCell.dataset.r, +bCell.dataset.r), r1 = Math.max(+aCell.dataset.r, +bCell.dataset.r);
+  const c0 = Math.min(+aCell.dataset.c, +bCell.dataset.c), c1 = Math.max(+aCell.dataset.c, +bCell.dataset.c);
+  P.sel = new Set(base);
+  const L = P.view.L;
+  for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) P.sel.add(cellMinterm(L, s, r, c));
+  pPaint();
+}
+
+function pPaint() {
+  paintValues(P.view, P.values);
+  P.view.cells.forEach((cell, m) => cell.classList.toggle('sel', P.sel.has(m)));
+  drawGroups(P.view, P.groups.map((g, i) => ({ id: 'u' + i, imp: g.imp, essential: false, hue: HUES[i % HUES.length] })), P.n);
+  const lg = $('#p-legend'); lg.innerHTML = '';
+  P.groups.forEach((g, i) => {
+    const d = el('span', 'lg'); d.style.setProperty('--gh', HUES[i % HUES.length]);
+    d.appendChild(el('span', 'sw'));
+    d.appendChild(el('span', null, '#' + (i + 1) + ' {' + g.cells.join(',') + '}'));
+    lg.appendChild(d);
+  });
+  if (!P.groups.length) lg.appendChild(el('span', 'small muted', 'Chưa chốt nhóm nào.'));
+}
+
+function pNewProblem() {
+  P.values = randomValues(P.n, $('#p-dc').checked);
+  P.groups = []; P.sel.clear();
+  $('#p-expr').value = '';
+  $('#p-result').innerHTML = '';
+  $('#p-spec').textContent = 'F(' + varNames(P.n).join(',') + ') = ' + formatSpec(P.values);
+  pPaint();
+}
+
+function pCommit() {
+  const res = $('#p-result');
+  if (P.sel.size === 0) { res.innerHTML = '<div class="msg warn">Chưa chọn ô nào.</div>'; return; }
+  const cells = [...P.sel].sort((a, b) => a - b);
+  P.groups.push({ cells, imp: cellsToImplicant(cells, P.n) });
+  P.sel.clear();
+  res.innerHTML = '';
+  pPaint();
+}
+
+/** Chấm bài: nhóm + biểu thức. */
+function pCheck() {
+  const res = $('#p-result');
+  res.innerHTML = '';
+  const n = P.n, values = P.values;
+  const { ones, dcs } = splitValues(values);
+  const allPIs = primeImplicants(ones, dcs, n);
+  const best = minimizeSOP(values, n);
+  const add = (cls, html) => { const d = el('div', 'msg ' + cls); d.innerHTML = html; res.appendChild(d); };
+
+  /* --- 1. Từng nhóm --- */
+  if (P.groups.length === 0) add('warn', 'Bạn chưa chốt nhóm nào — phần biểu thức vẫn được chấm.');
+  let allGroupsOk = true;
+  P.groups.forEach((g, i) => {
+    const r = checkGroup(g.cells, values, n, allPIs);
+    const head = 'Nhóm #' + (i + 1) + ' {' + g.cells.join(', ') + '}';
+    if (!r.ok) {
+      allGroupsOk = false;
+      add('bad', '✘ ' + head + ': ' + r.errors.join('; ') + '.');
+    } else if (r.notes.length) {
+      allGroupsOk = false;
+      add('warn', '⚠ ' + head + ' hợp lệ (= <span class="mono">' + implicantToSOP(r.imp, n) + '</span>) nhưng ' + r.notes.join('; ') + '.');
+    } else {
+      add('ok', '✔ ' + head + ' là prime implicant <span class="mono">' + implicantToSOP(r.imp, n) + '</span>.');
+    }
+  });
+
+  /* --- 2. Các nhóm có phủ hết ô 1 chưa --- */
+  if (P.groups.length) {
+    const covered = new Set();
+    P.groups.forEach(g => g.cells.forEach(m => covered.add(m)));
+    const missed = ones.filter(m => !covered.has(m));
+    if (missed.length) { allGroupsOk = false; add('bad', '✘ Các nhóm chưa phủ hết ô 1 — còn thiếu: <span class="mono">' + missed.join(', ') + '</span>.'); }
+    else add('ok', '✔ Các nhóm đã phủ hết mọi ô 1.');
+    if (P.groups.length > best.terms.length && allGroupsOk) {
+      add('warn', '⚠ Bạn dùng ' + P.groups.length + ' nhóm, đáp án tối ưu chỉ cần ' + best.terms.length + ' nhóm.');
+    }
+  }
+
+  /* --- 3. Biểu thức --- */
+  const text = $('#p-expr').value.trim();
+  if (!text) { add('warn', 'Chưa nhập biểu thức SOP.'); return; }
+  let tt;
+  try { tt = exprTruthTable(text, n); }
+  catch (e) { add('bad', '✘ Biểu thức không đọc được: ' + e.message); return; }
+
+  const wrong = [];
+  for (let m = 0; m < (1 << n); m++) if (values[m] !== 2 && tt[m] !== values[m]) wrong.push(m);
+  if (wrong.length) {
+    add('bad', '✘ Biểu thức <b>không</b> tương đương với hàm. Sai tại ô: <span class="mono">' + wrong.join(', ') +
+      '</span> (ô ' + wrong[0] + ': hàm = ' + values[wrong[0]] + ', biểu thức của bạn = ' + tt[wrong[0]] + ').');
+  } else {
+    add('ok', '✔ Biểu thức <b>tương đương</b> với hàm trên mọi ô không phải don\'t care.');
+    const st = sopStats(text, n);
+    const bt = best.terms.length, bl = totalLiterals(best.terms, n);
+    if (!st) {
+      add('warn', '⚠ Không đếm được số term/literal (biểu thức có ngoặc ⇒ chưa ở dạng SOP phẳng). Đáp án tối giản: <span class="mono">' + best.expr + '</span> (' + bt + ' term / ' + bl + ' literal).');
+    } else if (st.terms === bt && st.literals === bl) {
+      add('ok', '✔ Đã <b>tối giản</b>: ' + st.terms + ' term / ' + st.literals + ' literal — bằng đúng đáp án tối ưu.');
+    } else {
+      add('warn', '⚠ Đúng nhưng <b>chưa tối giản</b>: bạn có ' + st.terms + ' term / ' + st.literals + ' literal, tối ưu là ' +
+        bt + ' term / ' + bl + ' literal.');
+    }
+  }
+}
+
+function pShowAnswer() {
+  const best = minimizeSOP(P.values, P.n);
+  P.groups = best.terms.map(t => ({ cells: implicantMinterms(t.imp, P.n), imp: t.imp }));
+  P.sel.clear();
+  pPaint();
+  const res = $('#p-result');
+  res.innerHTML = '';
+  const d = el('div', 'msg ok');
+  d.innerHTML = 'Đáp án tối giản: <b class="mono">F = ' + best.expr + '</b> (' + best.terms.length + ' term / ' +
+    totalLiterals(best.terms, P.n) + ' literal).<br>' + best.terms.map(t => '· ' + explainTerm(t.imp, P.n, false)).join('<br>');
+  res.appendChild(d);
+}
+
+function setupPracticePage() {
+  $('#p-n').addEventListener('change', () => pSetN(+$('#p-n').value));
+  $('#p-gen').addEventListener('click', pNewProblem);
+  $('#p-dc').addEventListener('change', pNewProblem);
+  $('#p-commit').addEventListener('click', pCommit);
+  $('#p-clearsel').addEventListener('click', () => { P.sel.clear(); pPaint(); });
+  $('#p-undo').addEventListener('click', () => { P.groups.pop(); pPaint(); });
+  $('#p-clearg').addEventListener('click', () => { P.groups = []; P.sel.clear(); pPaint(); });
+  $('#p-check').addEventListener('click', pCheck);
+  $('#p-show').addEventListener('click', pShowAnswer);
+  $('#p-expr').addEventListener('keydown', e => { if (e.key === 'Enter') pCheck(); });
+  pSetN(4);
+}
+
+/* ---------------------- Khởi động ---------------------- */
+window.addEventListener('DOMContentLoaded', () => {
+  setupTabs();
+  setupGrayPage();
+  setupKmapPage();
+  setupPracticePage();
+  console.log('%cGray code & K-map', 'font-weight:bold');
+  console.log('Gõ runTests() để chạy bộ test tự kiểm tra.');
+});
+window.runTests = runTests;
+</script>
+</body>
+</html>
