@@ -38,7 +38,16 @@ có thêm tầng `src/geometry/`.
   toạ độ canvas, **y hướng xuống**. `createView()` giữ tỉ lệ vuông để góc vuông
   trên hình đúng là góc vuông.
 - Thư viện đồ hoạ quyết định **theo từng chương**, ghi lại ở đầu mỗi milestone
-  trong `PLAN.md`: Ch.1–2 dùng Canvas 2D thuần (không thêm phụ thuộc).
+  trong `PLAN.md`. Hiện tại: **Canvas 2D thuần cho tất cả, kể cả 3D** — dự án
+  không có phụ thuộc đồ hoạ ngoài nào. Lý do và số đo cụ thể ở mục
+  "Quyết định 3D" trong `PLAN.md`.
+- 3D: `geometry/space3d.js` là camera quay quanh điểm ngắm (chiếu phối cảnh,
+  tia chuột, kéo–thả), `geometry/polygon3d.js` cắt đa giác và sắp thứ tự vẽ.
+  Cả hai **thuần và có test**; `ui/canvas3d.js` chỉ nhận danh sách "vật" rồi
+  vẽ. Muốn đổi sang WebGL sau này thì chỉ phải viết lại `ui/canvas3d.js`.
+- Vẽ 3D bằng thuật toán người thợ sơn: **luôn cắt đa giác/đoạn thẳng theo mặt
+  phẳng của nhau trước khi sắp thứ tự**, nếu không thì hai mặt cắt nhau sẽ vẽ
+  sai (mặt này đè hẳn lên mặt kia).
 
 ## Song ngữ VI/EN
 - Chuỗi UI lấy qua `T(key, params)` (`src/i18n/index.js`). Bí danh import **luôn

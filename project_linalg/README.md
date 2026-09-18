@@ -10,6 +10,7 @@ Giáo trình tham chiếu: Strang — *Linear Algebra and Its Applications* (MIT
 |---|---|---|
 | Ch.1 | Vector, cộng/nhân vô hướng, độ dài, dot product, góc, tổ hợp tuyến tính, span | Ch.1 |
 | Ch.2 | Hệ phương trình, Ax = b, khử Gauss, ma trận bậc thang, hạng, phân loại nghiệm | Ch.2 |
+| Ch.3 | Không gian con, column space, null space, độc lập tuyến tính, cơ sở, số chiều | Ch.3 |
 
 ## Cách chạy
 
@@ -44,7 +45,9 @@ project_linalg/
 │   ├── main.js            # điểm vào: gọi các setup*Page()
 │   ├── pages/chN.html     # markup từng chương (4 mục con)
 │   ├── logic/             # toán thuần — không biết pixel, không đụng DOM
-│   ├── geometry/          # toạ độ ↔ pixel, cắt hình, nội suy — không đụng DOM
+│   ├── geometry/          # 2D: toạ độ ↔ pixel, cắt hình, nội suy
+│   │                      # 3D: camera xoay, chiếu phối cảnh, cắt đa giác
+│   │                      # (tự viết, không dùng thư viện đồ hoạ ngoài)
 │   ├── ui/                # DOM + canvas, ráp logic/ với geometry/
 │   ├── i18n/{vi,en}/      # từ điển song ngữ
 │   └── content/           # theory-chN.{vi,en}.md — nội dung tab Lý thuyết
@@ -73,7 +76,9 @@ Kế hoạch đầy đủ ở `PLAN.md`.
       `logic/matrix.js`, `geometry/plane2d.js` + test
 - [x] **M1** — Ch.1 Vector
 - [x] **M2** — Ch.2 Giải hệ Ax = b
-- [ ] **M3+** — dừng lại xin ý kiến trước khi chuyển sang Three.js (Ch.3)
+- [x] **M3** — Ch.3 Không gian vector (3D tự viết trên Canvas 2D, không thêm
+      phụ thuộc — lý do và số đo ở `PLAN.md`)
+- [ ] **M4+** — dừng lại xin ý kiến trước khi sang Ch.4 (Orthogonality)
 
 ## Checklist đối chiếu
 
@@ -92,8 +97,15 @@ Kế hoạch đầy đủ ở `PLAN.md`.
 - [x] Tương tác: tự chọn row operation, hệ thống kiểm tra + gợi ý bước tiếp
 - [x] Luyện tập: sinh hệ 2×2/3×3, chấm nghiệm và phân loại đúng
 
+**Chương 3 — Không gian vector**
+- [x] Lý thuyết: không gian con, C(A), N(A), độc lập, cơ sở, số chiều, định lý hạng
+- [x] Ví dụ: span lớn dần qua 4 bước, có bước "thêm vector phụ thuộc mà span không đổi"
+- [x] Ví dụ: C(A) và N(A) của cùng một ma trận vẽ chung một hình 3D
+- [x] Tương tác: kéo vector trong R³, xoay camera, kiểm tra b có trong span không
+- [x] Luyện tập: sinh + chấm 4 dạng, ba dạng chọn đáp án
+
 **Chung (mọi chương)**
-- [x] `npm test` pass (170 test)
+- [x] `npm test` pass (252 test)
 - [x] `check_file_sizes.sh` không báo file nào
 - [x] `npm run build` ra `dist/index.html` mở được bằng `file://`
 - [x] Light/dark mode đúng

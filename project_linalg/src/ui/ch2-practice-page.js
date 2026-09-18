@@ -48,7 +48,8 @@ function showQuestion() {
   for (const line of systemStrings(q.meta.A, q.meta.b)) host.appendChild(el('div', 'eqline', line));
   $('#q2-ans').style.display = isChoice(q) ? 'none' : '';
   $('#q2-choice').style.display = isChoice(q) ? '' : 'none';
-  if (isChoice(q)) fillChoices();
+  // câu không phải dạng chọn: dọn sạch ô chọn đang ẩn, đừng để sót nhãn câu trước
+  if (isChoice(q)) fillChoices(); else $('#q2-choice').innerHTML = '';
   $('#q2-ans').placeholder = Array.isArray(q.answer) ? T('common.vecAnswerPh') : T('common.numAnswerPh');
 }
 

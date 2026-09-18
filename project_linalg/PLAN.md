@@ -47,9 +47,8 @@ thay vì cam kết một thư viện duy nhất từ đầu.
    mức độ chương đó cần 3D thật:
    - Canvas 2D thuần: Ch.1–2 (vector 2D, hệ phương trình 2 biến, phép biến đổi
      tuyến tính trong mặt phẳng), Ch.5 (định thức là diện tích/thể tích 2D).
-   - Thêm Three.js (WebGL): Ch.3–4 khi vào không gian 3 chiều thật sự cần xoay
-     góc nhìn (span, independence trong R³, không gian con, eigenvector nhìn
-     dưới dạng trục bất biến của phép biến đổi 3D).
+   - 3D (Ch.3 trở đi): **đã đo và quyết định tự viết trên Canvas 2D**, không
+     dùng Three.js — xem "Quyết định 3D" ở Milestone 3 bên dưới.
    - Quyết định cụ thể ghi lại ở đầu mỗi milestone chương, không đổi giữa
      chừng một chương đã bắt đầu.
 3. **Thư viện tính toán ma trận** (`src/logic/matrix.js`): tự viết (không cần
@@ -128,17 +127,44 @@ nghiệm — đúng phần Huy đang học.*
 - **Xong khi:** giải đúng cả 3 trường hợp nghiệm, test pass, đối chiếu
   checklist.
 
-### Milestone 3 — Chương 3: Vector Spaces (Strang Ch.3)
+### Milestone 3 — Chương 3: Vector Spaces (Strang Ch.3) — ĐÃ XONG
 *Nội dung: không gian con, column space, null space, independence, basis,
 dimension.*
-- Đồ hoạ: **thêm Three.js** — đây là điểm bắt đầu cần R³ thật (mặt phẳng đi
-  qua gốc toạ độ, đường thẳng, giao của không gian con) và cần xoay góc nhìn
-  bằng chuột để hiểu "phẳng" nghĩa là gì trong 3D.
 - Tương tác: vẽ span của 1–2 vector trong R³ (đường thẳng/mặt phẳng), kiểm
   tra một vector có nằm trong span hay không, xoay camera tự do.
-- **Quyết định kỹ thuật ghi ở đầu milestone này:** thêm `three` vào
-  `package.json`, tạo `src/geometry/space3d.js` (camera, projection, raycast
-  để kéo-thả vector trong 3D).
+
+**Quyết định 3D (đo thật rồi mới chọn):** plan ban đầu định thêm Three.js.
+Đo bằng chính cấu hình build của project:
+
+| Phương án | `dist/index.html` |
+|---|---|
+| Không có 3D (sau M2) | 160 KB |
+| Three.js, cảnh tối giản | 287 KB |
+| Three.js dùng thật (WebGLRenderer + OrbitControls + mặt trong suốt + raycast) | **703 KB** |
+| Tự viết trên Canvas 2D (thực tế đã làm) | **200 KB** |
+
+Chọn **tự viết**, vì ở mức nội dung của giáo trình này Three.js không đổi lại
+được gì về khả năng học:
+
+- Thứ cần vẽ chỉ là vài mũi tên, vài mặt phẳng qua gốc, một lưới và một
+  camera xoay được — Canvas 2D làm đủ, và tương tác (xoay, kéo vector trong
+  không gian, animate) không mất gì.
+- Giữ được kỷ luật kiến trúc: toàn bộ toán 3D nằm ở `geometry/space3d.js` và
+  `geometry/polygon3d.js` dưới dạng hàm thuần, **test được bằng Node**. Nếu
+  dùng Three.js thì camera/projection/raycast nằm trong đối tượng WebGL,
+  không test được nếu không dựng context đồ hoạ.
+- Dự án giữ nguyên tính chất "không phụ thuộc ngoài, chạy offline từ một file".
+
+Điểm phải tự làm bù: thuật toán người thợ sơn (vẽ xa trước, gần sau) vẽ sai
+khi hai mặt phẳng **cắt nhau** — mà giao của hai không gian con lại đúng là
+nội dung Ch.3. Xử lý bằng cách cắt đa giác (và cắt cả đoạn thẳng) theo mặt
+phẳng của nhau trước khi sắp thứ tự; cắt xong thì không mảnh nào xuyên mảnh
+nào nên người thợ sơn cho kết quả đúng (`geometry/polygon3d.js`).
+
+**Xem lại quyết định này khi nào:** nếu một chương sau cần vẽ hàng nghìn vật
+cùng lúc (ví dụ trường vector dày đặc ở Ch.6) thì Canvas 2D mới đuối. Lúc đó
+đổi renderer chỉ đụng `ui/canvas3d.js`, vì phần toán đã tách sẵn ở
+`geometry/`.
 
 ### Milestone 4 — Chương 4: Orthogonality (Strang Ch.4)
 *Nội dung: trực giao, hình chiếu (projection), least squares, Gram-Schmidt.*
@@ -196,5 +222,5 @@ Huy đang ở Ch.2 (giải hệ phương trình vector) → thực hiện theo t
 1. Milestone 0 (khung sườn + `matrix.js`/`vector.js`/`plane2d.js`)
 2. Milestone 1 (Ch.1 — vì Ch.2 cần khái niệm vector/dot product làm nền)
 3. Milestone 2 (Ch.2 — đúng chương đang học)
-4. Dừng lại xin ý kiến trước khi sang Milestone 3 (điểm chuyển sang Three.js —
-   quyết định kỹ thuật lớn, nên xác nhận lại lúc đó thay vì cam kết trước).
+4. Milestone 3 (Ch.3 — không gian vector), kèm quyết định 3D đã ghi ở trên.
+5. Dừng lại xin ý kiến trước khi sang Milestone 4 (Orthogonality).

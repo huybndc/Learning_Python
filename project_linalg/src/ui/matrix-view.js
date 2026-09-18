@@ -45,7 +45,7 @@ export function renderMatrix(host, M, { augmented = true, pivot = null, changed 
  * Vẽ ô nhập cho ma trận mở rộng. onChange nhận ma trận mới, hoặc null nếu có ô
  * không phải số — trang gọi tự quyết định báo lỗi thế nào.
  */
-export function renderMatrixInputs(host, M, onChange) {
+export function renderMatrixInputs(host, M, onChange, { augmented = true } = {}) {
   host.innerHTML = '';
   const cols = M[0].length;
   const g = grid(cols);
@@ -63,7 +63,7 @@ export function renderMatrixInputs(host, M, onChange) {
       inp.type = 'text';
       inp.value = fmt(v);
       inp.setAttribute('aria-label', `a${i + 1}${j + 1}`);
-      if (j === cols - 1) inp.classList.add('aug');
+      if (augmented && j === cols - 1) inp.classList.add('aug');
       inp.addEventListener('input', collect);
       inputs[i].push(inp);
       g.appendChild(inp);

@@ -5,12 +5,14 @@ export const common = {
   'app.footer': 'Chạy test: <span class="mono">npm test</span> trong <span class="mono">project_linalg/</span>.',
   'nav.ch1': 'Ch.1 — Vector',
   'nav.ch2': 'Ch.2 — Giải hệ Ax = b',
+  'nav.ch3': 'Ch.3 — Không gian vector',
   'sub.theory': 'Lý thuyết',
   'sub.example': 'Ví dụ',
   'sub.interactive': 'Tương tác',
   'sub.practice': 'Luyện tập',
 
   /* lỗi từ logic/ và geometry/ */
+  'err.noVectors': 'Cần ít nhất một vector.',
   'err.notVector': 'Chưa phải một vector (cần mảng số khác rỗng).',
   'err.vectorNumbers': 'Toạ độ vector phải là số hữu hạn.',
   'err.dimMismatch': 'Hai vector khác số chiều: {a} và {b}.',

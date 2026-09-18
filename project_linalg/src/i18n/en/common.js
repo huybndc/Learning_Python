@@ -5,12 +5,14 @@ export const common = {
   'app.footer': 'Run tests: <span class="mono">npm test</span> in <span class="mono">project_linalg/</span>.',
   'nav.ch1': 'Ch.1 — Vectors',
   'nav.ch2': 'Ch.2 — Solving Ax = b',
+  'nav.ch3': 'Ch.3 — Vector spaces',
   'sub.theory': 'Theory',
   'sub.example': 'Examples',
   'sub.interactive': 'Interactive',
   'sub.practice': 'Practice',
 
   /* errors raised by logic/ and geometry/ */
+  'err.noVectors': 'At least one vector is required.',
   'err.notVector': 'Not a vector (expected a non-empty array of numbers).',
   'err.vectorNumbers': 'Vector entries must be finite numbers.',
   'err.dimMismatch': 'Vectors have different dimensions: {a} and {b}.',
