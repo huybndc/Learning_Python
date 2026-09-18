@@ -4,11 +4,11 @@ import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 
 const md = readFileSync(
-  fileURLToPath(new URL('../src/content/theory.md', import.meta.url)),
+  fileURLToPath(new URL('../src/content/theory-ch3.md', import.meta.url)),
   'utf-8',
 );
 
-describe('theory.md', () => {
+describe('theory-ch3.md', () => {
   const html = marked.parse(md, { async: false });
 
   it('marked parse được, không throw', () => {

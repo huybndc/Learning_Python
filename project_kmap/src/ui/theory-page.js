@@ -1,14 +1,15 @@
 import { marked } from 'marked';
 import { $ } from './dom-helpers.js';
-import theoryMd from '../content/theory.md?raw';
 
-/* Tab Lý thuyết: render nội dung Markdown tĩnh trong src/content/theory.md.
-   Sửa nội dung học tập ở file .md đó, không cần đụng tới code. */
+/* Trang Lý thuyết dùng chung cho mọi chương: render Markdown tĩnh ở
+   src/content/theory-chN.md. Sửa nội dung học tập ở file .md, không đụng code. */
 
 export function renderTheory(md) {
   return marked.parse(md, { async: false });
 }
 
-export function setupTheoryPage() {
-  $('#theory-body').innerHTML = renderTheory(theoryMd);
+/** Gắn nội dung .md đã render vào một mount point, vd '#theory-ch3-body'. */
+export function mountTheory(sel, md) {
+  const host = $(sel);
+  if (host) host.innerHTML = renderTheory(md);
 }

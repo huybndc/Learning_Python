@@ -9,20 +9,106 @@
 <body>
 <div class="wrap">
 <header>
-  <h1>Gray code &amp; Karnaugh map</h1>
-  <p class="sub">Công cụ trực quan hỗ trợ môn Logic Circuit — chạy hoàn toàn offline trong trình duyệt.</p>
+  <h1>Ôn tập Logic Circuit</h1>
+  <p class="sub">Học theo chương: lý thuyết → ví dụ minh hoạ → tương tác → luyện tập. Chạy hoàn toàn offline trong trình duyệt.</p>
 </header>
 
-<div class="tabs" role="tablist">
-  <button role="tab" id="tab-gray"  aria-selected="true"  aria-controls="page-gray">Gray code</button>
-  <button role="tab" id="tab-kmap"  aria-selected="false" aria-controls="page-kmap">K-map</button>
-  <button role="tab" id="tab-theory" aria-selected="false" aria-controls="page-theory">Lý thuyết</button>
-  <button role="tab" id="tab-prac"  aria-selected="false" aria-controls="page-prac">Luyện tập</button>
+<div class="tabs" role="tablist" id="chapter-tabs">
+  <button role="tab" id="tab-ch1" aria-selected="false" aria-controls="page-ch1">Ch.1 — Hệ đếm &amp; mã nhị phân</button>
+  <button role="tab" id="tab-ch2" aria-selected="false" aria-controls="page-ch2">Ch.2 — Đại số Boolean &amp; cổng logic</button>
+  <button role="tab" id="tab-ch3" aria-selected="true"  aria-controls="page-ch3">Ch.3 — Gray code &amp; K-map</button>
 </div>
 
-<!-- ============================ PAGE 1: GRAY CODE ============================ -->
-<section class="page active" id="page-gray" role="tabpanel" aria-labelledby="tab-gray">
+<!-- ============================ CHƯƠNG 1 ============================ -->
+<section class="page" id="page-ch1" role="tabpanel" aria-labelledby="tab-ch1">
+  <div class="subtabs" role="tablist">
+    <button role="tab" id="sub-ch1-theory" aria-selected="true" aria-controls="pane-ch1-theory">Lý thuyết</button>
+    <button role="tab" id="sub-ch1-example" aria-selected="false" aria-controls="pane-ch1-example">Ví dụ minh hoạ</button>
+    <button role="tab" id="sub-ch1-interactive" aria-selected="false" aria-controls="pane-ch1-interactive">Tương tác</button>
+    <button role="tab" id="sub-ch1-practice" aria-selected="false" aria-controls="pane-ch1-practice">Luyện tập</button>
+  </div>
 
+  <div class="pane active" id="pane-ch1-theory" role="tabpanel" aria-labelledby="sub-ch1-theory">
+  <div class="card">
+    <h2>Lý thuyết</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch1-example" role="tabpanel" aria-labelledby="sub-ch1-example">
+  <div class="card">
+    <h2>Ví dụ minh hoạ</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch1-interactive" role="tabpanel" aria-labelledby="sub-ch1-interactive">
+  <div class="card">
+    <h2>Tương tác</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch1-practice" role="tabpanel" aria-labelledby="sub-ch1-practice">
+  <div class="card">
+    <h2>Luyện tập</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ============================ CHƯƠNG 2 ============================ -->
+<section class="page" id="page-ch2" role="tabpanel" aria-labelledby="tab-ch2">
+  <div class="subtabs" role="tablist">
+    <button role="tab" id="sub-ch2-theory" aria-selected="true" aria-controls="pane-ch2-theory">Lý thuyết</button>
+    <button role="tab" id="sub-ch2-example" aria-selected="false" aria-controls="pane-ch2-example">Ví dụ minh hoạ</button>
+    <button role="tab" id="sub-ch2-interactive" aria-selected="false" aria-controls="pane-ch2-interactive">Tương tác</button>
+    <button role="tab" id="sub-ch2-practice" aria-selected="false" aria-controls="pane-ch2-practice">Luyện tập</button>
+  </div>
+
+  <div class="pane active" id="pane-ch2-theory" role="tabpanel" aria-labelledby="sub-ch2-theory">
+  <div class="card">
+    <h2>Lý thuyết</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch2-example" role="tabpanel" aria-labelledby="sub-ch2-example">
+  <div class="card">
+    <h2>Ví dụ minh hoạ</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch2-interactive" role="tabpanel" aria-labelledby="sub-ch2-interactive">
+  <div class="card">
+    <h2>Tương tác</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch2-practice" role="tabpanel" aria-labelledby="sub-ch2-practice">
+  <div class="card">
+    <h2>Luyện tập</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ============================ CHƯƠNG 3 ============================ -->
+<section class="page active" id="page-ch3" role="tabpanel" aria-labelledby="tab-ch3">
+  <div class="subtabs" role="tablist">
+    <button role="tab" id="sub-ch3-theory" aria-selected="true" aria-controls="pane-ch3-theory">Lý thuyết</button>
+    <button role="tab" id="sub-ch3-example" aria-selected="false" aria-controls="pane-ch3-example">Ví dụ minh hoạ</button>
+    <button role="tab" id="sub-ch3-interactive" aria-selected="false" aria-controls="pane-ch3-interactive">Tương tác</button>
+    <button role="tab" id="sub-ch3-practice" aria-selected="false" aria-controls="pane-ch3-practice">Luyện tập</button>
+  </div>
+
+  <div class="pane active" id="pane-ch3-theory" role="tabpanel" aria-labelledby="sub-ch3-theory">
+  <div class="card theory-body" id="theory-ch3-body"></div>
+  </div>
+
+  <div class="pane" id="pane-ch3-example" role="tabpanel" aria-labelledby="sub-ch3-example">
   <div class="card">
     <h2>1. Bảng Gray code</h2>
     <div class="row">
@@ -84,16 +170,14 @@
       </p>
       <p style="margin:.2em 0">Giải thích đầy đủ nằm ở tab <b>Lý thuyết</b>.</p>
       <p style="margin:.6em 0 .2em" class="row tight">
-        <button class="btn" id="goto-theory">Đọc lý thuyết ▶</button>
-        <button class="btn" id="goto-kmap">Sang phần K-map ▶</button>
+        <button class="btn" data-goto="ch3:theory">Đọc lý thuyết ▶</button>
+        <button class="btn" data-goto="ch3:interactive">Sang phần tương tác K-map ▶</button>
       </p>
     </div>
   </div>
-</section>
+  </div>
 
-<!-- ============================ PAGE 2: K-MAP ============================ -->
-<section class="page" id="page-kmap" role="tabpanel" aria-labelledby="tab-kmap">
-
+  <div class="pane" id="pane-ch3-interactive" role="tabpanel" aria-labelledby="sub-ch3-interactive">
   <div class="card">
     <h2>Nhập hàm</h2>
     <div class="row">
@@ -149,15 +233,9 @@
     </div>
     <div class="steps-box" style="margin-top:10px" id="st-box"></div>
   </div>
-</section>
+  </div>
 
-<!-- ============================ PAGE 3: LÝ THUYẾT ============================ -->
-<section class="page" id="page-theory" role="tabpanel" aria-labelledby="tab-theory">
-  <div class="card" id="theory-body"></div>
-</section>
-
-<!-- ============================ PAGE 4: PRACTICE ============================ -->
-<section class="page" id="page-prac" role="tabpanel" aria-labelledby="tab-prac">
+  <div class="pane" id="pane-ch3-practice" role="tabpanel" aria-labelledby="sub-ch3-practice">
   <div class="card">
     <h2>Đề bài</h2>
     <div class="row">
@@ -195,6 +273,7 @@
     </div>
     <p class="small muted" style="margin:.3em 0 0">Cú pháp: <span class="mono">A'</span> hoặc <span class="mono">!A</span> là NOT · viết liền là AND · <span class="mono">+</span> là OR · dùng được ngoặc.</p>
     <div id="p-result"></div>
+  </div>
   </div>
 </section>
 
