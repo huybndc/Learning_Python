@@ -9,7 +9,7 @@ describe('cellsToImplicant', () => {
     expect(cellsToImplicant([5], 4)).toEqual({ v: 5, d: 0 });
   });
 
-  it('4 góc K-map 4 biến → B\'D\' ({v:0, d:0b1010})', () => {
+  it('4 góc K-map 4 biến → x\'z\' ({v:0, d:0b1010})', () => {
     expect(cellsToImplicant([0, 2, 8, 10], 4)).toEqual({ v: 0, d: 0b1010 });
   });
 
@@ -29,7 +29,7 @@ describe('checkGroup (T7)', () => {
 
   it('nhóm 4 góc hợp lệ, không có ghi chú', () => {
     const g = checkGroup([0, 2, 8, 10], values, 4, pis);
-    expect(g.ok, g.errors.join('; ')).toBe(true);
+    expect(g.ok, JSON.stringify(g.errors)).toBe(true);
     expect(g.notes).toEqual([]);
     expect(g.size).toBe(4);
   });
@@ -38,7 +38,8 @@ describe('checkGroup (T7)', () => {
     const g = checkGroup([0, 2], values, 4, pis);
     expect(g.ok).toBe(true);
     expect(g.notes.length).toBe(1);
-    expect(g.notes[0]).toContain('chưa phải nhóm lớn nhất');
+    expect(g.notes[0].key).toBe('prac.noteBigger');
+    expect(g.notes[0].params.terms).toBeTruthy();
   });
 
   it('nhóm 3 ô bị loại (không phải luỹ thừa của 2)', () => {
@@ -50,19 +51,19 @@ describe('checkGroup (T7)', () => {
   it('nhóm chứa ô giá trị 0 bị loại', () => {
     const g = checkGroup([0, 1], values, 4, pis);
     expect(g.ok).toBe(false);
-    expect(g.errors.some(e => e.includes('chứa ô giá trị 0'))).toBe(true);
+    expect(g.errors.some(e => e.key === 'prac.errHasZero')).toBe(true);
   });
 
   it('nhóm 2 ô không kề nhau bị loại', () => {
     const g = checkGroup([0, 5], values, 4, pis);
     expect(g.ok).toBe(false);
-    expect(g.errors.some(e => e.includes('hình chữ nhật'))).toBe(true);
+    expect(g.errors.some(e => e.key === 'prac.errNotRect')).toBe(true);
   });
 
   it('nhóm rỗng bị loại ngay', () => {
     const g = checkGroup([], values, 4, pis);
     expect(g.ok).toBe(false);
-    expect(g.errors).toEqual(['nhóm rỗng']);
+    expect(g.errors).toEqual([{ key: 'prac.errEmpty', params: {} }]);
   });
 
   it('ô trùng lặp được gộp lại trước khi kiểm tra', () => {
@@ -78,6 +79,6 @@ describe('checkGroup (T7)', () => {
     const p = primeImplicants([1, 3], [0, 2], 4);
     const g = checkGroup([0, 2], v, 4, p);
     expect(g.ok).toBe(true);
-    expect(g.notes.some(x => x.includes('không cần thiết'))).toBe(true);
+    expect(g.notes.some(x => x.key === 'prac.noteAllDc')).toBe(true);
   });
 });

@@ -1,0 +1,224 @@
+<!-- ============================ CHƯƠNG 1 ============================ -->
+<section class="page active" id="page-ch1" role="tabpanel" aria-labelledby="tab-ch1">
+  <div class="subtabs" role="tablist">
+    <button role="tab" id="sub-ch1-theory" aria-selected="true" aria-controls="pane-ch1-theory" data-i18n="sub.theory"></button>
+    <button role="tab" id="sub-ch1-example" aria-selected="false" aria-controls="pane-ch1-example" data-i18n="sub.example"></button>
+    <button role="tab" id="sub-ch1-interactive" aria-selected="false" aria-controls="pane-ch1-interactive" data-i18n="sub.interactive"></button>
+    <button role="tab" id="sub-ch1-practice" aria-selected="false" aria-controls="pane-ch1-practice" data-i18n="sub.practice"></button>
+  </div>
+
+  <div class="pane active" id="pane-ch1-theory" role="tabpanel" aria-labelledby="sub-ch1-theory">
+  <div class="card theory-body" id="theory-ch1-body"></div>
+  </div>
+
+  <div class="pane" id="pane-ch1-example" role="tabpanel" aria-labelledby="sub-ch1-example">
+  <div class="card">
+    <h2 data-i18n="c1.intTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c1.decimal"></span>
+        <input type="text" id="e1-int" value="41" size="8" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline"><span data-i18n="c1.toBase"></span>
+        <select id="e1-base"><option selected>2</option><option>3</option><option>5</option><option>8</option><option>16</option></select>
+      </label>
+    </div>
+    <div id="e1-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <p class="small muted" style="margin:0 0 8px" data-i18n-html="c1.intNote"></p>
+      <div class="tblbox"><table class="grid" id="e1-table"></table></div>
+      <p class="mono" id="e1-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c1.fracTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c1.frac"></span>
+        <input type="text" id="e2-frac" value="0.6875" size="10" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline"><span data-i18n="c1.toBase"></span>
+        <select id="e2-base"><option selected>2</option><option>3</option><option>8</option><option>16</option></select>
+      </label>
+    </div>
+    <div id="e2-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <p class="small muted" style="margin:0 0 8px" data-i18n-html="c1.fracNote"></p>
+      <div class="tblbox"><table class="grid" id="e2-table"></table></div>
+      <p class="mono" id="e2-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c1.codeTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c1.decimal"></span>
+        <input type="text" id="e4-dec" value="185" size="10" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+    <div id="e4-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div id="e4-groups"></div>
+      <p class="small muted" id="e4-note" style="margin:8px 0 0"></p>
+    </div>
+    <div class="tblbox" style="margin-top:10px"><table class="grid" id="e4-table"></table></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c1.bcdTitle"></h2>
+    <div class="row">
+      <label class="inline">A:
+        <input type="text" id="e5-a" value="184" size="8" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">B:
+        <input type="text" id="e5-b" value="576" size="8" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+    <div id="e5-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="tblbox"><table class="grid" id="e5-table"></table></div>
+      <p class="mono" id="e5-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c1.parityTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c1.asciiChar"></span>
+        <input type="text" id="e6-ch" value="A" size="3" maxlength="1" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="seg" id="e6-kind">
+        <button data-k="even" aria-pressed="true" data-i18n="c1.even"></button>
+        <button data-k="odd" aria-pressed="false" data-i18n="c1.odd"></button>
+      </div>
+    </div>
+    <div id="e6-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="conv-steps" id="e6-steps"></div>
+      <p class="small muted" style="margin:8px 0 4px" data-i18n="c1.parityFlipHint"></p>
+      <div class="bitbar" id="e6-bits"></div>
+      <p class="small" id="e6-check" style="margin:8px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c1.groupTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c1.binStr"></span>
+        <input type="text" id="e3-bin" value="10110001101011.111100000110" size="30" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="seg" id="e3-k">
+        <button data-k="3" aria-pressed="true" data-i18n="c1.group3"></button>
+        <button data-k="4" aria-pressed="false" data-i18n="c1.group4"></button>
+      </div>
+    </div>
+    <div id="e3-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <p class="small muted" style="margin:0 0 8px" data-i18n-html="c1.groupNote"></p>
+      <div id="e3-groups"></div>
+      <p class="mono" id="e3-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch1-interactive" role="tabpanel" aria-labelledby="sub-ch1-interactive">
+  <div class="card">
+    <h2 data-i18n="c1.convTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c1.number"></span>
+        <input type="text" id="i1-in" value="41.6875" size="18" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline"><span data-i18n="c1.atBase"></span>
+        <select id="i1-from"><option>2</option><option>8</option><option selected>10</option><option>16</option></select>
+      </label>
+      <label class="inline"><span data-i18n="c1.arrowBase"></span>
+        <select id="i1-to"><option selected>2</option><option>8</option><option>10</option><option>16</option></select>
+      </label>
+    </div>
+    <div id="i1-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="bitbar" id="i1-out"></div>
+      <div class="conv-steps" id="i1-all" style="margin-top:9px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c1.complTitle"></h2>
+    <div class="row">
+      <label class="inline">M:
+        <input type="text" id="i2-m" value="1010100" size="12" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">N:
+        <input type="text" id="i2-n" value="1000011" size="12" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline"><span data-i18n="c1.atBase"></span>
+        <select id="i2-r"><option selected>2</option><option>8</option><option>10</option><option>16</option></select>
+      </label>
+    </div>
+    <div id="i2-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <h4 class="mono" id="i2-comp"></h4>
+      <div class="conv-steps" id="i2-steps"></div>
+      <p class="small" id="i2-check" style="margin:8px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c1.signedTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c1.value"></span>
+        <input type="text" id="i3-v" value="-9" size="7" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline"><span data-i18n="c1.width"></span>
+        <select id="i3-w"><option>4</option><option>5</option><option selected>8</option></select>
+      </label>
+    </div>
+    <div id="i3-err" class="small bad"></div>
+    <div class="tblbox" style="margin-top:8px"><table class="grid" id="i3-table"></table></div>
+
+    <h3 data-i18n="c1.addTitle"></h3>
+    <div class="row">
+      <label class="inline">A:
+        <input type="text" id="i3-a" value="120" size="7" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">B:
+        <input type="text" id="i3-b" value="66" size="7" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="seg" id="i3-op">
+        <button data-op="add" aria-pressed="true" data-i18n="c1.opAdd"></button>
+        <button data-op="sub" aria-pressed="false" data-i18n="c1.opSub"></button>
+      </div>
+    </div>
+    <div id="i3-aerr" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="conv-steps" id="i3-add"></div>
+      <p class="small" id="i3-ov" style="margin:8px 0 0"></p>
+    </div>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch1-practice" role="tabpanel" aria-labelledby="sub-ch1-practice">
+  <div class="card">
+    <h2 data-i18n="sub.practice"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="common.kind"></span>
+        <select id="q-kind">
+          <option value="convert" data-i18n="c1q.convert"></option>
+          <option value="complement" data-i18n="c1q.complement"></option>
+          <option value="subtract" data-i18n="c1q.subtract"></option>
+          <option value="signed" data-i18n="c1q.signed"></option>
+          <option value="mix" data-i18n="c1q.mix"></option>
+        </select>
+      </label>
+      <button class="btn primary" id="q-new" data-i18n="common.newQuestion"></button>
+      <span class="small muted" id="q-score"></span>
+    </div>
+    <p id="q-text" class="mono" style="margin:.8em 0 .4em"></p>
+    <div class="row">
+      <input type="text" id="q-ans" style="flex:1 1 200px" autocomplete="off" spellcheck="false" data-i18n-ph="common.answerPh">
+      <button class="btn primary" id="q-check" data-i18n="common.check"></button>
+      <button class="btn" id="q-show" data-i18n="common.showAnswer"></button>
+    </div>
+    <div id="q-result"></div>
+  </div>
+  </div>
+</section>

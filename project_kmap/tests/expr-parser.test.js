@@ -51,15 +51,15 @@ describe('parseSpec / formatSpec (T5)', () => {
 /* --- T5: biểu thức Boolean --- */
 describe('exprTruthTable / parseBoolExpr (T5)', () => {
   it("A'B + AB' là XOR 2 biến", () => {
-    expect(exprTruthTable("A'B + AB'", 2).join('')).toBe('0110');
+    expect(exprTruthTable("x'y + xy'", 2).join('')).toBe('0110');
   });
 
   it('đọc được ngoặc', () => {
-    expect(exprTruthTable("(A + B)(A' + B')", 2).join('')).toBe('0110');
+    expect(exprTruthTable("(x + y)(x' + y')", 2).join('')).toBe('0110');
   });
 
   it('đọc được !A', () => {
-    expect(exprTruthTable('!A', 1).join('')).toBe('10');
+    expect(exprTruthTable('!z', 1).join('')).toBe('10');
   });
 
   it('hằng 0 và hằng 1', () => {
@@ -68,31 +68,31 @@ describe('exprTruthTable / parseBoolExpr (T5)', () => {
   });
 
   it('A là MSB', () => {
-    expect(exprTruthTable('A', 2).join('')).toBe('0011');
-    expect(exprTruthTable('B', 2).join('')).toBe('0101');
+    expect(exprTruthTable('x', 2).join('')).toBe('0011');
+    expect(exprTruthTable('y', 2).join('')).toBe('0101');
   });
 
   it('phủ định hai lần triệt tiêu nhau', () => {
-    expect(exprTruthTable("A''", 1).join('')).toBe(exprTruthTable('A', 1).join(''));
-    expect(exprTruthTable('!!A', 1).join('')).toBe(exprTruthTable('A', 1).join(''));
+    expect(exprTruthTable("z''", 1).join('')).toBe(exprTruthTable('z', 1).join(''));
+    expect(exprTruthTable('!!z', 1).join('')).toBe(exprTruthTable('z', 1).join(''));
   });
 
   it('chấp nhận ký hiệu thay thế (· * ∧ | ∨ ¬) và chữ thường', () => {
-    expect(exprTruthTable('a·b', 2).join('')).toBe(exprTruthTable('AB', 2).join(''));
-    expect(exprTruthTable('A|B', 2).join('')).toBe(exprTruthTable('A + B', 2).join(''));
-    expect(exprTruthTable('¬A', 1).join('')).toBe('10');
+    expect(exprTruthTable('x·y', 2).join('')).toBe(exprTruthTable('xy', 2).join(''));
+    expect(exprTruthTable('x|y', 2).join('')).toBe(exprTruthTable('x + y', 2).join(''));
+    expect(exprTruthTable('¬z', 1).join('')).toBe('10');
   });
 
   it('biểu thức sai cú pháp thì throw', () => {
-    expect(() => exprTruthTable("A' +", 2)).toThrow();
-    expect(() => exprTruthTable('(A', 2)).toThrow();
-    expect(() => exprTruthTable('A)', 2)).toThrow();
-    expect(() => exprTruthTable('Z', 2)).toThrow();   // biến ngoài phạm vi n
+    expect(() => exprTruthTable("x' +", 2)).toThrow();
+    expect(() => exprTruthTable('(x', 2)).toThrow();
+    expect(() => exprTruthTable('x)', 2)).toThrow();
+    expect(() => exprTruthTable('q', 2)).toThrow();   // biến ngoài phạm vi n
     expect(() => exprTruthTable('', 2)).toThrow();
   });
 
   it('parseBoolExpr trả về hàm dùng lại được', () => {
-    const f = parseBoolExpr("A'B", 2);
+    const f = parseBoolExpr("x'y", 2);
     expect([0, 1, 2, 3].map(m => (f(m) ? 1 : 0))).toEqual([0, 1, 0, 0]);
   });
 });
@@ -100,19 +100,19 @@ describe('exprTruthTable / parseBoolExpr (T5)', () => {
 /* --- T5: sopStats --- */
 describe('sopStats (T5)', () => {
   it('đếm đúng số term và literal', () => {
-    expect(sopStats("A'B + BD' + C", 4)).toEqual({ terms: 3, literals: 5 });
+    expect(sopStats("w'x + xz' + y", 4)).toEqual({ terms: 3, literals: 5 });
   });
 
   it('một term đơn', () => {
-    expect(sopStats('A', 4)).toEqual({ terms: 1, literals: 1 });
+    expect(sopStats('w', 4)).toEqual({ terms: 1, literals: 1 });
   });
 
   it('trả về null khi có ngoặc (không phải SOP phẳng)', () => {
-    expect(sopStats('(A + B)C', 4)).toBeNull();
+    expect(sopStats('(w + x)y', 4)).toBeNull();
   });
 
   it('trả về null khi có biến ngoài phạm vi n', () => {
-    expect(sopStats('AE', 2)).toBeNull();
+    expect(sopStats('wz', 2)).toBeNull();
   });
 });
 

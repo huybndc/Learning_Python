@@ -5,10 +5,18 @@
    Minterm m thuộc implicant  <=>  (m & ~d) === v
    --------------------------------------------------------------- */
 
-export const VAR_NAMES = ['A', 'B', 'C', 'D', 'E'];
+export const VAR_NAMES = ['v', 'w', 'x', 'y', 'z'];
 
-/** Tên biến cho hàm n biến: A là MSB. */
-export function varNames(n) { return VAR_NAMES.slice(0, n); }
+/**
+ * Tên biến cho hàm n biến, theo quy ước Digital Design (Mano):
+ *   n=2 → x,y   n=3 → x,y,z   n=4 → w,x,y,z   n=5 → v,w,x,y,z
+ * Tức là lấy n ký tự CUỐI của VAR_NAMES, riêng n=2 dùng x,y (không phải y,z).
+ * Biến đầu danh sách là MSB.
+ */
+export function varNames(n) {
+  if (n === 2) return ['x', 'y'];
+  return VAR_NAMES.slice(VAR_NAMES.length - n);
+}
 
 export function popcount(x) { let c = 0; while (x) { x &= x - 1; c++; } return c; }
 

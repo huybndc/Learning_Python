@@ -1,0 +1,136 @@
+<!-- ============================ CHƯƠNG 2 ============================ -->
+<section class="page" id="page-ch2" role="tabpanel" aria-labelledby="tab-ch2">
+  <div class="subtabs" role="tablist">
+    <button role="tab" id="sub-ch2-theory" aria-selected="true" aria-controls="pane-ch2-theory" data-i18n="sub.theory"></button>
+    <button role="tab" id="sub-ch2-example" aria-selected="false" aria-controls="pane-ch2-example" data-i18n="sub.example"></button>
+    <button role="tab" id="sub-ch2-interactive" aria-selected="false" aria-controls="pane-ch2-interactive" data-i18n="sub.interactive"></button>
+    <button role="tab" id="sub-ch2-practice" aria-selected="false" aria-controls="pane-ch2-practice" data-i18n="sub.practice"></button>
+  </div>
+
+  <div class="pane active" id="pane-ch2-theory" role="tabpanel" aria-labelledby="sub-ch2-theory">
+  <div class="card theory-body" id="theory-ch2-body"></div>
+  </div>
+
+  <div class="pane" id="pane-ch2-example" role="tabpanel" aria-labelledby="sub-ch2-example">
+  <div class="card">
+    <h2 data-i18n="c2.derivTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="c2.pick"></span>
+        <select id="d-pick"></select>
+      </label>
+    </div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="tblbox"><table class="grid" id="d-table"></table></div>
+      <p class="small" id="d-cost" style="margin:10px 0 0"></p>
+      <p class="small" id="d-verify" style="margin:4px 0 0"></p>
+    </div>
+    <p class="small muted" style="margin:.5em 0 0" data-i18n="c2.derivNote"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c2.complTitle"></h2>
+    <div class="row">
+      <label class="inline" style="flex:1 1 280px"><span data-i18n="c2.fn"></span>
+        <input type="text" id="c-expr" value="x + y'z" style="flex:1 1 auto;min-width:160px"
+               autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline"><span data-i18n="common.vars"></span>
+        <select id="c-n"><option>2</option><option selected>3</option><option>4</option></select>
+      </label>
+    </div>
+    <div id="c-err" class="small bad"></div>
+    <div class="row" style="align-items:flex-start;gap:16px;margin-top:10px">
+      <div class="steps-box" style="flex:1 1 280px">
+        <h4 data-i18n="c2.way1"></h4>
+        <div id="c-dm"></div>
+      </div>
+      <div class="steps-box" style="flex:1 1 280px">
+        <h4 data-i18n="c2.way2"></h4>
+        <div id="c-du"></div>
+      </div>
+    </div>
+    <p class="small" id="c-check" style="margin:10px 0 0"></p>
+    <div class="tblbox" style="margin-top:10px"><table class="grid" id="c-tt"></table></div>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch2-interactive" role="tabpanel" aria-labelledby="sub-ch2-interactive">
+  <div class="card">
+    <h2 data-i18n="c2.gatesTitle"></h2>
+    <p class="small muted" style="margin-top:0" data-i18n="c2.gatesNote"></p>
+    <div class="row">
+      <div class="seg" id="g-x">
+        <button data-v="0" aria-pressed="true">x = 0</button>
+        <button data-v="1" aria-pressed="false">x = 1</button>
+      </div>
+      <div class="seg" id="g-y">
+        <button data-v="0" aria-pressed="true">y = 0</button>
+        <button data-v="1" aria-pressed="false">y = 1</button>
+      </div>
+    </div>
+    <div class="gategrid" id="g-gates" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c2.fnTableTitle"></h2>
+    <p class="small muted" style="margin-top:0" data-i18n="c2.fnTableNote"></p>
+    <div class="tblbox" style="max-height:430px;overflow-y:auto"><table class="grid" id="g-table"></table></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c2.assocTitle"></h2>
+    <div class="row">
+      <div class="seg" id="g-assoc">
+        <button data-g="nand" aria-pressed="true">NAND</button>
+        <button data-g="nor" aria-pressed="false">NOR</button>
+      </div>
+    </div>
+    <div class="tblbox" style="margin-top:10px"><table class="grid" id="g-assoc-table"></table></div>
+    <p class="small" id="g-assoc-note" style="margin:8px 0 0"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="c2.nandTitle"></h2>
+    <div class="row">
+      <label class="inline" style="flex:1 1 260px">F =
+        <input type="text" id="g-sop" value="wx + yz" style="flex:1 1 auto;min-width:150px"
+               autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline"><span data-i18n="common.vars"></span>
+        <select id="g-sopn"><option>2</option><option>3</option><option selected>4</option></select>
+      </label>
+    </div>
+    <div id="g-soperr" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="conv-steps" id="g-sopsteps"></div>
+      <p class="small" id="g-sopcheck" style="margin:8px 0 0"></p>
+    </div>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch2-practice" role="tabpanel" aria-labelledby="sub-ch2-practice">
+  <div class="card">
+    <h2 data-i18n="sub.practice"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="common.kind"></span>
+        <select id="q2-kind">
+          <option value="identify" data-i18n="c2q.identify"></option>
+          <option value="nand" data-i18n="c2q.nand"></option>
+          <option value="complement" data-i18n="c2q.complement"></option>
+          <option value="mix" data-i18n="c2q.mix"></option>
+        </select>
+      </label>
+      <button class="btn primary" id="q2-new" data-i18n="common.newQuestion"></button>
+      <span class="small muted" id="q2-score"></span>
+    </div>
+    <p id="q2-text" class="mono" style="margin:.8em 0 .4em"></p>
+    <div class="row">
+      <input type="text" id="q2-ans" style="flex:1 1 200px" autocomplete="off" spellcheck="false" data-i18n-ph="common.answerPh">
+      <button class="btn primary" id="q2-check" data-i18n="common.check"></button>
+      <button class="btn" id="q2-show" data-i18n="common.showAnswer"></button>
+    </div>
+    <p class="small muted" style="margin:.3em 0 0" data-i18n-html="c2q.note"></p>
+    <div id="q2-result"></div>
+  </div>
+  </div>
+</section>

@@ -8,10 +8,10 @@ import { primeImplicants, implicantMinterms, popcount } from '../src/logic/quine
 
 describe('mapLayout', () => {
   it('chia biến vào sheet / hàng / cột đúng cho từng n', () => {
-    expect(mapLayout(2)).toMatchObject({ sheetVars: [], rowVars: ['A'], colVars: ['B'] });
-    expect(mapLayout(3)).toMatchObject({ sheetVars: [], rowVars: ['A'], colVars: ['B', 'C'] });
-    expect(mapLayout(4)).toMatchObject({ sheetVars: [], rowVars: ['A', 'B'], colVars: ['C', 'D'] });
-    expect(mapLayout(5)).toMatchObject({ sheetVars: ['A'], rowVars: ['B', 'C'], colVars: ['D', 'E'] });
+    expect(mapLayout(2)).toMatchObject({ sheetVars: [], rowVars: ['x'], colVars: ['y'] });
+    expect(mapLayout(3)).toMatchObject({ sheetVars: [], rowVars: ['x'], colVars: ['y', 'z'] });
+    expect(mapLayout(4)).toMatchObject({ sheetVars: [], rowVars: ['w', 'x'], colVars: ['y', 'z'] });
+    expect(mapLayout(5)).toMatchObject({ sheetVars: ['v'], rowVars: ['w', 'x'], colVars: ['y', 'z'] });
   });
 
   it('số sheet × hàng × cột đúng bằng 2^n', () => {
@@ -110,14 +110,14 @@ describe('T6 — implicantRects', () => {
     });
   }
 
-  it("4 góc K-map 4 biến (B'D') vẽ thành 4 mảnh 1×1 ở mép", () => {
+  it("4 góc K-map 4 biến (x'z') vẽ thành 4 mảnh 1×1 ở mép", () => {
     const rects = implicantRects({ v: 0, d: 0b1010 }, 4);
     expect(rects.length).toBe(4);
     expect(rects.every(r => r.w === 1 && r.h === 1)).toBe(true);
   });
 
   it('nhóm phủ cả sheet của K-map 5 biến vẽ ở cả hai sheet', () => {
-    // d = 0b11111 -> toàn bộ; lấy nhóm bỏ A (bit 4) và giữ phần còn lại
+    // d = 0b11111 -> toàn bộ; lấy nhóm bỏ v (bit 4) và giữ phần còn lại
     const rects = implicantRects({ v: 0, d: 0b10000 }, 5);
     expect(new Set(rects.map(r => r.s)).size).toBe(2);
   });

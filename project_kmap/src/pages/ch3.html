@@ -1,0 +1,171 @@
+<!-- ============================ CHƯƠNG 3 ============================ -->
+<section class="page" id="page-ch3" role="tabpanel" aria-labelledby="tab-ch3">
+  <div class="subtabs" role="tablist">
+    <button role="tab" id="sub-ch3-theory" aria-selected="true" aria-controls="pane-ch3-theory" data-i18n="sub.theory"></button>
+    <button role="tab" id="sub-ch3-example" aria-selected="false" aria-controls="pane-ch3-example" data-i18n="sub.example"></button>
+    <button role="tab" id="sub-ch3-interactive" aria-selected="false" aria-controls="pane-ch3-interactive" data-i18n="sub.interactive"></button>
+    <button role="tab" id="sub-ch3-practice" aria-selected="false" aria-controls="pane-ch3-practice" data-i18n="sub.practice"></button>
+  </div>
+
+  <div class="pane active" id="pane-ch3-theory" role="tabpanel" aria-labelledby="sub-ch3-theory">
+  <div class="card theory-body" id="theory-ch3-body"></div>
+  </div>
+
+  <div class="pane" id="pane-ch3-example" role="tabpanel" aria-labelledby="sub-ch3-example">
+  <div class="card">
+    <h2 data-i18n="gray.tableTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="gray.bits"></span>
+        <select id="g-n"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+      </label>
+      <span class="muted small" data-i18n-html="gray.tableNote"></span>
+    </div>
+    <div class="tblbox" style="margin-top:10px;max-height:420px;overflow-y:auto">
+      <table class="grid" id="g-table"></table>
+    </div>
+    <p class="small muted" id="g-cyclic"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="gray.buildTitle"></h2>
+    <p class="small muted" style="margin-top:0" data-i18n-html="gray.buildNote"></p>
+    <div class="row">
+      <button class="btn primary" id="gb-next" data-i18n="gray.next"></button>
+      <button class="btn" id="gb-reset" data-i18n="gray.reset"></button>
+      <span class="mono small muted" id="gb-state"></span>
+    </div>
+    <div class="steps-box" style="margin-top:10px"><div id="gb-msg"></div></div>
+    <div class="gb-list" id="gb-list" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="gray.convTitle"></h2>
+    <div class="row">
+      <div class="seg" id="conv-dir">
+        <button data-d="b2g" aria-pressed="true">Binary → Gray</button>
+        <button data-d="g2b" aria-pressed="false">Gray → Binary</button>
+      </div>
+      <label class="inline"><span id="conv-lab">Binary</span>:
+        <input type="text" id="conv-in" value="1011" size="10" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+    <div id="conv-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <h4 id="conv-formula" class="mono"></h4>
+      <div class="conv-steps" id="conv-steps"></div>
+      <div style="margin-top:9px" class="row tight">
+        <span class="small muted" id="conv-outlab"></span>
+        <div class="bitbar" id="conv-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="gray.whyTitle"></h2>
+    <div class="note">
+      <p style="margin:.2em 0" data-i18n-html="gray.why1"></p>
+      <p style="margin:.2em 0" data-i18n-html="gray.why2"></p>
+      <p style="margin:.6em 0 .2em" class="row tight">
+        <button class="btn" data-goto="ch3:theory" data-i18n="gray.gotoTheory"></button>
+        <button class="btn" data-goto="ch3:interactive" data-i18n="gray.gotoKmap"></button>
+      </p>
+    </div>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch3-interactive" role="tabpanel" aria-labelledby="sub-ch3-interactive">
+  <div class="card">
+    <h2 data-i18n="kmap.inputTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="kmap.vars"></span>
+        <select id="k-n"><option>2</option><option>3</option><option selected>4</option><option>5</option></select>
+      </label>
+      <button class="btn" id="k-clear" data-i18n="kmap.clear"></button>
+      <button class="btn" id="k-rand" data-i18n="kmap.random"></button>
+      <span class="spacer"></span>
+      <span class="small muted" data-i18n="kmap.clickHint"></span>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="inline" style="flex:1 1 320px">
+        <span class="small" data-i18n="kmap.spec"></span>
+        <input type="text" id="k-spec" style="flex:1 1 auto;min-width:200px" autocomplete="off" spellcheck="false"
+               placeholder="Σm(1,3,5,7) + d(0,2)   ·   ΠM(0,2,4)">
+      </label>
+      <button class="btn" id="k-apply" data-i18n="kmap.apply"></button>
+    </div>
+    <div id="k-specerr" class="small bad"></div>
+  </div>
+
+  <div class="card">
+    <h2>K-map</h2>
+    <div class="maps" id="k-maps"></div>
+    <div class="legend" id="k-legend" style="margin-top:12px"></div>
+    <p class="small muted" style="margin-bottom:0" data-i18n-html="kmap.legendNote"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="kmap.resultTitle"></h2>
+    <div class="row tight" style="align-items:flex-start"><b class="small" style="min-width:5.5em;padding-top:6px">SOP:</b>
+      <div class="expr" id="k-sop"></div></div>
+    <div class="row tight" style="align-items:flex-start;margin-top:6px"><b class="small" style="min-width:5.5em;padding-top:6px">POS:</b>
+      <div class="expr" id="k-pos"></div></div>
+    <p class="small muted" id="k-cost" style="margin-bottom:0"></p>
+    <p class="small muted" style="margin:.2em 0 0" data-i18n-html="kmap.posNote"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="kmap.stepsTitle"></h2>
+    <div class="row">
+      <button class="btn primary" id="st-next" data-i18n="kmap.next"></button>
+      <button class="btn" id="st-prev" data-i18n="kmap.prev"></button>
+      <button class="btn" id="st-reset" data-i18n="kmap.restart"></button>
+      <span class="mono small muted" id="st-count"></span>
+    </div>
+    <div class="steps-box" style="margin-top:10px" id="st-box"></div>
+  </div>
+
+  <div class="card">
+    <h2>Truth table</h2>
+    <p class="small muted" style="margin-top:0" data-i18n="kmap.ttNote"></p>
+    <div class="tblbox" id="k-tt" style="max-height:430px;overflow-y:auto"></div>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch3-practice" role="tabpanel" aria-labelledby="sub-ch3-practice">
+  <div class="card">
+    <h2 data-i18n="prac.problemTitle"></h2>
+    <div class="row">
+      <label class="inline"><span data-i18n="kmap.vars"></span>
+        <select id="p-n"><option>2</option><option>3</option><option selected>4</option></select>
+      </label>
+      <label class="inline"><input type="checkbox" id="p-dc"> <span data-i18n="prac.withDc"></span></label>
+      <button class="btn primary" id="p-gen" data-i18n="prac.newProblem"></button>
+    </div>
+    <p class="mono small" id="p-spec" style="margin:.6em 0 0"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="prac.groupTitle"></h2>
+    <p class="small muted" style="margin-top:0" data-i18n-html="prac.groupHint"></p>
+    <div class="maps" id="p-maps"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="p-commit" data-i18n="prac.commit"></button>
+      <button class="btn" id="p-clearsel" data-i18n="prac.clearSel"></button>
+      <button class="btn" id="p-undo" data-i18n="prac.undo"></button>
+      <button class="btn" id="p-clearg" data-i18n="prac.clearAll"></button>
+    </div>
+    <div class="legend" id="p-legend" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="prac.exprTitle"></h2>
+    <div class="row">
+      <input type="text" id="p-expr" style="flex:1 1 260px" autocomplete="off" spellcheck="false" data-i18n-ph="prac.exprPh">
+      <button class="btn primary" id="p-check" data-i18n="prac.check"></button>
+      <button class="btn" id="p-show" data-i18n="prac.showAnswer"></button>
+    </div>
+    <p class="small muted" style="margin:.3em 0 0" data-i18n-html="prac.syntax"></p>
+    <div id="p-result"></div>
+  </div>
+  </div>
+</section>

@@ -2,6 +2,7 @@ import { $, el } from './dom-helpers.js';
 import {
   toBits, grayList, diffPositions, binToGraySteps, grayToBinSteps,
 } from '../logic/gray.js';
+import { t as T, onLangChange } from '../i18n/index.js';
 
 /* =====================================================================
    PHẦN 1 — GRAY CODE
@@ -33,7 +34,7 @@ function renderGrayTable() {
     tb.appendChild(tr);
   });
   t.appendChild(tb);
-  $('#g-cyclic').textContent = 'Tổng cộng ' + list.length + ' mã, mỗi bước (kể cả từ hàng cuối quay về hàng đầu) đổi đúng 1 bit ⇒ đây là một chu trình Hamilton trên siêu khối ' + n + ' chiều.';
+  $('#g-cyclic').textContent = T('gray.cyclic', { count: list.length, n });
 }
 
 /* ------------- Reflect and prefix (có animation) ------------- */
@@ -51,17 +52,15 @@ function gbRender(justChanged) {
   let items;
   if (gb.phase === 0) {
     items = base.map(s => ({ s, mirror: false, pfx: null }));
-    $('#gb-msg').innerHTML = '<b>Gray ' + gb.k + ' bit</b> — ' + base.length + ' mã. Bấm <b>Bước tiếp</b> để lật ngược danh sách và thêm vào cuối.';
+    $('#gb-msg').innerHTML = T('gray.phase0', { k: gb.k, count: base.length });
   } else if (gb.phase === 1) {
     items = base.map(s => ({ s, mirror: false, pfx: null }))
       .concat(base.slice().reverse().map(s => ({ s, mirror: true, pfx: null })));
-    $('#gb-msg').innerHTML = '<b>Bước 1 — reflect:</b> chép danh sách rồi <b>lật ngược</b> (phần tô vàng). Hai dòng sát chỗ nối là <span class="mono">' +
-      base[base.length - 1] + '</span> và <span class="mono">' + base[base.length - 1] + '</span> — giống hệt nhau.';
+    $('#gb-msg').innerHTML = T('gray.phase1', { last: base[base.length - 1] });
   } else {
     items = base.map(s => ({ s, mirror: false, pfx: '0' }))
       .concat(base.slice().reverse().map(s => ({ s, mirror: true, pfx: '1' })));
-    $('#gb-msg').innerHTML = '<b>Bước 2 — prefix:</b> nửa trên thêm <b class="mono">0</b>, nửa dưới thêm <b class="mono">1</b>. ' +
-      'Chỗ nối giờ là <span class="mono">0' + base[base.length - 1] + '</span> → <span class="mono">1' + base[base.length - 1] + '</span>: chỉ khác bit tiền tố ⇒ vẫn đúng quy tắc 1 bit. Đã có <b>Gray ' + (gb.k + 1) + ' bit</b>.';
+    $('#gb-msg').innerHTML = T('gray.phase2', { last: base[base.length - 1], next: gb.k + 1 });
   }
   items.forEach((it, i) => {
     const d = el('div', 'gb-item' + (it.mirror ? ' mirror' : '') + (justChanged && i >= base.length ? ' fresh' : ''));
@@ -73,7 +72,7 @@ function gbRender(justChanged) {
     box.appendChild(d);
     if (gb.phase > 0 && i === base.length - 1) box.appendChild(el('div', 'gb-mid'));  // ranh giới nửa trên / nửa lật
   });
-  $('#gb-state').textContent = 'n = ' + gbShownBits() + (gbAtMax() ? ' (tối đa)' : '');
+  $('#gb-state').textContent = T(gbAtMax() ? 'gray.stateMax' : 'gray.state', { n: gbShownBits() });
   $('#gb-next').disabled = gbAtMax();
 }
 
@@ -92,13 +91,11 @@ function renderConverter() {
   const errBox = $('#conv-err'), stepBox = $('#conv-steps'), outBox = $('#conv-out');
   stepBox.innerHTML = ''; outBox.innerHTML = '';
   $('#conv-lab').textContent = convDir === 'b2g' ? 'Binary' : 'Gray';
-  $('#conv-outlab').textContent = convDir === 'b2g' ? 'Gray code:' : 'Binary:';
-  $('#conv-formula').textContent = convDir === 'b2g'
-    ? 'g[i] = b[i-1] XOR b[i]   (bit trái là trọng số cao; b[-1] coi như 0)'
-    : 'b[i] = b[i-1] XOR g[i]   (dùng bit binary vừa tính ở bước trước)';
+  $('#conv-outlab').textContent = T(convDir === 'b2g' ? 'gray.convOutGray' : 'gray.convOutBin');
+  $('#conv-formula').textContent = T(convDir === 'b2g' ? 'gray.convB2g' : 'gray.convG2b');
 
-  if (!/^[01]+$/.test(raw)) { errBox.textContent = raw === '' ? 'Nhập một chuỗi bit.' : 'Chỉ được dùng ký tự 0 và 1.'; return; }
-  if (raw.length > 12) { errBox.textContent = 'Tối đa 12 bit.'; return; }
+  if (!/^[01]+$/.test(raw)) { errBox.textContent = T(raw === '' ? 'gray.errEmpty' : 'gray.errBits'); return; }
+  if (raw.length > 12) { errBox.textContent = T('gray.errLong'); return; }
   errBox.textContent = '';
 
   const steps = convDir === 'b2g' ? binToGraySteps(raw) : grayToBinSteps(raw);
@@ -112,14 +109,14 @@ function renderConverter() {
     const left = s.first ? '0' : accName + '[' + (s.i - 1) + ']=' + s.a;
     const right = srcName + '[' + s.i + ']=' + s.b;
     line.innerHTML = lhs + ' = ' + left + ' ⊕ ' + right + ' = <span class="hl">' + s.r + '</span>' +
-      (s.first ? '  <span class="muted">(bit đầu: không có bit trái ⇒ XOR với 0)</span>' : '');
+      (s.first ? '  <span class="muted">' + T('gray.convFirst') + '</span>' : '');
     stepBox.appendChild(line);
   });
   [...result].forEach(b => outBox.appendChild(el('span', 'act', b)));
   const dec = parseInt(convDir === 'b2g' ? raw : result, 2);
   const extra = el('div', 'small muted');
   extra.style.marginTop = '6px';
-  extra.textContent = 'Giá trị thập phân: ' + dec + (convDir === 'b2g' ? '  (binary ' + raw + ')' : '  (binary ' + result + ')');
+  extra.textContent = T('gray.convDec', { dec, bin: convDir === 'b2g' ? raw : result });
   stepBox.appendChild(extra);
 }
 
@@ -136,4 +133,5 @@ export function setupGrayPage() {
   }));
   $('#conv-in').addEventListener('input', renderConverter);
   renderConverter();
+  onLangChange(() => { renderGrayTable(); gbRender(false); renderConverter(); });
 }
