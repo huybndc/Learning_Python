@@ -92,7 +92,7 @@ milestone tiếp theo. Không sang milestone mới khi test đang fail.
 
 ---
 
-### Milestone 0 — Khung project chạy được
+### Milestone 0 — [x] Khung project chạy được
 **Làm:**
 - `npm create vite@latest gray-kmap -- --template vanilla`, cài `vitest`.
 - Xoá file mẫu của Vite, tạo cấu trúc thư mục ở trên (rỗng, có file `.gitkeep` nếu cần).
@@ -109,7 +109,7 @@ milestone tiếp theo. Không sang milestone mới khi test đang fail.
 
 ---
 
-### Milestone 1 — Tách logic Gray code
+### Milestone 1 — [x] Tách logic Gray code
 **Làm:**
 - Copy nguyên hàm `toBits, binToGray, grayToBin, grayList, binToGraySteps,
   grayToBinSteps, diffPositions` vào `src/logic/gray.js`, export từng hàm.
@@ -125,7 +125,7 @@ milestone tiếp theo. Không sang milestone mới khi test đang fail.
 
 ---
 
-### Milestone 2 — Tách logic Quine–McCluskey (rút gọn SOP/POS)
+### Milestone 2 — [x] Tách logic Quine–McCluskey (rút gọn SOP/POS)
 **Làm:**
 - Copy `VAR_NAMES, varNames, popcount, literalCount, implicantMinterms,
   impCovers, impKey, impContains, primeImplicants, minimalCover,
@@ -147,7 +147,7 @@ như bản gốc, hoặc ghi rõ trong test nếu giảm để chạy nhanh hơn
 
 ---
 
-### Milestone 3 — Tách logic hình học K-map
+### Milestone 3 — [x] Tách logic hình học K-map
 **Làm:**
 - Copy `mapLayout, cellMinterm, mintermPositions, contiguousSegments,
   implicantRects` vào `src/logic/kmap-layout.js`.
@@ -163,7 +163,7 @@ như bản gốc, hoặc ghi rõ trong test nếu giảm để chạy nhanh hơn
 
 ---
 
-### Milestone 4 — Tách logic parser biểu thức & spec
+### Milestone 4 — [x] Tách logic parser biểu thức & spec
 **Làm:**
 - Copy `parseBoolExpr, exprTruthTable, sopStats, parseSpec, formatSpec` vào
   `src/logic/expr-parser.js` (dùng lại `splitValues` từ Milestone 2 nếu cần,
@@ -190,7 +190,7 @@ Milestone 1–4 phải bao phủ đúng 7 nhóm T1–T7 của bản gốc (đố
 
 ---
 
-### Milestone 5 — Tách UI cho tab Gray code
+### Milestone 5 — [x] Tách UI cho tab Gray code
 **Làm:**
 - `src/ui/dom-helpers.js`: `$`, `el`, hằng số `HUES`, `GAP` dùng chung.
 - `src/ui/tabs.js`: `setupTabs`, `activateTab`.
@@ -210,7 +210,7 @@ Gray, demo reflect&prefix, bộ chuyển đổi, nút "Sang phần K-map"), và
 
 ---
 
-### Milestone 6 — Tách UI cho tab K-map
+### Milestone 6 — [x] Tách UI cho tab K-map
 **Làm:**
 - `src/ui/kmap-common.js`: `buildMap, paintValues, rectStyle, drawGroups,
   setHot` (dùng chung với tab Luyện tập ở Milestone 7).
@@ -229,7 +229,7 @@ thức, click đổi giá trị, K-map/truth table/SOP/POS/giải thích từng 
 
 ---
 
-### Milestone 7 — Tách UI cho tab Luyện tập
+### Milestone 7 — [x] Tách UI cho tab Luyện tập
 **Làm:**
 - `src/ui/practice-page.js`: state `P`, `pSetN/pBuild`, `cellUnder`,
   `pPointerDown`, `pSelectRect`, `pPaint`, `pNewProblem`, `pCommit`, `pCheck`,
@@ -245,7 +245,7 @@ thức, click đổi giá trị, K-map/truth table/SOP/POS/giải thích từng 
 
 ---
 
-### Milestone 8 — Xác nhận refactor hoàn tất, dọn file gốc
+### Milestone 8 — [x] Xác nhận refactor hoàn tất, dọn file gốc
 **Làm:**
 - Đối chiếu tay từng tab giữa bản gốc (`graycode-kmap.html`) và bản mới
   (`npm run dev`) — checklist trong README.
@@ -262,7 +262,7 @@ thức, click đổi giá trị, K-map/truth table/SOP/POS/giải thích từng 
 
 ---
 
-### Milestone 9 — Trang Lý thuyết (Markdown)
+### Milestone 9 — [x] Trang Lý thuyết (Markdown)
 **Làm:**
 - Cài thư viện markdown nhẹ (`marked`, không cần cú pháp toán phức tạp vì nội
   dung chủ yếu là Boolean algebra viết bằng ký hiệu văn bản như bản gốc).

@@ -77,6 +77,11 @@ Sau mỗi thay đổi lớn, đối chiếu lại từng mục:
       biểu thức sai, biểu thức sai cú pháp, biểu thức đúng nhưng chưa tối giản
 - [ ] "Xem đáp án" vẽ các nhóm tối ưu và giải thích từng term
 
+**Tab Lý thuyết**
+- [ ] Nội dung `src/content/theory.md` render đủ 6 mục, có bảng và khối code
+- [ ] Nút "Đọc lý thuyết ▶" ở tab Gray code nhảy đúng tab
+- [ ] Hiển thị đúng ở cả light mode và dark mode
+
 **Chung**
 - [ ] `npm test` pass
 - [ ] `npm run build` chạy được và `dist/index.html` mở trực tiếp bằng `file://`

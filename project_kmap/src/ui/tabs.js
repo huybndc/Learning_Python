@@ -14,8 +14,10 @@ export function activateTab(id) {
 export function setupTabs() {
   tabs = [...document.querySelectorAll('.tabs button')];
   tabs.forEach(t => t.addEventListener('click', () => activateTab(t.id)));
-  $('#goto-kmap').addEventListener('click', () => {
-    activateTab('tab-kmap');
+  const jump = (btn, tab) => $(btn).addEventListener('click', () => {
+    activateTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+  jump('#goto-kmap', 'tab-kmap');
+  jump('#goto-theory', 'tab-theory');
 }

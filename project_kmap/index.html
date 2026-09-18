@@ -16,6 +16,7 @@
 <div class="tabs" role="tablist">
   <button role="tab" id="tab-gray"  aria-selected="true"  aria-controls="page-gray">Gray code</button>
   <button role="tab" id="tab-kmap"  aria-selected="false" aria-controls="page-kmap">K-map</button>
+  <button role="tab" id="tab-theory" aria-selected="false" aria-controls="page-theory">Lý thuyết</button>
   <button role="tab" id="tab-prac"  aria-selected="false" aria-controls="page-prac">Luyện tập</button>
 </div>
 
@@ -77,16 +78,15 @@
     <h2>4. Vì sao K-map dùng thứ tự Gray?</h2>
     <div class="note">
       <p style="margin:.2em 0">
-        Trong K-map, hai ô <b>kề nhau</b> phải khác nhau đúng <b>1 biến</b> — khi đó ghép chúng lại thì biến đó bị triệt tiêu:
-        <span class="mono">A′BC + ABC = BC(A′+A) = BC</span>.
+        Vì hai ô <b>kề nhau</b> trên K-map phải khác nhau đúng <b>1 biến</b> thì mới ghép lại được:
+        <span class="mono">A′BC + ABC = BC(A′+A) = BC</span>. Thứ tự Gray đảm bảo điều đó ở mọi
+        bước, kể cả khi <b>quấn biên</b> (nhóm wrap-around như 4 góc của K-map 4 biến).
       </p>
-      <p style="margin:.2em 0">
-        Nếu dán nhãn theo thứ tự nhị phân thường (00, 01, <b>10</b>, 11) thì bước 01→10 đổi tới 2 bit ⇒ hai ô kề nhau
-        <i>không</i> gộp được. Thứ tự Gray (00, 01, <b>11</b>, 10) đảm bảo mọi bước chỉ đổi 1 bit, và vì Gray là chu trình
-        khép kín nên cột cuối cũng kề cột đầu ⇒ sinh ra các nhóm <b>wrap-around</b> (ví dụ 4 góc của K-map 4 biến).
+      <p style="margin:.2em 0">Giải thích đầy đủ nằm ở tab <b>Lý thuyết</b>.</p>
+      <p style="margin:.6em 0 .2em" class="row tight">
+        <button class="btn" id="goto-theory">Đọc lý thuyết ▶</button>
+        <button class="btn" id="goto-kmap">Sang phần K-map ▶</button>
       </p>
-      <p style="margin:.2em 0">Nói cách khác: K-map chính là hình vẽ của <b>siêu khối n chiều</b> trải phẳng, và Gray code là cách trải giữ nguyên quan hệ kề.</p>
-      <p style="margin:.6em 0 .2em"><button class="btn" id="goto-kmap">Sang phần K-map ▶</button></p>
     </div>
   </div>
 </section>
@@ -151,7 +151,12 @@
   </div>
 </section>
 
-<!-- ============================ PAGE 3: PRACTICE ============================ -->
+<!-- ============================ PAGE 3: LÝ THUYẾT ============================ -->
+<section class="page" id="page-theory" role="tabpanel" aria-labelledby="tab-theory">
+  <div class="card" id="theory-body"></div>
+</section>
+
+<!-- ============================ PAGE 4: PRACTICE ============================ -->
 <section class="page" id="page-prac" role="tabpanel" aria-labelledby="tab-prac">
   <div class="card">
     <h2>Đề bài</h2>

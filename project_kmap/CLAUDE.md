@@ -13,6 +13,11 @@
 - Comment và chuỗi hiển thị viết bằng tiếng Việt, giữ nguyên văn phong bản gốc.
 - Tên biến công khai của thuật toán (`A/B/C/D/E`, `imp = {v, d}`) giữ nguyên như bản gốc.
 
+## Tab Lý thuyết
+Nội dung nằm ở `src/content/theory.md`, import bằng `?raw` và render bằng `marked`
+trong `src/ui/theory-page.js`. Thêm/sửa bài học thì sửa file `.md`, không đụng code.
+CSS của trang gom trong khối `#theory-body` ở `src/style.css`.
+
 ## Build
 `npm run build` dùng `vite-plugin-singlefile` để gộp thành một file HTML tự chứa,
 nhờ đó bản dist vẫn mở được bằng `file://` như bản gốc.
