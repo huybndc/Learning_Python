@@ -47,6 +47,7 @@ export const ch1 = {
   'c1.lblCos': 'cos θ',
   'c1.lblProj': 'Projection of v onto w',
   'c1.lblCombo': 'c₁v₁ + c₂v₂',
+  'c1.toCh2': 'On to Chapter 2: solving Ax = b →',
   'c1.errVec': 'Coordinates must be two numbers, for example 3, 1.',
   'c1.undefinedZero': 'undefined (zero vector)',
 

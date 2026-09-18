@@ -34,7 +34,12 @@ export function createBoard(canvas, { span = DEFAULT_SPAN, center = [0, 0], onRe
 
   board.fit();
   if (typeof ResizeObserver !== 'undefined') {
-    new ResizeObserver(() => { board.fit(); board.redraw(); }).observe(canvas);
+    new ResizeObserver(() => {
+      // tab đang ẩn thì clientWidth = 0: giữ nguyên kích thước cũ, khỏi vẽ lại vô ích
+      if (!canvas.clientWidth) return;
+      board.fit();
+      board.redraw();
+    }).observe(canvas);
   }
   return board;
 }

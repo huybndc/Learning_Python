@@ -54,8 +54,9 @@ export function fmt(x, digits = 3) {
   const c = clean(x);
   if (Number.isInteger(c)) return String(c);
   if (Number(c.toFixed(2)) === c) return String(c);
-  const f = toFraction(c);
-  if (f && f.den !== 1 && f.den <= 64) return f.num + '/' + f.den;
+  // mẫu số tới 999: khử Gauss trên số nguyên hay ra 5/77, viết phân số vẫn đọc được
+  const f = toFraction(c, 999);
+  if (f && f.den !== 1 && f.den <= 999) return f.num + '/' + f.den;
   return String(Number(c.toFixed(digits)));
 }
 

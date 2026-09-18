@@ -72,7 +72,7 @@ Kế hoạch đầy đủ ở `PLAN.md`.
 - [x] **M0** — khung sườn: Vite, nav 2 cấp, song ngữ, `logic/vector.js`,
       `logic/matrix.js`, `geometry/plane2d.js` + test
 - [x] **M1** — Ch.1 Vector
-- [ ] **M2** — Ch.2 Giải hệ Ax = b
+- [x] **M2** — Ch.2 Giải hệ Ax = b
 - [ ] **M3+** — dừng lại xin ý kiến trước khi chuyển sang Three.js (Ch.3)
 
 ## Checklist đối chiếu
@@ -86,15 +86,16 @@ Kế hoạch đầy đủ ở `PLAN.md`.
 - [x] Luyện tập: sinh + chấm 4 dạng bài, chấm theo giá trị số có sai số
 
 **Chương 2 — Giải hệ Ax = b**
-- [ ] Lý thuyết: biểu diễn ma trận, khử Gauss, hạng, phân loại nghiệm
-- [ ] Ví dụ: elimination từng bước, mỗi bước 1 dòng row-op + 1 câu lý do
-- [ ] Tương tác: tự chọn row operation, hệ thống kiểm tra
-- [ ] Luyện tập: sinh hệ 2×2/3×3, chấm nghiệm và phân loại đúng
+- [x] Lý thuyết: biểu diễn ma trận, khử Gauss, hạng, phân loại nghiệm
+- [x] Ví dụ: elimination từng bước, mỗi bước 1 dòng row-op + 1 câu lý do
+- [x] Ví dụ: hệ 2 ẩn vẽ thành hai đường thẳng, giao điểm là nghiệm
+- [x] Tương tác: tự chọn row operation, hệ thống kiểm tra + gợi ý bước tiếp
+- [x] Luyện tập: sinh hệ 2×2/3×3, chấm nghiệm và phân loại đúng
 
 **Chung (mọi chương)**
-- [ ] `npm test` pass
-- [ ] `check_file_sizes.sh` không báo file nào
-- [ ] `npm run build` ra `dist/index.html` mở được bằng `file://`
-- [ ] Light/dark mode đúng
-- [ ] VI/EN đổi hết chuỗi, không sót
-- [ ] Lựa chọn ngôn ngữ nhớ sau khi tải lại
+- [x] `npm test` pass (170 test)
+- [x] `check_file_sizes.sh` không báo file nào
+- [x] `npm run build` ra `dist/index.html` mở được bằng `file://`
+- [x] Light/dark mode đúng
+- [x] VI/EN đổi hết chuỗi, không sót
+- [x] Lựa chọn ngôn ngữ nhớ sau khi tải lại

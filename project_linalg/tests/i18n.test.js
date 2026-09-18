@@ -63,21 +63,16 @@ describe('markup và mã nguồn dùng đúng khoá', () => {
     expect([...used].filter(k => !(k in vi)), 'khoá dùng trong ui/ nhưng chưa khai báo').toEqual([]);
   });
 
-  it('mọi mã lỗi fail("…") trong logic/ và geometry/ đều có trong từ điển', () => {
+  it('mọi khoá i18n trong logic/ và geometry/ đều có trong từ điển', () => {
+    // gồm cả mã lỗi fail('err.…') lẫn khoá trả ra cho ui/ (textKey, reasonKey…),
+    // dù truyền theo tên hay truyền thẳng làm tham số
+    const shaped = /'((?:app|nav|sub|common|err|c\d+q?)\.[\w.]+)'/g;
     const used = new Set();
     for (const { code } of [...jsFiles('../src/logic/'), ...jsFiles('../src/geometry/')]) {
-      for (const m of code.matchAll(/\bfail\('([\w.]+)'/g)) used.add(m[1]);
+      for (const m of stripComments(code).matchAll(shaped)) used.add(m[1]);
     }
-    expect(used.size).toBeGreaterThan(5);
-    expect([...used].filter(k => !(k in vi)), 'mã lỗi chưa có bản dịch').toEqual([]);
-  });
-
-  it('mọi khoá logic/ trả về cho ui/ (…Key: "…") đều có trong từ điển', () => {
-    const used = new Set();
-    for (const { code } of jsFiles('../src/logic/')) {
-      for (const m of stripComments(code).matchAll(/\b\w*[Kk]ey:\s*'([\w.]+)'/g)) used.add(m[1]);
-    }
-    expect([...used].filter(k => !(k in vi)), 'khoá logic/ trả ra nhưng chưa dịch').toEqual([]);
+    expect(used.size).toBeGreaterThan(20);
+    expect([...used].filter(k => !(k in vi)), 'khoá chưa có bản dịch').toEqual([]);
   });
 });
 

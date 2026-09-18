@@ -47,6 +47,7 @@ export const ch1 = {
   'c1.lblCos': 'cos θ',
   'c1.lblProj': 'Hình chiếu v lên w',
   'c1.lblCombo': 'c₁v₁ + c₂v₂',
+  'c1.toCh2': 'Sang Chương 2: giải hệ Ax = b →',
   'c1.errVec': 'Toạ độ phải là hai số, ví dụ 3, 1.',
   'c1.undefinedZero': 'không xác định (vector 0)',
 
