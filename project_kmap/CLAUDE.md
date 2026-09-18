@@ -1,5 +1,8 @@
 # CLAUDE.md — project_kmap
 
+App ôn tập Logic Circuit, điều hướng 2 cấp: **Chương → 4 mục con**
+(Lý thuyết / Ví dụ minh hoạ / Tương tác / Luyện tập).
+
 ## Nguyên tắc
 - Mỗi file một trách nhiệm, mục tiêu dưới ~300 dòng. Vượt thì tách tiếp
   (`bash scripts/check_file_sizes.sh .`).
@@ -9,6 +12,13 @@
 
 ## Quy ước
 - Test đặt ở `tests/<tên-module-logic>.test.js`, một file test cho một file trong `src/logic/`.
+- Module logic của chương N đặt tên theo chủ đề (`number-systems.js`), riêng phần
+  sinh/chấm đề thì đặt `chN-quiz.js`; UI tương ứng là `chN-<mục con>-page.js`.
+- Hàm sinh đề trả về `{ kind, text, answer, hint, meta }` — `meta` giữ tham số ở
+  dạng có cấu trúc để test kiểm chứng lại mà không phải bóc tách chuỗi đề.
+- Biến đổi biểu thức Boolean (dual, DeMorgan) **phải** làm trên cây cú pháp
+  (`logic/bool-ast.js`), không làm trên chuỗi ký tự — AND viết liền và dấu ngoặc
+  đều mang thông tin ưu tiên.
 - Nội dung học tập dạng văn bản để ở `src/content/*.md`, import bằng `?raw` của Vite.
 - Comment và chuỗi hiển thị viết bằng tiếng Việt, giữ nguyên văn phong bản gốc.
 - Tên biến công khai của thuật toán (`A/B/C/D/E`, `imp = {v, d}`) giữ nguyên như bản gốc.

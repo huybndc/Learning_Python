@@ -1,8 +1,15 @@
-# Gray code & Karnaugh map
+# Ôn tập Logic Circuit
 
-Công cụ trực quan hỗ trợ môn Logic Circuit — chạy hoàn toàn offline trong trình duyệt.
+App học theo chương, chạy hoàn toàn offline trong trình duyệt.
+Mỗi chương có 4 mục con: **Lý thuyết → Ví dụ minh hoạ → Tương tác → Luyện tập**.
 
-> Đây là bản tái cấu trúc nhiều file của `graycode-kmap.html` (file HTML tự chứa ở thư mục gốc repo).
+| Chương | Nội dung | Tương ứng sách |
+|---|---|---|
+| Ch.1 | Hệ đếm, chuyển cơ số, complement, số có dấu, mã BCD/parity | §1.1–1.11 |
+| Ch.2 | Đại số Boolean, định lý, hàm bù, minterm/maxterm, 16 hàm & 8 cổng | §2.1–2.8 |
+| Ch.3 | Gray code, K-map, Quine–McCluskey | Ch.3 |
+
+> `graycode-kmap.html` ở thư mục gốc repo là **bản build** của project này.
 
 ## Cách chạy
 
@@ -29,59 +36,62 @@ npm run build    # -> dist/index.html (một file tự chứa, mở được b�
 
 ```
 project_kmap/
-├── index.html            # markup 4 tab + mount point
+├── index.html            # shell: nav 2 cấp + <!--#include --> từng chương
+├── vite-plugin-include.js# plugin gộp partial HTML lúc build
 ├── src/
 │   ├── style.css         # toàn bộ CSS
 │   ├── main.js           # điểm vào: gọi các setup*Page()
+│   ├── pages/chN.html    # markup từng chương (4 mục con)
 │   ├── logic/            # hàm thuần, không đụng DOM — test bằng Node
 │   ├── ui/               # đọc/ghi DOM, gắn sự kiện, gọi logic/
-│   └── content/          # nội dung Markdown cho tab Lý thuyết
+│   └── content/          # theory-chN.md — nội dung Lý thuyết từng chương
 ├── tests/                # test Vitest, mỗi file ứng với một module logic
 └── scripts/              # tiện ích (kiểm tra độ dài file)
 ```
 
 Quy tắc: `logic/` **không bao giờ** import từ `ui/`.
 
-## Sửa nội dung tab Lý thuyết
+## Sửa nội dung Lý thuyết
 
-Sửa thẳng `src/content/theory.md` (Markdown thường, có thể copy từ vault Obsidian `CAU_1st`).
-Trang tự render lại khi lưu (`npm run dev`), không cần đụng code.
+Sửa thẳng `src/content/theory-chN.md` (Markdown thường, có thể copy từ vault
+Obsidian `CAU_1st`). Trang tự render lại khi lưu (`npm run dev`), không cần đụng code.
 
-## Checklist đối chiếu với bản gốc
+## Thêm một chương mới
 
-Bản gốc là commit trước của `../graycode-kmap.html` (file HTML tự chứa viết tay).
-Sau mỗi thay đổi lớn, đối chiếu lại từng mục:
+1. `src/pages/ch4.html` — copy khung 4 mục con từ một chương có sẵn.
+2. Thêm 1 dòng `<!--#include src/pages/ch4.html -->` và 1 nút tab trong `index.html`.
+3. `src/content/theory-ch4.md` + `mountTheory('#theory-ch4-body', md)` trong `main.js`.
+4. Logic mới vào `src/logic/`, UI vào `src/ui/`, test vào `tests/`.
 
-**Tab Gray code**
-- [ ] Bảng Gray đổi theo n = 1..5, bit đổi được gạch chân đỏ (hàng đầu so hàng cuối)
-- [ ] Dòng tổng kết ghi đúng số mã và nhắc chu trình Hamilton
-- [ ] "Bước tiếp" chạy đủ reflect → prefix tới n = 5 rồi tự khoá nút
-- [ ] "Về đầu" đưa lại n = 1
-- [ ] Converter đổi được hai chiều, in đủ các bước XOR và giá trị thập phân
-- [ ] Converter báo lỗi khi nhập ký tự khác 0/1 hoặc quá 12 bit
-- [ ] Nút "Sang phần K-map" nhảy tab và cuộn lên đầu
+## Checklist đối chiếu với sách/slide
 
-**Tab K-map**
-- [ ] Đổi n = 2..5 (n = 5 hiện 2 sheet A=0 / A=1)
-- [ ] Click ô K-map và click hàng truth table đều đổi 0 → 1 → X
-- [ ] Ô "Biểu thức" nhận Σm(...), ΠM(...), d(...); spec sai hiện thông báo lỗi
-- [ ] SOP/POS, dòng chi phí (term/literal/số PI) và legend khớp nhau
-- [ ] Hover chip term làm sáng đúng nhóm trên K-map (các nhóm khác mờ đi)
-- [ ] Giải thích từng bước: Next/Back/Bắt đầu lại, K-map vẽ nhóm của bước hiện tại
+**Chương 1 — Hệ đếm & mã nhị phân**
+- [ ] Lý thuyết: đủ 10 mục (§1.1–1.11), bảng và khối code render đúng
+- [ ] Ví dụ: chia lấy dư (Ex 1.1–1.2), nhân lấy phần nguyên (Ex 1.3), gộp nhóm bit (§1.4)
+- [ ] Ví dụ: bảng mã BCD/2421/Excess-3 + đánh dấu mã tự bù, cộng BCD có hiệu chỉnh +6
+- [ ] Ví dụ: parity — lật 1 bit thì phát hiện được, lật 2 bit thì không
+- [ ] Tương tác: đổi cơ số nhiều chiều, complement & trừ bằng complement có kiểm chứng ngược
+- [ ] Tương tác: bảng 3 dạng số có dấu, cộng/trừ 2's complement chỉ rõ tràn số
+- [ ] Luyện tập: sinh + chấm được cả 4 dạng, gợi ý đúng, đếm điểm
 
-**Tab Luyện tập**
-- [ ] "Tạo hàm ngẫu nhiên" sinh đề mới, có/không don't care theo checkbox
-- [ ] Kéo chuột quét được vùng chữ nhật; click từng ô chọn được nhóm wrap-around
-- [ ] Chốt nhóm / Bỏ chọn / Xoá nhóm cuối / Xoá hết nhóm
-- [ ] "Kiểm tra" chấm được: nhóm sai, nhóm chưa lớn nhất, chưa phủ hết ô 1,
-      biểu thức sai, biểu thức sai cú pháp, biểu thức đúng nhưng chưa tối giản
-- [ ] "Xem đáp án" vẽ các nhóm tối ưu và giải thích từng term
+**Chương 2 — Đại số Boolean & cổng logic**
+- [ ] Lý thuyết: đủ 8 mục (§2.1–2.8), có bảng Huntington và bảng định lý
+- [ ] Ví dụ: 5 lời giải Example 2.1 (a–e), mỗi bước được kiểm chứng tự động
+- [ ] Ví dụ: hai cách lấy hàm bù cho cùng kết quả, kèm bảng chân trị F/F′
+- [ ] Tương tác: 8 cổng phản ứng theo (x, y); bảng 16 hàm highlight đúng dòng/cột
+- [ ] Tương tác: bảng NAND/NOR đánh dấu 4/8 dòng lệch ⇒ không kết hợp
+- [ ] Tương tác: SOP → toàn NAND, đếm đúng số cổng mỗi tầng, bảng chân trị khớp
+- [ ] Luyện tập: 3 dạng; câu biểu thức chấm theo bảng chân trị (viết khác vẫn đúng)
 
-**Tab Lý thuyết**
-- [ ] Nội dung `src/content/theory.md` render đủ 6 mục, có bảng và khối code
-- [ ] Nút "Đọc lý thuyết ▶" ở tab Gray code nhảy đúng tab
-- [ ] Hiển thị đúng ở cả light mode và dark mode
+**Chương 3 — Gray code & K-map**
+- [ ] Ví dụ: bảng Gray đổi theo n = 1..5, reflect&prefix, bộ chuyển đổi hai chiều
+- [ ] Tương tác: K-map n = 2..5, click ô/hàng truth table, spec Σm/ΠM/d, giải thích từng bước
+- [ ] Tương tác: hover chip term làm sáng đúng nhóm trên K-map
+- [ ] Luyện tập: kéo chọn vùng, nhóm wrap-around, chấm nhóm và biểu thức, xem đáp án
+- [ ] Lý thuyết: 6 mục render đủ
 
 **Chung**
 - [ ] `npm test` pass
+- [ ] `bash scripts/check_file_sizes.sh .` không báo file nào
 - [ ] `npm run build` chạy được và `dist/index.html` mở trực tiếp bằng `file://`
+- [ ] Hiển thị đúng ở cả light mode và dark mode

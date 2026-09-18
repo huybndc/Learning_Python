@@ -1,5 +1,5 @@
 <!-- ============================ CHƯƠNG 1 ============================ -->
-<section class="page" id="page-ch1" role="tabpanel" aria-labelledby="tab-ch1">
+<section class="page active" id="page-ch1" role="tabpanel" aria-labelledby="tab-ch1">
   <div class="subtabs" role="tablist">
     <button role="tab" id="sub-ch1-theory" aria-selected="true" aria-controls="pane-ch1-theory">Lý thuyết</button>
     <button role="tab" id="sub-ch1-example" aria-selected="false" aria-controls="pane-ch1-example">Ví dụ minh hoạ</button>
@@ -45,6 +45,58 @@
       <p class="small muted" style="margin:0 0 8px">Nhân liên tiếp với cơ số, đọc các <b>phần nguyên từ trên xuống</b>.</p>
       <div class="tblbox"><table class="grid" id="e2-table"></table></div>
       <p class="mono" id="e2-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>§1.7 — Bảng mã thập phân &amp; mã tự bù</h2>
+    <div class="row">
+      <label class="inline">Số thập phân:
+        <input type="text" id="e4-dec" value="185" size="10" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+    <div id="e4-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div id="e4-groups"></div>
+      <p class="small muted" id="e4-note" style="margin:8px 0 0"></p>
+    </div>
+    <div class="tblbox" style="margin-top:10px"><table class="grid" id="e4-table"></table></div>
+  </div>
+
+  <div class="card">
+    <h2>§1.7 — Cộng BCD có hiệu chỉnh +6</h2>
+    <div class="row">
+      <label class="inline">A:
+        <input type="text" id="e5-a" value="184" size="8" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">B:
+        <input type="text" id="e5-b" value="576" size="8" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+    <div id="e5-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="tblbox"><table class="grid" id="e5-table"></table></div>
+      <p class="mono" id="e5-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>§1.9 — Bit parity phát hiện lỗi</h2>
+    <div class="row">
+      <label class="inline">Ký tự ASCII:
+        <input type="text" id="e6-ch" value="A" size="3" maxlength="1" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="seg" id="e6-kind">
+        <button data-k="even" aria-pressed="true">Even parity</button>
+        <button data-k="odd" aria-pressed="false">Odd parity</button>
+      </div>
+    </div>
+    <div id="e6-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="conv-steps" id="e6-steps"></div>
+      <p class="small muted" style="margin:8px 0 4px">Bấm một bit dưới đây để "làm hỏng" nó và xem bên nhận có phát hiện được không:</p>
+      <div class="bitbar" id="e6-bits"></div>
+      <p class="small" id="e6-check" style="margin:8px 0 0"></p>
     </div>
   </div>
 

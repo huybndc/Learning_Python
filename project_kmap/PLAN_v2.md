@@ -71,7 +71,7 @@ Mỗi milestone: code → `npm test` pass → đối chiếu tay → commit → 
 
 ---
 
-### Milestone A — Khung điều hướng 2 cấp (chuẩn bị, không đổi nội dung)
+### Milestone A — [x] Khung điều hướng 2 cấp (chuẩn bị, không đổi nội dung)
 - Viết `chapter-nav.js` thay `tabs.js`: quản lý chương đang mở + sub-tab đang mở.
 - Bọc 4 tab cũ vào "Chương 3", đổi nhãn, giữ nguyên toàn bộ hành vi.
 - `theory.md` → đổi tên `theory-ch3.md`, sửa import trong `theory-page.js`.
@@ -80,7 +80,7 @@ Mỗi milestone: code → `npm test` pass → đối chiếu tay → commit → 
 
 ---
 
-### Milestone B — Ch.1: Lý thuyết + Ví dụ minh hoạ (hệ đếm cơ số)
+### Milestone B — [x] Ch.1: Lý thuyết + Ví dụ minh hoạ (hệ đếm cơ số)
 - `logic/number-systems.js`: chuyển đổi base r ↔ decimal ↔ base r' (nhị/bát/thập lục phân), có/không phần lẻ.
 - `content/theory-ch1.md`: §1.2–1.4 (hệ đếm, cơ số r, bit, chuyển đổi, octal/hex).
 - Ví dụ minh hoạ tái hiện Example 1.1–1.3 (chia lấy dư, nhân lấy phần nguyên) — hiển thị từng bước như bảng trong slide.
@@ -89,7 +89,7 @@ Mỗi milestone: code → `npm test` pass → đối chiếu tay → commit → 
 
 ---
 
-### Milestone C — Ch.2: Lý thuyết + Ví dụ (phần còn thiếu của Boolean Algebra)
+### Milestone C — [x] Ch.2: Lý thuyết + Ví dụ (phần còn thiếu của Boolean Algebra)
 - `content/theory-ch2.md`: bổ sung mục *chưa có* — hàm Boolean qua truth
   table/mạch, rút gọn đại số bằng định lý (Example 2.1), hàm bù qua DeMorgan
   mở rộng & qua dual (Example 2.2–2.3). (Phần Huntington/minterm/maxterm/
@@ -103,7 +103,7 @@ Mỗi milestone: code → `npm test` pass → đối chiếu tay → commit → 
 
 ---
 
-### Milestone D — Ch.1: Tương tác + Luyện tập (complement & số có dấu)
+### Milestone D — [x] Ch.1: Tương tác + Luyện tập (complement & số có dấu)
 - `logic/complements.js` + `logic/signed-binary.js`.
 - Tương tác: nhập số ở 1 cơ số bất kỳ, đổi qua cơ số khác theo từng bước
   (giống bộ converter Gray code hiện có — tái dùng UI pattern `conv-steps`).
@@ -118,7 +118,7 @@ Mỗi milestone: code → `npm test` pass → đối chiếu tay → commit → 
 
 ---
 
-### Milestone E — Ch.2: Tương tác + Luyện tập (16 hàm & 8 cổng logic)
+### Milestone E — [x] Ch.2: Tương tác + Luyện tập (16 hàm & 8 cổng logic)
 - `logic/logic-gates.js`: bảng 16 hàm F0–F15 (2 biến), tự phân loại 3 nhóm
   (constant / unary / binary-operator), liệt kê 8 cổng chuẩn với ký hiệu.
 - Tương tác: chọn 2 giá trị x,y → xem đồng thời kết quả 8 cổng (AND/OR/NAND/
@@ -131,7 +131,7 @@ Mỗi milestone: code → `npm test` pass → đối chiếu tay → commit → 
 
 ---
 
-### Milestone F — Hoàn thiện chéo
+### Milestone F — [x] Hoàn thiện chéo
 - `theory-ch1.md` bổ sung nốt các mục chưa làm ở Milestone B/D (mã BCD +
   cộng BCD có hiệu chỉnh +6, mã 2421/Excess-3/ASCII/parity, thanh ghi, logic
   nhị phân cơ bản — phần này có thể chỉ cần Lý thuyết + 1-2 ví dụ, không cần

@@ -6,6 +6,7 @@ import { setupPracticePage } from './ui/practice-page.js';
 import { mountTheory } from './ui/theory-page.js';
 import { setupCh1ExamplePage } from './ui/ch1-example-page.js';
 import theoryCh1 from './content/theory-ch1.md?raw';
+import { setupCh1CodesPage } from './ui/ch1-codes-page.js';
 import { setupCh1InteractivePage } from './ui/ch1-interactive-page.js';
 import { setupCh1PracticePage } from './ui/ch1-practice-page.js';
 import { setupCh2ExamplePage } from './ui/ch2-example-page.js';
@@ -20,6 +21,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setupKmapPage();
   setupPracticePage();
   setupCh1ExamplePage();
+  setupCh1CodesPage();
   setupCh1InteractivePage();
   setupCh1PracticePage();
   setupCh2ExamplePage();
