@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Linear Algebra</title>
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<div class="wrap">
+<header class="row">
+  <div style="flex:1 1 auto;min-width:0">
+    <h1 data-i18n="app.title">Ôn tập Đại số tuyến tính</h1>
+    <p class="sub" data-i18n="app.sub"></p>
+  </div>
+  <div class="seg" id="lang-switch">
+    <button data-lang="vi" aria-pressed="true">VI</button>
+    <button data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" id="chapter-tabs">
+  <button role="tab" id="tab-ch1" aria-selected="true"  aria-controls="page-ch1" data-i18n="nav.ch1"></button>
+</div>
+
+<!--#include src/pages/ch1.html -->
+
+<footer class="small muted" style="text-align:center;padding:10px 0" data-i18n-html="app.footer"></footer>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
