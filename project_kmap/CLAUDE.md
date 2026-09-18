@@ -13,10 +13,20 @@
 - Comment và chuỗi hiển thị viết bằng tiếng Việt, giữ nguyên văn phong bản gốc.
 - Tên biến công khai của thuật toán (`A/B/C/D/E`, `imp = {v, d}`) giữ nguyên như bản gốc.
 
+## Điều hướng & markup
+Điều hướng 2 cấp: Chương (`#chapter-tabs`) → 4 mục con (`.subtabs`), quản lý ở
+`src/ui/chapter-nav.js`. Nút nhảy chéo khai báo bằng `data-goto="ch3:interactive"`,
+không cần gắn listener riêng.
+
+`index.html` chỉ là shell; markup mỗi chương nằm ở `src/pages/chN.html`, gộp lúc
+build bằng `<!--#include src/pages/chN.html -->` (plugin `vite-plugin-include.js`).
+Thêm chương mới thì thêm 1 file partial + 1 dòng include + 1 nút tab.
+
 ## Tab Lý thuyết
-Nội dung nằm ở `src/content/theory.md`, import bằng `?raw` và render bằng `marked`
-trong `src/ui/theory-page.js`. Thêm/sửa bài học thì sửa file `.md`, không đụng code.
-CSS của trang gom trong khối `#theory-body` ở `src/style.css`.
+Mỗi chương có `src/content/theory-chN.md`, import bằng `?raw` trong `main.js` rồi
+gắn bằng `mountTheory('#theory-chN-body', md)` (`src/ui/theory-page.js`).
+Thêm/sửa bài học thì sửa file `.md`, không đụng code.
+CSS của trang gom trong khối `.theory-body` ở `src/style.css`.
 
 ## Build
 `npm run build` dùng `vite-plugin-singlefile` để gộp thành một file HTML tự chứa,

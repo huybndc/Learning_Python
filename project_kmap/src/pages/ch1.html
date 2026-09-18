@@ -1,0 +1,84 @@
+<!-- ============================ CHƯƠNG 1 ============================ -->
+<section class="page" id="page-ch1" role="tabpanel" aria-labelledby="tab-ch1">
+  <div class="subtabs" role="tablist">
+    <button role="tab" id="sub-ch1-theory" aria-selected="true" aria-controls="pane-ch1-theory">Lý thuyết</button>
+    <button role="tab" id="sub-ch1-example" aria-selected="false" aria-controls="pane-ch1-example">Ví dụ minh hoạ</button>
+    <button role="tab" id="sub-ch1-interactive" aria-selected="false" aria-controls="pane-ch1-interactive">Tương tác</button>
+    <button role="tab" id="sub-ch1-practice" aria-selected="false" aria-controls="pane-ch1-practice">Luyện tập</button>
+  </div>
+
+  <div class="pane active" id="pane-ch1-theory" role="tabpanel" aria-labelledby="sub-ch1-theory">
+  <div class="card theory-body" id="theory-ch1-body"></div>
+  </div>
+
+  <div class="pane" id="pane-ch1-example" role="tabpanel" aria-labelledby="sub-ch1-example">
+  <div class="card">
+    <h2>Ví dụ 1.1–1.2 — Đổi phần nguyên bằng cách chia lấy dư</h2>
+    <div class="row">
+      <label class="inline">Số thập phân:
+        <input type="text" id="e1-int" value="41" size="8" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">Đổi sang cơ số:
+        <select id="e1-base"><option selected>2</option><option>3</option><option>5</option><option>8</option><option>16</option></select>
+      </label>
+    </div>
+    <div id="e1-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <p class="small muted" style="margin:0 0 8px">Chia liên tiếp cho cơ số, đọc các số <b>dư từ dưới lên</b>.</p>
+      <div class="tblbox"><table class="grid" id="e1-table"></table></div>
+      <p class="mono" id="e1-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ví dụ 1.3 — Đổi phần lẻ bằng cách nhân lấy phần nguyên</h2>
+    <div class="row">
+      <label class="inline">Phần lẻ (0 &lt; x &lt; 1):
+        <input type="text" id="e2-frac" value="0.6875" size="10" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">Đổi sang cơ số:
+        <select id="e2-base"><option selected>2</option><option>3</option><option>8</option><option>16</option></select>
+      </label>
+    </div>
+    <div id="e2-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <p class="small muted" style="margin:0 0 8px">Nhân liên tiếp với cơ số, đọc các <b>phần nguyên từ trên xuống</b>.</p>
+      <div class="tblbox"><table class="grid" id="e2-table"></table></div>
+      <p class="mono" id="e2-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>§1.4 — Nhị phân ↔ bát phân / thập lục phân bằng gộp nhóm bit</h2>
+    <div class="row">
+      <label class="inline">Chuỗi nhị phân:
+        <input type="text" id="e3-bin" value="10110001101011.111100000110" size="30" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="seg" id="e3-k">
+        <button data-k="3" aria-pressed="true">Gộp 3 → bát phân</button>
+        <button data-k="4" aria-pressed="false">Gộp 4 → thập lục phân</button>
+      </div>
+    </div>
+    <div id="e3-err" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <p class="small muted" style="margin:0 0 8px">Gộp bit từ <b>dấu chấm ra hai bên</b>; thiếu thì đệm 0 (phần nguyên đệm trái, phần lẻ đệm phải).</p>
+      <div id="e3-groups"></div>
+      <p class="mono" id="e3-out" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch1-interactive" role="tabpanel" aria-labelledby="sub-ch1-interactive">
+  <div class="card">
+    <h2>Tương tác</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+
+  <div class="pane" id="pane-ch1-practice" role="tabpanel" aria-labelledby="sub-ch1-practice">
+  <div class="card">
+    <h2>Luyện tập</h2>
+    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+  </div>
+  </div>
+</section>

@@ -191,6 +191,13 @@ table.grid tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel2) 5
 .chart td.cov{background:color-mix(in srgb,var(--accent) 30%,transparent);font-weight:700}
 .chart td.ess{background:color-mix(in srgb,var(--ok) 30%,transparent)}
 
+/* ===================== Gộp nhóm bit (Ch.1) ===================== */
+.bitgroup{
+  display:inline-flex;flex-direction:column;align-items:center;gap:2px;
+  padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);
+}
+.bitgroup .gdigit{font-weight:700;color:var(--accent);font-size:1.05rem;line-height:1}
+
 /* ===================== Trang Lý thuyết (Markdown) ===================== */
 .theory-body{padding:18px 20px;max-width:760px}
 .theory-body > :first-child{margin-top:0}
