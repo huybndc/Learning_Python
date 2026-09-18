@@ -1,5 +1,47 @@
 # PLAN — project_linalg (Ôn tập Linear Algebra trực quan)
 
+> **Đang ở đâu:** M0, M1, M2, M3 đã xong và đã push
+> (nhánh `claude/new-session-skx1dd`). 252 test pass, `dist/index.html` 210 KB.
+> **Làm tiếp:** Milestone 4 (Ch.4 — Orthogonality).
+
+## Quy tắc làm việc giữa các phiên
+
+- **Mỗi phiên làm tối đa 2 milestone.** Xong 2 milestone thì cập nhật file này,
+  gửi lại `PLAN.md` cho Huy rồi dừng — phiên sau đọc lại file này là tiếp được
+  ngay. Không làm dồn 3–4 milestone một lúc.
+- Trước khi viết code ở phiên mới: đọc `PLAN.md`, `CLAUDE.md`, `README.md`,
+  rồi chạy `npm test` để chắc chắn đang ở trạng thái sạch.
+- Không sang milestone mới khi `npm test` đang fail.
+- Mỗi quyết định kỹ thuật lớn (chọn/không chọn thư viện, đổi cách vẽ) phải ghi
+  lại ngay trong file này, kèm lý do, số đo nếu có, và **điều kiện nào thì nên
+  xem lại quyết định đó**.
+- Milestone nào đổi khác so với kế hoạch ban đầu thì sửa thẳng vào đây, ghi rõ
+  vì sao — đừng để kế hoạch và code nói hai chuyện khác nhau.
+
+## Tình trạng từng milestone
+
+| Milestone | Nội dung | Tình trạng |
+|---|---|---|
+| M0 | Khung sườn + `vector.js`, `matrix.js`, `plane2d.js` | ✅ xong |
+| M1 | Ch.1 — Vector | ✅ xong |
+| M2 | Ch.2 — Giải hệ Ax = b | ✅ xong |
+| M3 | Ch.3 — Không gian vector (3D tự viết) | ✅ xong |
+| M4 | Ch.4 — Orthogonality | ⬜ làm tiếp |
+| M5 | Ch.5 — Determinants | ⬜ |
+| M6 | Ch.6 — Eigenvalues & eigenvectors | ⬜ |
+| M7+ | SVD và ứng dụng | ⬜ chưa lập plan chi tiết |
+
+Những gì đã dựng sẵn và dùng lại được cho các chương sau:
+
+- `logic/`: `vector.js`, `matrix.js`, `num-format.js`, `answer-check.js`,
+  `elimination.js`, `linear-system.js`, `subspace.js`
+- `geometry/`: `plane2d.js` (2D), `space3d.js` + `polygon3d.js` (3D, tự viết)
+- `ui/`: `canvas2d.js`, `canvas3d.js`, `vector-draw.js`, `span-draw.js`,
+  `matrix-view.js`, `drag.js`, `drag3d.js`, `chapter-nav.js`, `theory-page.js`
+- Mẫu lặp lại cho mỗi chương: `pages/chN.html` (4 mục con) + `i18n/{vi,en}/chN.js`
+  + `content/theory-chN.{vi,en}.md` + `logic/chN-quiz.js` + 3–4 file
+  `ui/chN-*-page.js`, và một file test cho mỗi module logic/geometry.
+
 ## Bối cảnh
 
 `project_kmap` (Logic Circuit) đã chạy tốt: Vite + vanilla JS, `logic/` thuần
@@ -84,7 +126,7 @@ project_linalg/
 
 ## Lộ trình theo chương (Strang) — mỗi chương là 1 milestone lớn
 
-### Milestone 0 — Khung sườn dự án (làm trước, không phụ thuộc chương nào)
+### Milestone 0 — Khung sườn dự án — ĐÃ XONG
 - Bootstrap Vite, copy `vite-plugin-include.js`, `check_file_sizes.sh`,
   cấu trúc i18n rỗng, `chapter-nav.js`, `theory-page.js` (tái dùng gần như
   nguyên bản từ project_kmap).
@@ -96,7 +138,7 @@ project_linalg/
 - **Xong khi:** `npm run dev` chạy, có 1 chương rỗng (placeholder) render
   đúng nav 2 cấp, test cho `matrix.js`/`vector.js` pass.
 
-### Milestone 1 — Chương 1: Vectors (Strang Ch.1)
+### Milestone 1 — Chương 1: Vectors (Strang Ch.1) — ĐÃ XONG
 *Nội dung: vector là gì, cộng/trừ, nhân vô hướng, độ dài, tích vô hướng
 (dot product), góc giữa hai vector, tổ hợp tuyến tính, span (trong R²).*
 - Đồ hoạ: **Canvas 2D thuần**.
@@ -110,7 +152,7 @@ project_linalg/
 - **Xong khi:** checklist chương 1 (xem "Checklist đối chiếu" bên dưới) đạt
   đủ, test pass.
 
-### Milestone 2 — Chương 2: Solving Linear Equations / Ax = b (Strang Ch.2)
+### Milestone 2 — Chương 2: Solving Linear Equations / Ax = b (Strang Ch.2) — ĐÃ XONG
 *Nội dung: hệ phương trình tuyến tính, biểu diễn ma trận Ax=b, phép khử Gauss,
 ma trận bậc thang (row echelon), hạng (rank), nghiệm duy nhất/vô số/vô
 nghiệm — đúng phần Huy đang học.*
@@ -166,26 +208,41 @@ cùng lúc (ví dụ trường vector dày đặc ở Ch.6) thì Canvas 2D mới
 đổi renderer chỉ đụng `ui/canvas3d.js`, vì phần toán đã tách sẵn ở
 `geometry/`.
 
-### Milestone 4 — Chương 4: Orthogonality (Strang Ch.4)
+### Milestone 4 — Chương 4: Orthogonality (Strang Ch.4) — LÀM TIẾP Ở ĐÂY
 *Nội dung: trực giao, hình chiếu (projection), least squares, Gram-Schmidt.*
-- Đồ hoạ: tiếp tục Three.js (kế thừa hạ tầng Ch.3).
+- Đồ hoạ: **dùng lại nguyên hạ tầng 3D của Ch.3** (`geometry/space3d.js`,
+  `geometry/polygon3d.js`, `ui/canvas3d.js`, `ui/drag3d.js`). Không phát sinh
+  quyết định kỹ thuật mới.
+- Đã có sẵn dùng lại được: `vector.js` có `projection`, `perpendicular`,
+  `isOrthogonal`; `ui/vector-draw.js` có `drawProjection` (vẽ hình chiếu kèm
+  đường gióng nét đứt và ký hiệu góc vuông) — Ch.1 đã dùng cho dot product 2D.
+- Việc mới cần viết: `logic/orthogonal.js` (Gram-Schmidt từng bước,
+  chiếu lên không gian con nhiều chiều, nghiệm least squares qua AᵀAx̂ = Aᵀb).
 - Tương tác nổi bật: minh hoạ least squares bằng "khoảng cách vuông góc nhỏ
-  nhất" trực quan, Gram-Schmidt từng bước có animation.
+  nhất" trực quan, Gram-Schmidt từng bước có animation (dùng lại kiểu stepper
+  của Ch.2: mỗi bước một công thức + một câu lý do).
 
 ### Milestone 5 — Chương 5: Determinants (Strang Ch.5)
 *Nội dung: định thức, tính chất, công thức cofactor, định thức = thể tích.*
 - Đồ hoạ: quay lại **Canvas 2D thuần** cho định nghĩa "định thức = diện tích
   hình bình hành" (2D dễ hiểu hơn, không cần 3D); nếu minh hoạ thể tích 3D thì
-  tái dùng `space3d.js` đã có sẵn từ Ch.3.
+  tái dùng `space3d.js` đã có sẵn từ Ch.3 (`polygon3d.js` đã có
+  `parallelogram3`).
+- Đã có sẵn: `matrix.js` có `determinant`, `cofactor`, `minorMatrix`;
+  `vector.js` có `cross2` (định thức 2×2) và `cross`.
 - Tương tác: kéo 2 vector, xem diện tích hình bình hành = |det| cập nhật
   realtime.
 
 ### Milestone 6 — Chương 6: Eigenvalues and Eigenvectors (Strang Ch.6)
 *Nội dung: trị riêng, vector riêng, chéo hoá, ứng dụng (Markov, hệ vi phân
 tuyến tính cơ bản).*
-- Đồ hoạ: Three.js — đây là chỗ trực quan hoá "ăn tiền" nhất: cho một phép
-  biến đổi tuyến tính, vẽ trường vector và tô đậm trục bất biến (eigenvector),
-  animate "không gian bị kéo giãn" dọc theo trục đó.
+- Đồ hoạ: mặc định vẫn Canvas 2D tự viết. **Đây là chương duy nhất có thể phải
+  xem lại quyết định không dùng Three.js** — nếu trường vector cần vẽ hàng nghìn
+  mũi tên cùng lúc thì Canvas 2D mới đuối. Cách làm: thử trước bằng lưới thưa
+  (ví dụ 5×5×5 = 125 mũi tên), đo fps thật rồi mới quyết. Nếu phải đổi renderer
+  thì chỉ viết lại `ui/canvas3d.js`, phần toán ở `geometry/` giữ nguyên.
+- Nội dung trực quan: cho một phép biến đổi tuyến tính, vẽ trường vector và tô
+  đậm trục bất biến (eigenvector), animate "không gian bị kéo giãn" dọc trục đó.
 - Tương tác: nhập ma trận 2×2/3×3 tuỳ ý, hệ thống tính eigenvalue/eigenvector
   và animate phép biến đổi tương ứng lên lưới điểm.
 
@@ -197,16 +254,23 @@ tuyến tính cơ bản).*
 ## Checklist đối chiếu (mẫu, mở rộng dần theo README project_kmap)
 
 **Chương 1 — Vectors**
-- [ ] Lý thuyết: định nghĩa vector, các phép toán, dot product, góc, span
-- [ ] Ví dụ: cộng vector bằng hình bình hành có animate
-- [ ] Tương tác: kéo mũi tên vector, toạ độ/độ dài/góc cập nhật realtime
-- [ ] Luyện tập: sinh + chấm 4 dạng bài, chấm theo giá trị số có sai số
+- [x] Lý thuyết: định nghĩa vector, các phép toán, dot product, góc, span
+- [x] Ví dụ: cộng vector bằng hình bình hành có animate
+- [x] Tương tác: kéo mũi tên vector, toạ độ/độ dài/góc cập nhật realtime
+- [x] Luyện tập: sinh + chấm 4 dạng bài, chấm theo giá trị số có sai số
 
 **Chương 2 — Solving Ax = b**
-- [ ] Lý thuyết: biểu diễn ma trận, Gauss elimination, rank, phân loại nghiệm
-- [ ] Ví dụ: elimination từng bước, mỗi bước 1 dòng row-op + 1 câu lý do
-- [ ] Tương tác: tự chọn row operation, hệ thống kiểm tra
-- [ ] Luyện tập: sinh hệ 2×2/3×3, chấm nghiệm và phân loại đúng
+- [x] Lý thuyết: biểu diễn ma trận, Gauss elimination, rank, phân loại nghiệm
+- [x] Ví dụ: elimination từng bước, mỗi bước 1 dòng row-op + 1 câu lý do
+- [x] Tương tác: tự chọn row operation, hệ thống kiểm tra
+- [x] Luyện tập: sinh hệ 2×2/3×3, chấm nghiệm và phân loại đúng
+
+**Chương 3 — Vector Spaces**
+- [x] Lý thuyết: không gian con, C(A), N(A), độc lập, cơ sở, số chiều, định lý hạng
+- [x] Ví dụ: span lớn dần, có bước thêm vector phụ thuộc mà span không đổi
+- [x] Ví dụ: C(A) và N(A) của cùng một ma trận vẽ chung một hình 3D
+- [x] Tương tác: kéo vector trong R³, xoay camera, kiểm tra b có trong span
+- [x] Luyện tập: sinh + chấm 4 dạng, ba dạng chọn đáp án
 
 **Chung (mọi chương)**
 - [ ] `npm test` pass
@@ -216,11 +280,13 @@ tuyến tính cơ bản).*
 - [ ] VI/EN đổi hết chuỗi, không sót
 - [ ] Lựa chọn ngôn ngữ nhớ sau khi tải lại
 
-## Việc cần làm ngay (theo đúng tiến độ hiện tại của Huy)
+## Việc cần làm ở phiên sau
 
-Huy đang ở Ch.2 (giải hệ phương trình vector) → thực hiện theo thứ tự:
-1. Milestone 0 (khung sườn + `matrix.js`/`vector.js`/`plane2d.js`)
-2. Milestone 1 (Ch.1 — vì Ch.2 cần khái niệm vector/dot product làm nền)
-3. Milestone 2 (Ch.2 — đúng chương đang học)
-4. Milestone 3 (Ch.3 — không gian vector), kèm quyết định 3D đã ghi ở trên.
-5. Dừng lại xin ý kiến trước khi sang Milestone 4 (Orthogonality).
+1. Đọc `PLAN.md` (file này), `CLAUDE.md`, `README.md`; chạy `npm test` trong
+   `project_linalg/` để chắc chắn 252 test vẫn pass.
+2. **Milestone 4 — Ch.4 Orthogonality.**
+3. **Milestone 5 — Ch.5 Determinants** (nếu còn sức trong cùng phiên).
+4. Hết 2 milestone thì cập nhật file này, gửi lại `PLAN.md` cho Huy rồi dừng.
+
+Chưa có câu hỏi nào đang chờ Huy quyết. Quyết định 3D đã chốt (xem Milestone 3),
+chỉ xem lại nếu Ch.6 cần vẽ trường vector quá dày.

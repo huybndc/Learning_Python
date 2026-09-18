@@ -16,6 +16,9 @@ có thêm tầng `src/geometry/`.
   - `src/ui/` — đọc/ghi DOM và canvas, ráp `logic/` với `geometry/`.
 - `logic/` và `geometry/` không bao giờ import từ `ui/` (`tests/i18n.test.js` canh).
 - Không sang milestone mới khi `npm test` đang fail.
+- **Mỗi phiên làm tối đa 2 milestone**, xong thì cập nhật `PLAN.md` và gửi lại
+  file đó cho Huy rồi dừng. Trạng thái hiện tại và việc làm tiếp luôn nằm ở đầu
+  `PLAN.md`.
 
 ## Quy ước
 - Test ở `tests/<tên-module>.test.js`, một file test cho một file logic/geometry.
