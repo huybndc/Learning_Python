@@ -9,6 +9,8 @@ import theoryCh1 from './content/theory-ch1.md?raw';
 import { setupCh1InteractivePage } from './ui/ch1-interactive-page.js';
 import { setupCh1PracticePage } from './ui/ch1-practice-page.js';
 import { setupCh2ExamplePage } from './ui/ch2-example-page.js';
+import { setupCh2InteractivePage } from './ui/ch2-interactive-page.js';
+import { setupCh2PracticePage } from './ui/ch2-practice-page.js';
 import theoryCh2 from './content/theory-ch2.md?raw';
 import theoryCh3 from './content/theory-ch3.md?raw';
 
@@ -21,6 +23,8 @@ window.addEventListener('DOMContentLoaded', () => {
   setupCh1InteractivePage();
   setupCh1PracticePage();
   setupCh2ExamplePage();
+  setupCh2InteractivePage();
+  setupCh2PracticePage();
   mountTheory('#theory-ch1-body', theoryCh1);
   mountTheory('#theory-ch2-body', theoryCh2);
   mountTheory('#theory-ch3-body', theoryCh3);

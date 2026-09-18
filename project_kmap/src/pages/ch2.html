@@ -60,15 +60,84 @@
 
   <div class="pane" id="pane-ch2-interactive" role="tabpanel" aria-labelledby="sub-ch2-interactive">
   <div class="card">
-    <h2>Tương tác</h2>
-    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+    <h2>8 cổng logic chuẩn</h2>
+    <p class="small muted" style="margin-top:0">Bấm để đổi giá trị hai ngõ vào, xem cả 8 cổng phản ứng cùng lúc.</p>
+    <div class="row">
+      <div class="seg" id="g-x">
+        <button data-v="0" aria-pressed="true">x = 0</button>
+        <button data-v="1" aria-pressed="false">x = 1</button>
+      </div>
+      <div class="seg" id="g-y">
+        <button data-v="0" aria-pressed="true">y = 0</button>
+        <button data-v="1" aria-pressed="false">y = 1</button>
+      </div>
+    </div>
+    <div class="gategrid" id="g-gates" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Bảng 16 hàm hai biến F0–F15</h2>
+    <p class="small muted" style="margin-top:0">Dòng đang sáng là hàm khớp với (x, y) hiện tại. Số hiệu Fᵢ chính là cột kết quả đọc thành nhị phân.</p>
+    <div class="tblbox" style="max-height:430px;overflow-y:auto"><table class="grid" id="g-table"></table></div>
+  </div>
+
+  <div class="card">
+    <h2>Mở rộng nhiều ngõ vào: NAND/NOR không kết hợp</h2>
+    <div class="row">
+      <div class="seg" id="g-assoc">
+        <button data-g="nand" aria-pressed="true">NAND</button>
+        <button data-g="nor" aria-pressed="false">NOR</button>
+      </div>
+    </div>
+    <div class="tblbox" style="margin-top:10px"><table class="grid" id="g-assoc-table"></table></div>
+    <p class="small" id="g-assoc-note" style="margin:8px 0 0"></p>
+  </div>
+
+  <div class="card">
+    <h2>Chuyển mạch AND-OR thành toàn NAND (Fig 2.7c)</h2>
+    <div class="row">
+      <label class="inline" style="flex:1 1 260px">F =
+        <input type="text" id="g-sop" value="AB + CD" style="flex:1 1 auto;min-width:150px"
+               autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">Số biến:
+        <select id="g-sopn"><option>2</option><option>3</option><option selected>4</option></select>
+      </label>
+    </div>
+    <div id="g-soperr" class="small bad"></div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="conv-steps" id="g-sopsteps"></div>
+      <p class="small" id="g-sopcheck" style="margin:8px 0 0"></p>
+    </div>
   </div>
   </div>
 
   <div class="pane" id="pane-ch2-practice" role="tabpanel" aria-labelledby="sub-ch2-practice">
   <div class="card">
     <h2>Luyện tập</h2>
-    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+    <div class="row">
+      <label class="inline">Dạng bài:
+        <select id="q2-kind">
+          <option value="identify">Nhận diện cổng từ bảng chân trị</option>
+          <option value="nand">Chuyển sang toàn NAND</option>
+          <option value="complement">Tìm hàm bù</option>
+          <option value="mix">Trộn cả ba dạng</option>
+        </select>
+      </label>
+      <button class="btn primary" id="q2-new">Câu mới</button>
+      <span class="small muted" id="q2-score"></span>
+    </div>
+    <p id="q2-text" class="mono" style="margin:.8em 0 .4em"></p>
+    <div class="row">
+      <input type="text" id="q2-ans" style="flex:1 1 200px" autocomplete="off" spellcheck="false" placeholder="Nhập đáp án">
+      <button class="btn primary" id="q2-check">Kiểm tra</button>
+      <button class="btn" id="q2-show">Xem đáp án</button>
+    </div>
+    <p class="small muted" style="margin:.3em 0 0">
+      Câu biểu thức được chấm theo <b>bảng chân trị</b>, nên viết cách khác mà vẫn
+      tương đương thì vẫn tính đúng.
+    </p>
+    <div id="q2-result"></div>
   </div>
   </div>
 </section>
