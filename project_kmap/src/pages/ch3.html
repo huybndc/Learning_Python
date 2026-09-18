@@ -68,7 +68,7 @@
     <div class="note">
       <p style="margin:.2em 0">
         Vì hai ô <b>kề nhau</b> trên K-map phải khác nhau đúng <b>1 biến</b> thì mới ghép lại được:
-        <span class="mono">A′BC + ABC = BC(A′+A) = BC</span>. Thứ tự Gray đảm bảo điều đó ở mọi
+        <span class="mono">x′yz + xyz = yz(x′+x) = yz</span>. Thứ tự Gray đảm bảo điều đó ở mọi
         bước, kể cả khi <b>quấn biên</b> (nhóm wrap-around như 4 góc của K-map 4 biến).
       </p>
       <p style="margin:.2em 0">Giải thích đầy đủ nằm ở tab <b>Lý thuyết</b>.</p>
@@ -170,11 +170,11 @@
   <div class="card">
     <h2>Biểu thức của bạn</h2>
     <div class="row">
-      <input type="text" id="p-expr" style="flex:1 1 260px" autocomplete="off" spellcheck="false" placeholder="ví dụ: A'B + BD' + C">
+      <input type="text" id="p-expr" style="flex:1 1 260px" autocomplete="off" spellcheck="false" placeholder="ví dụ: w'x + xz' + y">
       <button class="btn primary" id="p-check">Kiểm tra</button>
       <button class="btn" id="p-show">Xem đáp án</button>
     </div>
-    <p class="small muted" style="margin:.3em 0 0">Cú pháp: <span class="mono">A'</span> hoặc <span class="mono">!A</span> là NOT · viết liền là AND · <span class="mono">+</span> là OR · dùng được ngoặc.</p>
+    <p class="small muted" style="margin:.3em 0 0">Cú pháp: <span class="mono">x'</span> hoặc <span class="mono">!x</span> là NOT · viết liền là AND · <span class="mono">+</span> là OR · dùng được ngoặc.</p>
     <div id="p-result"></div>
   </div>
   </div>

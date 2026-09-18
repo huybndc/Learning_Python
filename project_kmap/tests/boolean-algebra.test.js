@@ -22,28 +22,28 @@ describe('bảng định lý', () => {
 
 describe('equivalent / dual / normalize', () => {
   it('nhận ra hai biểu thức tương đương', () => {
-    expect(equivalent("A + A'B", 'A + B', 3)).toBe(true);
-    expect(equivalent("A(A' + B)", 'AB', 3)).toBe(true);
-    expect(equivalent('A + B', 'AB', 2)).toBe(false);
+    expect(equivalent("x + x'y", 'x + y', 3)).toBe(true);
+    expect(equivalent("x(x' + y)", 'xy', 3)).toBe(true);
+    expect(equivalent('x + y', 'xy', 2)).toBe(false);
   });
 
   it('dual xử lý đúng AND viết liền', () => {
-    expect(dual("A + B'C", 3)).toBe("A(B' + C)");
-    expect(dual('A(B + C)', 3)).toBe('A + BC');
+    expect(dual("x + y'z", 3)).toBe("x(y' + z)");
+    expect(dual('x(y + z)', 3)).toBe('x + yz');
   });
 
   it('normalize chuẩn hoá khoảng trắng và dấu nhân', () => {
-    expect(normalize("A·B  +  C", 3)).toBe('AB + C');
+    expect(normalize("x·y  +  z", 3)).toBe('xy + z');
   });
 
   it('usedVars liệt kê biến thực sự xuất hiện', () => {
-    expect(usedVars("A + B'C", 4)).toEqual(['A', 'B', 'C']);
-    expect(usedVars('D', 4)).toEqual(['D']);
+    expect(usedVars("w + x'y", 4)).toEqual(['w', 'x', 'y']);
+    expect(usedVars('z', 4)).toEqual(['z']);
   });
 
   it('cost đếm term/literal, trả null khi có ngoặc', () => {
-    expect(cost("A'B + BD' + C", 4)).toEqual({ terms: 3, literals: 5 });
-    expect(cost('(A + B)C', 4)).toBeNull();
+    expect(cost("w'x + xz' + y", 4)).toEqual({ terms: 3, literals: 5 });
+    expect(cost('(w + x)y', 4)).toBeNull();
   });
 });
 
@@ -61,32 +61,32 @@ describe('checkDerivation (Example 2.1)', () => {
   }
 
   it('kết quả cuối khớp với phát biểu của định lý', () => {
-    expect(checkDerivation("A(A' + B)", derivation('2.1a').steps, 3).to).toBe('AB');
-    expect(checkDerivation("A + A'B", derivation('2.1b').steps, 3).to).toBe('A + B');
-    expect(checkDerivation("(A + B)(A + B')", derivation('2.1c').steps, 3).to).toBe('A');
-    expect(checkDerivation("AB + A'C + BC", derivation('2.1d').steps, 3).to).toBe("AB + A'C");
+    expect(checkDerivation("x(x' + y)", derivation('2.1a').steps, 3).to).toBe('xy');
+    expect(checkDerivation("x + x'y", derivation('2.1b').steps, 3).to).toBe('x + y');
+    expect(checkDerivation("(x + y)(x + y')", derivation('2.1c').steps, 3).to).toBe('x');
+    expect(checkDerivation("xy + x'z + yz", derivation('2.1d').steps, 3).to).toBe("xy + x'z");
   });
 
   it('rút gọn xong thì số literal giảm', () => {
-    const r = checkDerivation("AB + A'C + BC", derivation('2.1d').steps, 3);
+    const r = checkDerivation("xy + x'z + yz", derivation('2.1d').steps, 3);
     expect(r.statsFrom.literals).toBe(6);
     expect(r.statsTo.literals).toBe(4);
     expect(r.statsTo.terms).toBeLessThan(r.statsFrom.terms);
   });
 
   it('bắt được một bước sai (không tương đương)', () => {
-    const r = checkDerivation("A + A'B", [{ expr: 'AB', by: 'P4b' }], 3);
+    const r = checkDerivation("x + x'y", [{ expr: 'xy', by: 'P4b' }], 3);
     expect(r.ok).toBe(false);
     expect(r.errors[0]).toContain('không tương đương');
   });
 
   it('bắt được một bước sai cú pháp', () => {
-    const r = checkDerivation('A + B', [{ expr: 'A +', by: 'P2a' }], 2);
+    const r = checkDerivation('x + y', [{ expr: 'x +', by: 'P2a' }], 2);
     expect(r.ok).toBe(false);
     expect(r.errors[0]).toContain('không đọc được');
   });
 
   it('định lý lạ thì throw', () => {
-    expect(() => checkDerivation('A', [{ expr: 'A', by: 'ZZ' }], 2)).toThrow();
+    expect(() => checkDerivation('x', [{ expr: 'x', by: 'ZZ' }], 2)).toThrow();
   });
 });

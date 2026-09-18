@@ -27,7 +27,7 @@ export function parseAst(text, n) {
     const c = peek();
     if (c === null) return false;
     return c === '(' || c === '!' || c === '~' || c === '0' || c === '1' ||
-      (names.includes(c.toUpperCase()) && /[a-z]/i.test(c));
+      (names.includes(c.toLowerCase()) && /[a-z]/i.test(c));
   }
   function parseAnd() {
     const parts = [];
@@ -55,7 +55,7 @@ export function parseAst(text, n) {
     }
     if (c === '0') { i++; return { t: 'const', v: 0 }; }
     if (c === '1') { i++; return { t: 'const', v: 1 }; }
-    const k = names.indexOf(c.toUpperCase());
+    const k = names.indexOf(c.toLowerCase());
     if (k < 0) fail('ký tự không hợp lệ "' + c + '" — chỉ dùng ' + names.join(', '));
     i++;
     return { t: 'var', k };

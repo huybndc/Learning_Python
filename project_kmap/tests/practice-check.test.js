@@ -9,7 +9,7 @@ describe('cellsToImplicant', () => {
     expect(cellsToImplicant([5], 4)).toEqual({ v: 5, d: 0 });
   });
 
-  it('4 góc K-map 4 biến → B\'D\' ({v:0, d:0b1010})', () => {
+  it('4 góc K-map 4 biến → x\'z\' ({v:0, d:0b1010})', () => {
     expect(cellsToImplicant([0, 2, 8, 10], 4)).toEqual({ v: 0, d: 0b1010 });
   });
 

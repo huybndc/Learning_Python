@@ -31,7 +31,7 @@ export function sopTerms(expr, n) {
  */
 export function sopToNand(expr, n) {
   const terms = sopTerms(expr, n);
-  const inverted = terms.map(t => (t.length === 1 || /^[A-E]'$/.test(t) ? t + "'" : '(' + t + ")'"));
+  const inverted = terms.map(t => (t.length === 1 || /^[a-z]'$/i.test(t) ? t + "'" : '(' + t + ")'"));
   const result = '(' + inverted.join('') + ")'";
 
   return {

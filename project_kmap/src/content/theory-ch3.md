@@ -44,7 +44,7 @@ Trong K-map, hai ô **kề nhau** phải khác nhau đúng **1 biến** — khi 
 chúng lại thì biến đó bị triệt tiêu:
 
 ```
-A'BC + ABC = BC(A' + A) = BC
+x'yz + xyz = yz(x' + x) = yz
 ```
 
 Nếu dán nhãn theo thứ tự nhị phân thường (00, 01, **10**, 11) thì bước 01 → 10
@@ -52,7 +52,7 @@ Nếu dán nhãn theo thứ tự nhị phân thường (00, 01, **10**, 11) thì
 
 Thứ tự Gray (00, 01, **11**, 10) đảm bảo mọi bước chỉ đổi 1 bit, và vì Gray là
 chu trình khép kín nên **cột cuối cũng kề cột đầu** ⇒ sinh ra các nhóm
-**wrap-around** (ví dụ 4 góc của K-map 4 biến gộp được thành `B'D'`).
+**wrap-around** (ví dụ 4 góc của K-map 4 biến gộp được thành `x'z'`).
 
 Nói cách khác: K-map chính là hình vẽ của **siêu khối n chiều** trải phẳng, và
 Gray code là cách trải giữ nguyên quan hệ kề.
@@ -92,7 +92,7 @@ Quy trình rút gọn (Quine–McCluskey, cũng chính là thuật toán tab K-m
 - **POS** (Product of Sums, ΠM): phủ các ô **0** để rút gọn `F'`, rồi lấy bù
   bằng **De Morgan** ⇒ mỗi term tích thành một tổng, mỗi literal bị đảo dấu.
 
-Ví dụ: nếu `F' = B'D'` thì `F = (B + D)`.
+Ví dụ: nếu `F' = x'z'` thì `F = (x + z)`.
 
 Hai dạng luôn tương đương về mặt hàm, nhưng số term/literal có thể khác nhau —
 chọn dạng nào rẻ hơn tuỳ bài toán.

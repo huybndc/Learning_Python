@@ -23,7 +23,7 @@ export function parseBoolExpr(text, n) {
     const c = peek();
     if (c === null) return false;
     return c === '(' || c === '!' || c === '~' || c === '0' || c === '1' ||
-      names.includes(c.toUpperCase()) && /[a-z]/i.test(c);
+      names.includes(c.toLowerCase()) && /[a-z]/i.test(c);
   }
   function parseAnd() {
     const parts = [];
@@ -52,8 +52,7 @@ export function parseBoolExpr(text, n) {
     }
     if (c === '0') { i++; return () => 0; }
     if (c === '1') { i++; return () => 1; }
-    const up = c.toUpperCase();
-    const k = names.indexOf(up);
+    const k = names.indexOf(c.toLowerCase());
     if (k < 0) fail('ký tự không hợp lệ "' + c + '" — chỉ dùng ' + names.join(', '));
     i++;
     const bit = n - 1 - k;
@@ -81,9 +80,9 @@ export function sopStats(text, n) {
   if (text.includes('(')) return null;               // có ngoặc ⇒ không phải SOP phẳng
   let literals = 0;
   for (const p of parts) {
-    const toks = p.match(/[A-Ea-e]\s*['’`]?|[!~]\s*[A-Ea-e]|[01]/g) || [];
+    const toks = p.match(/[A-Za-z]\s*['’`]?|[!~]\s*[A-Za-z]|[01]/g) || [];
     for (const t of toks) {
-      const v = t.replace(/[^A-Ea-e]/g, '').toUpperCase();
+      const v = t.replace(/[^A-Za-z]/g, '').toLowerCase();
       if (v && !names.includes(v)) return null;
       if (v) literals++;
     }

@@ -1,62 +1,62 @@
 /* ---------------------------------------------------------------
    LỜI GIẢI MẪU RÚT GỌN BẰNG ĐỊNH LÝ — Example 2.1 (§2.4)
-   Mỗi lời giải là một chuỗi bước, có định lý biện minh cho từng bước.
-   checkDerivation() kiểm chứng mọi bước cùng bảng chân trị với hàm gốc.
+   Biến đặt đúng như sách: x, y, z. Mỗi bước có định lý biện minh;
+   checkDerivation() kiểm chứng mọi bước giữ nguyên bảng chân trị.
    --------------------------------------------------------------- */
 
 export const DERIVATIONS = [
   {
     id: '2.1a',
     title: "x(x' + y) = xy",
-    n: 3, vars: 'x → A, y → B',
-    from: "A(A' + B)",
+    n: 3,
+    from: "x(x' + y)",
     steps: [
-      { expr: "AA' + AB", by: 'P4a', note: 'Phân phối A vào trong ngoặc.' },
-      { expr: '0 + AB', by: 'P5b', note: "AA' = 0 (phần tử bù)." },
-      { expr: 'AB', by: 'P2a', note: '0 + AB = AB (phần tử trung hoà).' },
+      { expr: "xx' + xy", by: 'P4a', noteKey: 'deriv.distributeIn' },
+      { expr: '0 + xy', by: 'P5b', noteKey: 'deriv.complZero' },
+      { expr: 'xy', by: 'P2a', noteKey: 'deriv.identitySum' },
     ],
   },
   {
     id: '2.1b',
     title: "x + x'y = x + y",
-    n: 3, vars: 'x → A, y → B',
-    from: "A + A'B",
+    n: 3,
+    from: "x + x'y",
     steps: [
-      { expr: "(A + A')(A + B)", by: 'P4b', note: 'Phân phối dạng tổng.' },
-      { expr: '1(A + B)', by: 'P5a', note: "A + A' = 1 (phần tử bù)." },
-      { expr: 'A + B', by: 'P2b', note: '1 · (A + B) = A + B.' },
+      { expr: "(x + x')(x + y)", by: 'P4b', noteKey: 'deriv.distributeSum' },
+      { expr: '1(x + y)', by: 'P5a', noteKey: 'deriv.complOne' },
+      { expr: 'x + y', by: 'P2b', noteKey: 'deriv.identityProd' },
     ],
   },
   {
     id: '2.1c',
     title: "(x + y)(x + y') = x",
-    n: 3, vars: 'x → A, y → B',
-    from: "(A + B)(A + B')",
+    n: 3,
+    from: "(x + y)(x + y')",
     steps: [
-      { expr: "A + BB'", by: 'P4b', note: 'Phân phối ngược (gộp A ra ngoài).' },
-      { expr: 'A + 0', by: 'P5b', note: "BB' = 0." },
-      { expr: 'A', by: 'P2a', note: 'A + 0 = A.' },
+      { expr: "x + yy'", by: 'P4b', noteKey: 'deriv.factorOut' },
+      { expr: 'x + 0', by: 'P5b', noteKey: 'deriv.complZero' },
+      { expr: 'x', by: 'P2a', noteKey: 'deriv.identitySum' },
     ],
   },
   {
     id: '2.1d',
-    title: "xy + x'z + yz = xy + x'z  (định lý consensus)",
-    n: 3, vars: 'x → A, y → B, z → C',
-    from: "AB + A'C + BC",
+    title: "xy + x'z + yz = xy + x'z",
+    n: 3,
+    from: "xy + x'z + yz",
     steps: [
-      { expr: "AB + A'C + BC(A + A')", by: 'P5a', note: "Nhân thêm 1 = A + A' vào term BC." },
-      { expr: "AB + A'C + ABC + A'BC", by: 'P4a', note: 'Khai triển.' },
-      { expr: "AB(1 + C) + A'C(1 + B)", by: 'P4a', note: 'Gộp nhân tử chung.' },
-      { expr: "AB + A'C", by: 'T2a', note: '1 + C = 1 và 1 + B = 1 (phần tử nuốt).' },
+      { expr: "xy + x'z + yz(x + x')", by: 'P5a', noteKey: 'deriv.multiplyOne' },
+      { expr: "xy + x'z + xyz + x'yz", by: 'P4a', noteKey: 'deriv.expand' },
+      { expr: "xy(1 + z) + x'z(1 + y)", by: 'P4a', noteKey: 'deriv.groupCommon' },
+      { expr: "xy + x'z", by: 'T2a', noteKey: 'deriv.absorbOne' },
     ],
   },
   {
     id: '2.1e',
-    title: "(x + y)(x' + z)(y + z) = (x + y)(x' + z)  (dual của consensus)",
-    n: 3, vars: 'x → A, y → B, z → C',
-    from: "(A + B)(A' + C)(B + C)",
+    title: "(x + y)(x' + z)(y + z) = (x + y)(x' + z)",
+    n: 3,
+    from: "(x + y)(x' + z)(y + z)",
     steps: [
-      { expr: "(A + B)(A' + C)", by: 'C1', note: 'Dual của định lý consensus: bỏ được term (B + C).' },
+      { expr: "(x + y)(x' + z)", by: 'C1', noteKey: 'deriv.consensusDual' },
     ],
   },
 ];

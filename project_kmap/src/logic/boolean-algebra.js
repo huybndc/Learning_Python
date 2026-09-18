@@ -60,7 +60,7 @@ export function checkDerivation(from, stepList, n) {
     if (tt && !tt.every((v, m) => v === base[m])) {
       errors.push('bước ' + (i + 1) + ': "' + st.expr + '" không tương đương với biểu thức ban đầu');
     }
-    steps.push({ expr: st.expr, by: st.by, law: t.law, name: t.name, note: st.note || '' });
+    steps.push({ expr: st.expr, by: st.by, law: t.law, name: t.name, noteKey: st.noteKey || '' });
   });
 
   const to = stepList.length ? stepList[stepList.length - 1].expr : from;
@@ -96,6 +96,6 @@ export function cost(expr, n) {
 /** Danh sách biến thực sự xuất hiện trong biểu thức, theo thứ tự A, B, C… */
 export function usedVars(expr, n) {
   const names = varNames(n);
-  const up = expr.toUpperCase();
-  return names.filter(v => up.includes(v));
+  const low = expr.toLowerCase();
+  return names.filter(v => low.includes(v));
 }

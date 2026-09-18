@@ -30,8 +30,8 @@ function makeIdentify(rnd) {
 /** Cho biểu thức SOP → yêu cầu chuyển thành toàn NAND. */
 function makeNand(rnd) {
   const exprs = [
-    ['AB + CD', 4], ["A'B + AB'", 2], ['AB + C', 3],
-    ["A'B'C + ABC", 3], ['AB + BC + CA', 3], ["A + B'C", 3],
+    ['wx + yz', 4], ["x'y + xy'", 2], ['xy + z', 3],
+    ["x'y'z + xyz", 3], ['xy + yz + zx', 3], ["x + y'z", 3],
   ];
   const [expr, n] = pick(exprs, rnd);
   const r = sopToNand(expr, n);
@@ -47,7 +47,7 @@ function makeNand(rnd) {
 
 /** Cho biểu thức → yêu cầu lấy hàm bù. */
 function makeComplement(rnd) {
-  const exprs = [["A + B'C", 3], ['AB + CD', 4], ["A'B + AB'", 2], ['A(B + C)', 3], ["A'BC", 3]];
+  const exprs = [["x + y'z", 3], ['wx + yz', 4], ["x'y + xy'", 2], ['x(y + z)', 3], ["x'yz", 3]];
   const [expr, n] = pick(exprs, rnd);
   const r = complementByDeMorgan(expr, n);
   return {

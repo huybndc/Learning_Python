@@ -12,8 +12,8 @@ import { evalSOP, evalPOS, randomFunction, mulberry32 } from './helpers/eval-cov
 
 describe('tiện ích implicant', () => {
   it('varNames lấy đúng n biến đầu, A là MSB', () => {
-    expect(varNames(3)).toEqual(['A', 'B', 'C']);
-    expect(varNames(5)).toEqual(['A', 'B', 'C', 'D', 'E']);
+    expect(varNames(3)).toEqual(['x', 'y', 'z']);
+    expect(varNames(5)).toEqual(['v', 'w', 'x', 'y', 'z']);
   });
 
   it('popcount đếm đúng số bit 1', () => {
@@ -28,7 +28,7 @@ describe('tiện ích implicant', () => {
   });
 
   it('implicantMinterms liệt kê đủ và đã sắp xếp', () => {
-    // B'D' trên 4 biến: B = bit2, D = bit0 -> d = bit3|bit1 = 0b1010
+    // x'z' trên 4 biến: x = bit2, z = bit0 -> d = bit3|bit1 = 0b1010
     const imp = { v: 0, d: 0b1010 };
     expect(implicantMinterms(imp, 4)).toEqual([0, 2, 8, 10]);
     expect(implicantMinterms({ v: 5, d: 0 }, 4)).toEqual([5]);
@@ -54,9 +54,9 @@ describe('tiện ích implicant', () => {
   });
 
   it('implicantToSOP / implicantToPOS sinh đúng literal', () => {
-    expect(implicantToSOP({ v: 0, d: 0b1010 }, 4)).toBe("B'D'");
+    expect(implicantToSOP({ v: 0, d: 0b1010 }, 4)).toBe("x'z'");
     expect(implicantToSOP({ v: 0, d: 0b1111 }, 4)).toBe('1');
-    expect(implicantToPOS({ v: 0, d: 0b1010 }, 4)).toBe('(B + D)');
+    expect(implicantToPOS({ v: 0, d: 0b1010 }, 4)).toBe('(x + z)');
     expect(implicantToPOS({ v: 0, d: 0b1111 }, 4)).toBe('0');
   });
 });
@@ -106,10 +106,10 @@ describe('T3 — 120 hàm ngẫu nhiên mỗi n (n = 2..4)', () => {
 
 /* --- T4: các case kinh điển --- */
 describe('T4 — case kinh điển', () => {
-  it("4 góc K-map 4 biến → B'D'", () => {
+  it("4 góc K-map 4 biến → x'z'", () => {
     const v = new Array(16).fill(0);
     [0, 2, 8, 10].forEach(m => { v[m] = 1; });
-    expect(minimizeSOP(v, 4).expr).toBe("B'D'");
+    expect(minimizeSOP(v, 4).expr).toBe("x'z'");
   });
 
   for (let n = 2; n <= 4; n++) {
@@ -133,11 +133,11 @@ describe('T4 — case kinh điển', () => {
     });
   }
 
-  it("don't care giúp rút gọn: Σm(1,3,5,7,9) + d(11,13,15) → D", () => {
+  it("don't care giúp rút gọn: Σm(1,3,5,7,9) + d(11,13,15) → z", () => {
     const v = new Array(16).fill(0);
     [1, 3, 5, 7, 9].forEach(m => { v[m] = 1; });
     [11, 13, 15].forEach(m => { v[m] = 2; });
-    expect(minimizeSOP(v, 4).expr).toBe('D');
+    expect(minimizeSOP(v, 4).expr).toBe('z');
   });
 
   it('ca essential kinh điển Σm(0,1,2,5,6,7,8,9,10,14) → 3 term / 7 literal', () => {

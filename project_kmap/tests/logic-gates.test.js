@@ -47,10 +47,9 @@ describe('đánh số 16 hàm', () => {
 
 /* Biểu thức đại số ghi trong bảng phải khớp với bảng chân trị sinh ra. */
 describe('biểu thức đại số khớp bảng chân trị', () => {
-  it('mọi Fᵢ: expr (đổi x→A, y→B) cho đúng bits', () => {
+  it('mọi Fᵢ: biểu thức trong bảng cho đúng bits (biến x, y trùng varNames(2))', () => {
     for (const f of allFunctions()) {
-      const expr = f.expr.replace(/x/g, 'A').replace(/y/g, 'B');
-      const tt = exprTruthTable(expr, 2);          // m = 0..3 tương ứng AB = 00..11
+      const tt = exprTruthTable(f.expr, 2);        // m = 0..3 tương ứng xy = 00..11
       expect(tt.join(''), 'F' + f.i + ' = ' + f.expr).toBe(f.bits);
     }
   });
