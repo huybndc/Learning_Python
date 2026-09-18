@@ -38,7 +38,7 @@ describe('theory-ch3.md', () => {
     expect(html).toContain('wrap-around');
     expect(html).toContain('siêu khối');
     // marked escape dấu nháy đơn thành &#39; trong khối code
-    expect(html).toContain('A&#39;BC + ABC = BC(A&#39; + A) = BC');
+    expect(html).toContain('x&#39;yz + xyz = yz(x&#39; + x) = yz');
   });
 
   it('không còn chỗ giữ chỗ chưa điền', () => {
