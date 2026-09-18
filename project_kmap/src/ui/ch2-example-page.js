@@ -5,6 +5,7 @@ import { complementByDeMorgan, complementByDual, verifyComplement } from '../log
 import { exprTruthTable } from '../logic/expr-parser.js';
 import { varNames } from '../logic/quine-mccluskey.js';
 import { toBits } from '../logic/gray.js';
+import { t as T, tError, onLangChange } from '../i18n/index.js';
 
 /* Chương 2 — Ví dụ minh hoạ: Example 2.1 (rút gọn bằng định lý) và
    Example 2.2–2.3 (lấy hàm bù bằng hai cách). */
@@ -14,12 +15,10 @@ function renderDerivation() {
   const d = derivation($('#d-pick').value);
   const r = checkDerivation(d.from, d.steps, d.n);
 
-  $('#d-vars').textContent = 'Đổi tên biến: ' + d.vars;
-
   const t = $('#d-table');
   t.innerHTML = '';
   const hr = el('tr');
-  ['Bước', 'Biểu thức', 'Định lý dùng', 'Giải thích'].forEach(h => hr.appendChild(el('th', null, h)));
+  [T('c2.colStep'), T('c2.colExpr'), T('c2.colLaw'), T('c2.colWhy')].forEach(h => hr.appendChild(el('th', null, h)));
   t.appendChild(el('thead')).appendChild(hr);
 
   const tb = el('tbody');
@@ -35,21 +34,21 @@ function renderDerivation() {
     tr.appendChild(td);
     tb.appendChild(tr);
   };
-  row('—', r.from, 'đề bài', 'Biểu thức ban đầu.');
-  r.steps.forEach((s, i) => row(String(i + 1), s.expr, s.by + ': ' + s.law, s.note));
+  row('—', r.from, T('c2.given'), T('c2.givenNote'));
+  r.steps.forEach((s, i) => row(String(i + 1), s.expr,
+    s.by + ': ' + s.law + ' (' + T(s.nameKey) + ')', T(s.noteKey)));
   t.appendChild(tb);
 
   const cf = r.statsFrom, ct = r.statsTo;
   $('#d-cost').innerHTML = (cf && ct)
-    ? 'Chi phí: <b>' + cf.terms + ' term / ' + cf.literals + ' literal</b> → <b>'
-      + ct.terms + ' term / ' + ct.literals + ' literal</b>.'
-    : 'Chi phí: không đếm được (biểu thức có ngoặc ⇒ chưa ở dạng SOP phẳng).';
+    ? T('c2.cost', { ft: cf.terms, fl: cf.literals, tt: ct.terms, tl: ct.literals })
+    : T('c2.costNA');
 
   const v = $('#d-verify');
   v.className = 'small ' + (r.ok ? 'ok' : 'bad');
   v.textContent = r.ok
-    ? '✔ Mọi bước đều giữ nguyên bảng chân trị.'
-    : '✘ ' + r.errors.join('; ');
+    ? T('c2.derivOk')
+    : '✘ ' + r.errors.map(e => T(e.key, e.params)).join('; ');
 }
 
 /* ---------------- Example 2.2–2.3 ---------------- */
@@ -59,7 +58,7 @@ function stepList(host, steps) {
     const line = el('div');
     line.style.margin = '6px 0';
     line.appendChild(el('div', 'mono', (i + 1) + '. ' + s.expr));
-    line.appendChild(el('div', 'small muted', s.note));
+    line.appendChild(el('div', 'small muted', T(s.noteKey)));
     host.appendChild(line);
   });
 }
@@ -72,14 +71,14 @@ function renderComplement() {
     $('#c-dm').innerHTML = ''; $('#c-du').innerHTML = '';
     $('#c-check').textContent = ''; $('#c-tt').innerHTML = '';
   };
-  if (!expr) { err.textContent = 'Nhập một biểu thức, ví dụ A + B\'C.'; clear(); return; }
+  if (!expr) { err.textContent = T('c2.complErr'); clear(); return; }
 
   let dm, du;
   try {
     dm = complementByDeMorgan(expr, n);
     du = complementByDual(expr, n);
   } catch (e) {
-    err.textContent = 'Lỗi: ' + e.message;
+    err.textContent = T('err.prefix') + tError(e);
     clear();
     return;
   }
@@ -93,9 +92,8 @@ function renderComplement() {
   const c = $('#c-check');
   c.className = 'small ' + (same && okDm ? 'ok' : 'bad');
   c.innerHTML = same && okDm
-    ? '✔ Hai cách cho cùng kết quả <span class="mono">F′ = ' + dm.result
-      + '</span>, và đúng bằng phủ định của F trên mọi dòng.'
-    : '✘ Hai cách cho kết quả khác nhau hoặc sai: DeMorgan = ' + dm.result + ', dual = ' + du.result;
+    ? T('c2.complOk', { result: dm.result })
+    : T('c2.complBad', { dm: dm.result, du: du.result });
 
   renderTruthTable(expr, dm.result, n);
 }
@@ -130,6 +128,7 @@ export function setupCh2ExamplePage() {
     pick.appendChild(o);
   });
   pick.addEventListener('change', renderDerivation);
+  onLangChange(() => { renderDerivation(); renderComplement(); });
   renderDerivation();
 
   $('#c-expr').addEventListener('input', renderComplement);

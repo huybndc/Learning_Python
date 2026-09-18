@@ -74,6 +74,7 @@ describe('classify', () => {
     allFunctions().forEach(f => { count[f.group] = (count[f.group] || 0) + 1; });
     expect(count).toEqual({ constant: 2, unary: 4, binary: 10 });
     expect(Object.keys(GROUPS).sort()).toEqual(['binary', 'constant', 'unary']);
+    expect(Object.values(GROUPS).every(v => v.startsWith('group.'))).toBe(true);
   });
 });
 
@@ -83,7 +84,7 @@ describe('8 cổng chuẩn', () => {
     STANDARD_GATES.forEach(g => {
       expect(g.fi).toBeGreaterThanOrEqual(0);
       expect(g.fi).toBeLessThanOrEqual(15);
-      expect(g.note.length).toBeGreaterThan(5);
+      expect(g.noteKey.length).toBeGreaterThan(0);
     });
   });
 

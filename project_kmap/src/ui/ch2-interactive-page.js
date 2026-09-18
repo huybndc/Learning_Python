@@ -1,10 +1,11 @@
 import { $, el } from './dom-helpers.js';
 import {
-  allFunctions, evalAllGates, evalFunction,
+  GROUPS, allFunctions, evalAllGates, evalFunction,
   nandAssociativityTable, norAssociativityTable,
 } from '../logic/logic-gates.js';
 import { sopToNand } from '../logic/nand-conversion.js';
 import { exprTruthTable } from '../logic/expr-parser.js';
+import { t as T, tError, onLangChange } from '../i18n/index.js';
 
 /* Chương 2 — Tương tác: 8 cổng chuẩn, bảng 16 hàm, tính không kết hợp của
    NAND/NOR, và chuyển mạch AND-OR thành toàn NAND. */
@@ -20,7 +21,7 @@ function renderGates() {
     card.appendChild(el('div', 'gname', g.gate));
     card.appendChild(el('div', 'mono small muted', g.symbol));
     card.appendChild(el('div', 'gval', String(g.value)));
-    card.title = g.note;
+    card.title = T(g.noteKey);
     host.appendChild(card);
   });
 }
@@ -30,10 +31,11 @@ function renderFunctionTable() {
   const t = $('#g-table');
   t.innerHTML = '';
   const hr = el('tr');
-  ['Fᵢ', 'Biểu thức', 'Ký hiệu', '00', '01', '10', '11', 'Nhóm', 'Cổng'].forEach(h => hr.appendChild(el('th', null, h)));
+  ['Fᵢ', T('c2.colExpr'), T('c2.colSymbol'), '00', '01', '10', '11', T('c2.colGroup'), T('c2.colGate')]
+    .forEach(h => hr.appendChild(el('th', null, h)));
   t.appendChild(el('thead')).appendChild(hr);
 
-  const row = (G.x << 1) | G.y;
+  const nowRow = (G.x << 1) | G.y;
   const tb = el('tbody');
   allFunctions().forEach(f => {
     const tr = el('tr');
@@ -42,10 +44,10 @@ function renderFunctionTable() {
     tr.appendChild(el('td', 'muted', f.op));
     f.rows.forEach((r, k) => {
       const td = el('td', r.f ? 'val-1' : 'val-0', String(r.f));
-      if (k === row) td.classList.add('nowcol');
+      if (k === nowRow) td.classList.add('nowcol');
       tr.appendChild(td);
     });
-    tr.appendChild(el('td', 'small muted', f.group));
+    tr.appendChild(el('td', 'small muted', T(GROUPS[f.group])));
     tr.appendChild(el('td', 'small', f.gate || '—'));
     if (evalFunction(f.i, G.x, G.y) === 1) tr.classList.add('on');
     tb.appendChild(tr);
@@ -60,8 +62,8 @@ function renderAssoc() {
   const t = $('#g-assoc-table');
   t.innerHTML = '';
   const hr = el('tr');
-  ['x', 'y', 'z', `(x ${sym} y) ${sym} z`, `x ${sym} (y ${sym} z)`, 'Bằng nhau?',
-    G.assoc === 'nand' ? '(xyz)′ đúng nghĩa' : '(x+y+z)′ đúng nghĩa'].forEach(h => hr.appendChild(el('th', null, h)));
+  ['x', 'y', 'z', `(x ${sym} y) ${sym} z`, `x ${sym} (y ${sym} z)`, T('c2.colSame'),
+    T(G.assoc === 'nand' ? 'c2.properNand' : 'c2.properNor')].forEach(h => hr.appendChild(el('th', null, h)));
   t.appendChild(el('thead')).appendChild(hr);
   const tb = el('tbody');
   data.rows.forEach(r => {
@@ -79,10 +81,7 @@ function renderAssoc() {
   const n = $('#g-assoc-note');
   const diff = data.rows.filter(r => !r.same).length;
   n.className = 'small bad';
-  n.innerHTML = 'Hai cách ghép đôi khác nhau ở <b>' + diff + '/8</b> dòng ⇒ '
-    + G.assoc.toUpperCase() + ' <b>không có tính kết hợp</b>. Vì vậy '
-    + G.assoc.toUpperCase() + ' 3 ngõ vào được <b>định nghĩa lại</b> (cột cuối), '
-    + 'chứ không phải ghép hai cổng 2 ngõ vào.';
+  n.innerHTML = T('c2.assocNote', { diff, gate: G.assoc.toUpperCase() });
 }
 
 /* ---------------- SOP → toàn NAND ---------------- */
@@ -91,13 +90,13 @@ function renderNandForm() {
   const n = +$('#g-sopn').value;
   const host = $('#g-sopsteps');
   host.innerHTML = ''; $('#g-sopcheck').textContent = '';
-  if (!expr) { $('#g-soperr').textContent = 'Nhập một biểu thức SOP, ví dụ AB + CD.'; return; }
+  if (!expr) { $('#g-soperr').textContent = T('c2.nandErr'); return; }
 
   let r;
   try {
     r = sopToNand(expr, n);
   } catch (e) {
-    $('#g-soperr').textContent = 'Lỗi: ' + e.message;
+    $('#g-soperr').textContent = T('err.prefix') + tError(e);
     return;
   }
   $('#g-soperr').textContent = '';
@@ -106,15 +105,14 @@ function renderNandForm() {
     const d = el('div');
     d.style.margin = '6px 0';
     d.appendChild(el('div', 'mono hl', (i + 1) + '. ' + s.expr));
-    d.appendChild(el('div', 'small muted', s.note));
+    d.appendChild(el('div', 'small muted', T(s.noteKey)));
     host.appendChild(d);
   });
 
   const same = exprTruthTable(r.result, n).join('') === exprTruthTable(expr, n).join('');
   const c = $('#g-sopcheck');
   c.className = 'small ' + (same ? 'ok' : 'bad');
-  c.innerHTML = (same ? '✔' : '✘') + ' Cần <b>' + r.gateCount.level1 + '</b> cổng NAND ở tầng 1 và <b>1</b> ở tầng 2'
-    + (same ? '; bảng chân trị khớp với F ban đầu.' : '; nhưng bảng chân trị KHÔNG khớp.');
+  c.innerHTML = same ? T('c2.nandOk', { l1: r.gateCount.level1 }) : T('c2.nandBad');
 }
 
 export function setupCh2InteractivePage() {
@@ -131,6 +129,7 @@ export function setupCh2InteractivePage() {
   $('#g-sop').addEventListener('input', renderNandForm);
   $('#g-sopn').addEventListener('change', renderNandForm);
 
+  onLangChange(() => { renderGates(); renderFunctionTable(); renderAssoc(); renderNandForm(); });
   renderGates();
   renderFunctionTable();
   renderAssoc();

@@ -5,36 +5,36 @@
 
 import { varNames } from './quine-mccluskey.js';
 import { exprTruthTable, sopStats } from './expr-parser.js';
-import { parseAst, formatAst, dualAst } from './bool-ast.js';
+import { parseAst, formatAst, dualAst } from './bool-ast.js';import { fail } from './app-error.js';
 
 /** Tiên đề Huntington & các định lý cơ bản của đại số Boolean (§2.2–2.3). */
 export const THEOREMS = [
-  { id: 'P2a', name: 'Phần tử trung hoà', law: 'x + 0 = x' },
-  { id: 'P2b', name: 'Phần tử trung hoà', law: 'x · 1 = x' },
-  { id: 'P5a', name: 'Phần tử bù', law: "x + x' = 1" },
-  { id: 'P5b', name: 'Phần tử bù', law: "x · x' = 0" },
-  { id: 'T1a', name: 'Luỹ đẳng (idempotent)', law: 'x + x = x' },
-  { id: 'T1b', name: 'Luỹ đẳng (idempotent)', law: 'x · x = x' },
-  { id: 'T2a', name: 'Phần tử nuốt', law: 'x + 1 = 1' },
-  { id: 'T2b', name: 'Phần tử nuốt', law: 'x · 0 = 0' },
-  { id: 'T3', name: 'Phủ định hai lần (involution)', law: "(x')' = x" },
-  { id: 'T4a', name: 'Kết hợp (associative)', law: 'x + (y + z) = (x + y) + z' },
-  { id: 'T4b', name: 'Kết hợp (associative)', law: 'x(yz) = (xy)z' },
-  { id: 'T5a', name: 'DeMorgan', law: "(x + y)' = x'y'" },
-  { id: 'T5b', name: 'DeMorgan', law: "(xy)' = x' + y'" },
-  { id: 'T6a', name: 'Hấp thụ (absorption)', law: 'x + xy = x' },
-  { id: 'T6b', name: 'Hấp thụ (absorption)', law: 'x(x + y) = x' },
-  { id: 'P4a', name: 'Phân phối (distributive)', law: 'x(y + z) = xy + xz' },
-  { id: 'P4b', name: 'Phân phối (distributive)', law: 'x + yz = (x + y)(x + z)' },
-  { id: 'P3a', name: 'Giao hoán (commutative)', law: 'x + y = y + x' },
-  { id: 'P3b', name: 'Giao hoán (commutative)', law: 'xy = yx' },
-  { id: 'C1', name: 'Consensus', law: "xy + x'z + yz = xy + x'z" },
+  { id: 'P2a', nameKey: 'law.identity', law: 'x + 0 = x' },
+  { id: 'P2b', nameKey: 'law.identity', law: 'x · 1 = x' },
+  { id: 'P5a', nameKey: 'law.complement', law: "x + x' = 1" },
+  { id: 'P5b', nameKey: 'law.complement', law: "x · x' = 0" },
+  { id: 'T1a', nameKey: 'law.idempotent', law: 'x + x = x' },
+  { id: 'T1b', nameKey: 'law.idempotent', law: 'x · x = x' },
+  { id: 'T2a', nameKey: 'law.absorbing', law: 'x + 1 = 1' },
+  { id: 'T2b', nameKey: 'law.absorbing', law: 'x · 0 = 0' },
+  { id: 'T3', nameKey: 'law.involution', law: "(x')' = x" },
+  { id: 'T4a', nameKey: 'law.associative', law: 'x + (y + z) = (x + y) + z' },
+  { id: 'T4b', nameKey: 'law.associative', law: 'x(yz) = (xy)z' },
+  { id: 'T5a', nameKey: 'law.demorgan', law: "(x + y)' = x'y'" },
+  { id: 'T5b', nameKey: 'law.demorgan', law: "(xy)' = x' + y'" },
+  { id: 'T6a', nameKey: 'law.absorption', law: 'x + xy = x' },
+  { id: 'T6b', nameKey: 'law.absorption', law: 'x(x + y) = x' },
+  { id: 'P4a', nameKey: 'law.distributive', law: 'x(y + z) = xy + xz' },
+  { id: 'P4b', nameKey: 'law.distributive', law: 'x + yz = (x + y)(x + z)' },
+  { id: 'P3a', nameKey: 'law.commutative', law: 'x + y = y + x' },
+  { id: 'P3b', nameKey: 'law.commutative', law: 'xy = yx' },
+  { id: 'C1', nameKey: 'law.consensus', law: "xy + x'z + yz = xy + x'z" },
 ];
 
 /** Tra một định lý theo id, vd theorem('T6a'). */
 export function theorem(id) {
   const t = THEOREMS.find(x => x.id === id);
-  if (!t) throw new Error('không có định lý "' + id + '"');
+  if (!t) fail('err.noTheorem', { id });
   return t;
 }
 
@@ -55,12 +55,12 @@ export function checkDerivation(from, stepList, n) {
     try {
       tt = exprTruthTable(st.expr, n);
     } catch (e) {
-      errors.push('bước ' + (i + 1) + ': không đọc được "' + st.expr + '" — ' + e.message);
+      errors.push({ key: 'c2.stepParseFail', params: { i: i + 1, expr: st.expr } });
     }
     if (tt && !tt.every((v, m) => v === base[m])) {
-      errors.push('bước ' + (i + 1) + ': "' + st.expr + '" không tương đương với biểu thức ban đầu');
+      errors.push({ key: 'c2.stepNotEquiv', params: { i: i + 1, expr: st.expr } });
     }
-    steps.push({ expr: st.expr, by: st.by, law: t.law, name: t.name, noteKey: st.noteKey || '' });
+    steps.push({ expr: st.expr, by: st.by, law: t.law, nameKey: t.nameKey, noteKey: st.noteKey || '' });
   });
 
   const to = stepList.length ? stepList[stepList.length - 1].expr : from;

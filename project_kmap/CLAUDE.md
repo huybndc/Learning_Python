@@ -32,9 +32,26 @@ không cần gắn listener riêng.
 build bằng `<!--#include src/pages/chN.html -->` (plugin `vite-plugin-include.js`).
 Thêm chương mới thì thêm 1 file partial + 1 dòng include + 1 nút tab.
 
+## Song ngữ VI/EN
+- Chuỗi UI lấy qua `T(key, params)` (`src/i18n/index.js`). Bí danh import **luôn
+  là `T`** — không dùng `t` hay `tr` vì đụng biến cục bộ `t` (`<table>`) và
+  `tr` (`<tr>`).
+- Markup tĩnh dùng `data-i18n` / `-html` / `-ph` / `-title`.
+- Từ điển ở `src/i18n/{vi,en}/{common,ch1,ch2,ch3}.js`. Hai bản **bắt buộc
+  cùng tập khoá và cùng tham số `{…}`** — `tests/i18n.test.js` canh việc này.
+- `logic/` **không được** biết ngôn ngữ: ném `AppError(key, params)`
+  (`logic/app-error.js`), trả về `{key, params}` hoặc `labelKey/noteKey/textKey`.
+  `ui/` dịch bằng `T()` / `tError()`. Test chặn mọi chuỗi tiếng Việt lọt vào `logic/`.
+- Mỗi trang tự gọi `onLangChange(...)` để vẽ lại khi đổi ngôn ngữ.
+
+## Tên biến Boolean
+Theo Digital Design (Mano): `n=2 → x,y` · `n=3 → x,y,z` · `n=4 → w,x,y,z` ·
+`n=5 → v,w,x,y,z`. Parser chấp nhận cả chữ hoa lẫn chữ thường.
+
 ## Tab Lý thuyết
-Mỗi chương có `src/content/theory-chN.md`, import bằng `?raw` trong `main.js` rồi
-gắn bằng `mountTheory('#theory-chN-body', md)` (`src/ui/theory-page.js`).
+Mỗi chương có `src/content/theory-chN.vi.md` và `theory-chN.en.md`, import bằng
+`?raw` trong `main.js` rồi gắn bằng `mountTheory('#theory-chN-body', md)`
+(`src/ui/theory-page.js`). Hai bản phải cùng số heading cấp 2.
 Thêm/sửa bài học thì sửa file `.md`, không đụng code.
 CSS của trang gom trong khối `.theory-body` ở `src/style.css`.
 

@@ -7,7 +7,7 @@ import { DERIVATIONS, derivation } from '../src/logic/boolean-examples.js';
 describe('bảng định lý', () => {
   it('mọi định lý đều có id, tên và phát biểu', () => {
     expect(THEOREMS.length).toBeGreaterThan(15);
-    expect(THEOREMS.every(t => t.id && t.name && t.law)).toBe(true);
+    expect(THEOREMS.every(t => t.id && t.nameKey && t.law)).toBe(true);
   });
 
   it('id không trùng nhau', () => {
@@ -56,7 +56,7 @@ describe('checkDerivation (Example 2.1)', () => {
       expect(r.ok).toBe(true);
       expect(r.steps.length).toBe(d.steps.length);
       // mỗi bước phải nêu được định lý
-      expect(r.steps.every(s => s.law && s.name)).toBe(true);
+      expect(r.steps.every(s => s.law && s.nameKey)).toBe(true);
     });
   }
 
@@ -77,13 +77,13 @@ describe('checkDerivation (Example 2.1)', () => {
   it('bắt được một bước sai (không tương đương)', () => {
     const r = checkDerivation("x + x'y", [{ expr: 'xy', by: 'P4b' }], 3);
     expect(r.ok).toBe(false);
-    expect(r.errors[0]).toContain('không tương đương');
+    expect(r.errors[0].key).toBe('c2.stepNotEquiv');
   });
 
   it('bắt được một bước sai cú pháp', () => {
     const r = checkDerivation('x + y', [{ expr: 'x +', by: 'P2a' }], 2);
     expect(r.ok).toBe(false);
-    expect(r.errors[0]).toContain('không đọc được');
+    expect(r.errors[0].key).toBe('c2.stepParseFail');
   });
 
   it('định lý lạ thì throw', () => {

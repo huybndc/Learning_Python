@@ -8,6 +8,7 @@ import {
 } from '../logic/quine-mccluskey.js';
 import { toBits } from '../logic/gray.js';
 import { formatSpec, parseSpec } from '../logic/expr-parser.js';
+import { t as T, tError, onLangChange } from '../i18n/index.js';
 import { randomValues } from '../logic/random-function.js';
 
 /* =====================================================================
@@ -65,13 +66,13 @@ export function renderTruthTable() {
 export function renderExpr(host, terms, groups, emptyText) {
   host.innerHTML = '';
   if (!terms.length) { host.appendChild(el('span', 'mono', emptyText)); return; }
-  terms.forEach((t, i) => {
+  terms.forEach((term, i) => {
     if (i) host.appendChild(el('span', 'plus', groups[i].joiner));
-    const chip = el('span', 'term' + (t.essential ? ' ess' : ''), t.text);
+    const chip = el('span', 'term' + (term.essential ? ' ess' : ''), term.text);
     chip.style.setProperty('--gh', groups[i].hue);
     chip.dataset.gid = groups[i].id;
-    chip.title = (t.essential ? 'Essential prime implicant' : 'Prime implicant') +
-      ' — phủ các ô: ' + implicantMinterms(t.imp, K.n).join(', ');
+    chip.title = T(term.essential ? 'kmap.termTitleEss' : 'kmap.termTitlePi',
+      { cells: implicantMinterms(term.imp, K.n).join(', ') });
     chip.addEventListener('mouseenter', () => setHot($('#k-maps'), new Set([groups[i].id])));
     chip.addEventListener('mouseleave', () => setHot($('#k-maps'), null));
     host.appendChild(chip);
@@ -92,28 +93,30 @@ export function kRefresh() {
   const drawn = (K.stepIdx >= 0 && K.steps) ? K.steps[K.stepIdx].groups : K.groups;
   drawGroups(K.view, drawn, K.n);
 
-  renderExpr($('#k-sop'), S.terms, sopGroups, '0  (hàm luôn bằng 0)');
-  renderExpr($('#k-pos'), P.terms, posGroups, '1  (hàm luôn bằng 1)');
-  if (S.terms.length === 1 && S.terms[0].text === '1') $('#k-sop').innerHTML = '<span class="mono">1  (hàm luôn bằng 1)</span>';
-  if (P.terms.length === 1 && P.terms[0].text === '0') $('#k-pos').innerHTML = '<span class="mono">0  (hàm luôn bằng 0)</span>';
+  renderExpr($('#k-sop'), S.terms, sopGroups, T('kmap.sopEmpty'));
+  renderExpr($('#k-pos'), P.terms, posGroups, T('kmap.posEmpty'));
+  if (S.terms.length === 1 && S.terms[0].text === '1') $('#k-sop').innerHTML = '<span class="mono">' + T('kmap.sopOne') + '</span>';
+  if (P.terms.length === 1 && P.terms[0].text === '0') $('#k-pos').innerHTML = '<span class="mono">' + T('kmap.posZero') + '</span>';
 
-  $('#k-cost').textContent = 'SOP: ' + S.terms.length + ' term / ' + totalLiterals(S.terms, K.n) + ' literal · ' +
-    'POS: ' + P.terms.length + ' term / ' + totalLiterals(P.terms, K.n) + ' literal · ' +
-    'tổng cộng ' + S.pis.length + ' prime implicant của F.';
+  $('#k-cost').textContent = T('kmap.cost', {
+    st: S.terms.length, sl: totalLiterals(S.terms, K.n),
+    pt: P.terms.length, pl: totalLiterals(P.terms, K.n),
+    pis: S.pis.length,
+  });
 
   // legend
   const lg = $('#k-legend'); lg.innerHTML = '';
   sopGroups.forEach((g, i) => {
     const d = el('span', 'lg'); d.style.setProperty('--gh', g.hue);
     d.appendChild(el('span', 'sw'));
-    d.appendChild(el('span', null, S.terms[i].text + (S.terms[i].essential ? ' (essential)' : '')));
+    d.appendChild(el('span', null, S.terms[i].text + (S.terms[i].essential ? ' ' + T('kmap.essential') : '')));
     lg.appendChild(d);
   });
-  if (!sopGroups.length) lg.appendChild(el('span', 'small muted', 'Không có nhóm nào (hàm bằng 0).'));
+  if (!sopGroups.length) lg.appendChild(el('span', 'small muted', T('kmap.noGroup')));
 
   renderTruthTable();
   $('#k-spec').value = formatSpec(K.values);
-  K.steps = buildSteps(K.values, K.n, sopGroups);
+  K.steps = buildSteps(K.values, K.n);
   renderStep();
 }
 
@@ -127,6 +130,7 @@ export function setupKmapPage() {
   $('#st-next').addEventListener('click', () => stepGo(1));
   $('#st-prev').addEventListener('click', () => stepGo(-1));
   $('#st-reset').addEventListener('click', () => { K.stepIdx = -1; stepGo(0); });
+  onLangChange(kRefresh);
   kSetN(4);
   K.values = [1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0];   // ví dụ mở đầu
   kRefresh();
@@ -140,6 +144,6 @@ export function applySpec() {
     err.textContent = '';
     kRefresh();
   } catch (e) {
-    err.textContent = 'Lỗi: ' + e.message;
+    err.textContent = T('err.prefix') + tError(e);
   }
 }

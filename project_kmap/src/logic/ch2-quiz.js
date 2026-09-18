@@ -5,7 +5,7 @@
 import { allFunctions, STANDARD_GATES, functionAt } from './logic-gates.js';
 import { sopToNand } from './nand-conversion.js';
 import { complementByDeMorgan } from './boolean-complement.js';
-import { exprTruthTable } from './expr-parser.js';
+import { exprTruthTable } from './expr-parser.js';import { fail } from './app-error.js';
 
 export const KINDS = ['identify', 'nand', 'complement'];
 
@@ -18,11 +18,12 @@ function makeIdentify(rnd) {
   const rows = f.rows.map(r => `x=${r.x} y=${r.y} → ${r.f}`).join('   ·   ');
   return {
     kind: 'identify',
-    text: 'Bảng chân trị sau ứng với cổng logic nào?   ' + rows,
+    textKey: 'c2q.qIdentify',
+    textParams: { rows },
     answer: gate.gate,
     accepts: [gate.gate, 'F' + gate.fi, String(gate.fi)],
-    hint: 'Đọc cột kết quả từ trên xuống thành chuỗi 4 bit: ' + f.bits
-      + '. Chuỗi đó chính là số hiệu Fᵢ ở dạng nhị phân.',
+    hintKey: 'c2q.hIdentify',
+    hintParams: { bits: f.bits },
     meta: { fi: gate.fi, gate: gate.gate, bits: f.bits },
   };
 }
@@ -37,10 +38,11 @@ function makeNand(rnd) {
   const r = sopToNand(expr, n);
   return {
     kind: 'nand',
-    text: 'Chuyển F = ' + expr + ' thành mạch chỉ dùng cổng NAND (viết biểu thức tương đương).',
+    textKey: 'c2q.qNand',
+    textParams: { expr },
     answer: r.result,
-    hint: 'Bù hai lần rồi áp DeMorgan: t₁ + t₂ = (t₁′ · t₂′)′. '
-      + 'Cần ' + r.gateCount.level1 + ' NAND ở tầng 1 và 1 NAND ở tầng 2.',
+    hintKey: 'c2q.hNand',
+    hintParams: { n: r.gateCount.level1 },
     meta: { expr, n, result: r.result },
   };
 }
@@ -52,9 +54,11 @@ function makeComplement(rnd) {
   const r = complementByDeMorgan(expr, n);
   return {
     kind: 'complement',
-    text: 'Cho F = ' + expr + '. Tìm F′ (dùng DeMorgan mở rộng).',
+    textKey: 'c2q.qComplement',
+    textParams: { expr },
     answer: r.result,
-    hint: 'Đổi mọi + thành ·, mọi · thành +, rồi bù từng literal. Nhớ giữ đúng thứ tự ưu tiên.',
+    hintKey: 'c2q.hComplement',
+    hintParams: {},
     meta: { expr, n, result: r.result },
   };
 }
@@ -64,7 +68,7 @@ const MAKERS = { identify: makeIdentify, nand: makeNand, complement: makeComplem
 export function makeQuestion(kind = 'mix', rnd = Math.random) {
   const k = kind === 'mix' ? pick(KINDS, rnd) : kind;
   const make = MAKERS[k];
-  if (!make) throw new Error('dạng bài không hợp lệ: ' + kind);
+  if (!make) fail('err.badQuizKind', { kind });
   return make(rnd);
 }
 
@@ -86,7 +90,7 @@ export function checkAnswer(q, given) {
   try {
     tt = exprTruthTable(g, n);
   } catch (e) {
-    return { ok: false, reason: 'parse', message: e.message };
+    return { ok: false, reason: 'parse', error: e };
   }
   const want = exprTruthTable(q.answer, n);
   return { ok: tt.every((v, m) => v === want[m]), reason: 'truthtable' };

@@ -4,6 +4,8 @@
    signed 2's complement. Bit trái nhất là bit dấu (0 = dương, 1 = âm).
    --------------------------------------------------------------- */
 
+import { fail } from './app-error.js';
+
 export const FORMATS = ['magnitude', 'ones', 'twos'];
 
 const pad = (v, w) => v.toString(2).padStart(w, '0');
@@ -18,25 +20,23 @@ export function range(format, w) {
 
 /** Số thập phân có dấu → chuỗi w bit theo một trong ba dạng. */
 export function encode(value, format, w) {
-  if (!FORMATS.includes(format)) throw new Error('dạng không hợp lệ: ' + format);
+  if (!FORMATS.includes(format)) fail('err.badFormat', { format });
   const { min, max } = range(format, w);
-  if (!Number.isInteger(value)) throw new Error('phải là số nguyên');
-  if (value < min || value > max) {
-    throw new Error('giá trị ' + value + ' vượt khoảng ' + min + '..' + max + ' của ' + w + ' bit');
-  }
+  if (!Number.isInteger(value)) fail('err.needInt');
+  if (value < min || value > max) fail('err.outOfRange', { value, min, max, w });
   const mag = Math.abs(value);
   if (value >= 0) return pad(mag, w);
   switch (format) {
     case 'magnitude': return '1' + pad(mag, w - 1);
     case 'ones': return [...pad(mag, w)].map(b => (b === '0' ? '1' : '0')).join('');
     case 'twos': return pad((1 << w) + value, w);      // value âm ⇒ 2^w + value
-    default: throw new Error('dạng không hợp lệ');
+    default: return fail('err.badFormat', { format });
   }
 }
 
 /** Chuỗi bit → số thập phân có dấu theo một trong ba dạng. */
 export function decode(bits, format) {
-  if (!/^[01]+$/.test(bits)) throw new Error('chỉ được dùng ký tự 0 và 1');
+  if (!/^[01]+$/.test(bits)) fail('err.bitsOnly');
   const w = bits.length;
   const neg = bits[0] === '1';
   if (!neg) return parseInt(bits, 2);
@@ -46,7 +46,7 @@ export function decode(bits, format) {
     case 'magnitude': return -parseInt(bits.slice(1) || '0', 2) || 0;
     case 'ones': return -parseInt([...bits].map(b => (b === '0' ? '1' : '0')).join(''), 2) || 0;
     case 'twos': return parseInt(bits, 2) - (1 << w);
-    default: throw new Error('dạng không hợp lệ: ' + format);
+    default: return fail('err.badFormat', { format });
   }
 }
 
@@ -57,7 +57,7 @@ export function decode(bits, format) {
  * Trả về { bits, value, carryOut, overflow, steps }.
  */
 export function addTwos(aBits, bBits) {
-  if (aBits.length !== bBits.length) throw new Error('hai số phải cùng số bit');
+  if (aBits.length !== bBits.length) fail('err.sameWidth');
   const w = aBits.length;
   let carry = 0;
   const out = [];
@@ -78,16 +78,16 @@ export function addTwos(aBits, bBits) {
     overflow,
     carries,
     steps: [
-      { label: 'A', value: aBits + '  (' + decode(aBits, 'twos') + ')' },
-      { label: 'B', value: bBits + '  (' + decode(bBits, 'twos') + ')' },
-      { label: 'A + B (bỏ nhớ ra ngoài)', value: bits + '  (' + decode(bits, 'twos') + ')' },
+      { labelKey: 'add.a', value: aBits + '  (' + decode(aBits, 'twos') + ')' },
+      { labelKey: 'add.b', value: bBits + '  (' + decode(bBits, 'twos') + ')' },
+      { labelKey: 'add.sum', value: bits + '  (' + decode(bits, 'twos') + ')' },
     ],
   };
 }
 
 /** Trừ A − B bằng 2's complement: cộng A với 2's complement của B. */
 export function subTwos(aBits, bBits) {
-  if (aBits.length !== bBits.length) throw new Error('hai số phải cùng số bit');
+  if (aBits.length !== bBits.length) fail('err.sameWidth');
   const negB = encode(-decode(bBits, 'twos'), 'twos', bBits.length);
   const r = addTwos(aBits, negB);
   return { ...r, negB };

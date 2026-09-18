@@ -7,11 +7,9 @@
 
 import { convertBase, fromDecimal } from './number-systems.js';
 import { radixComplement, subtractByComplement } from './complements.js';
-import { encode, range } from './signed-binary.js';
+import { encode, range } from './signed-binary.js';import { fail } from './app-error.js';
 
 export const KINDS = ['convert', 'complement', 'subtract', 'signed'];
-
-const BASE_NAME = { 2: 'nhị phân', 8: 'bát phân', 10: 'thập phân', 16: 'thập lục phân' };
 
 const pick = (arr, rnd) => arr[Math.floor(rnd() * arr.length)];
 const int = (lo, hi, rnd) => lo + Math.floor(rnd() * (hi - lo + 1));
@@ -24,9 +22,11 @@ function makeConvert(rnd) {
   const src = fromDecimal(v, from);
   return {
     kind: 'convert',
-    text: 'Đổi (' + src + ') từ ' + BASE_NAME[from] + ' sang ' + BASE_NAME[to] + '.',
+    textKey: 'c1q.qConvert',
+    textParams: { src, from: 'base.' + from, to: 'base.' + to },
     answer: convertBase(src, from, to),
-    hint: 'Phần nguyên: chia liên tiếp cho ' + to + ', đọc số dư từ dưới lên.',
+    hintKey: 'c1q.hConvert',
+    hintParams: { to },
     meta: { src, from, to },
   };
 }
@@ -39,10 +39,11 @@ function makeComplement(rnd) {
   const src = fromDecimal(v, r).padStart(width, '0');
   return {
     kind: 'complement',
-    text: 'Tính ' + r + "'s complement của (" + src + ') ở cơ số ' + r
-      + ' (giữ nguyên ' + width + ' chữ số).',
+    textKey: 'c1q.qComplement',
+    textParams: { r, src, width },
     answer: radixComplement(src, r).digits,
-    hint: "Lấy (" + (r - 1) + ")'s complement (trừ từng chữ số) rồi cộng 1.",
+    hintKey: 'c1q.hComplement',
+    hintParams: { r1: r - 1 },
     meta: { src, r, width },
   };
 }
@@ -58,12 +59,12 @@ function makeSubtract(rnd) {
   const res = subtractByComplement(A, B, r);
   return {
     kind: 'subtract',
-    text: 'Dùng ' + r + "'s complement để tính (" + A + ') − (' + B + ') ở cơ số ' + r
-      + '. Ghi kết quả ' + width + ' chữ số, thêm dấu − ở đầu nếu âm.',
+    textKey: 'c1q.qSubtract',
+    textParams: { r, a: A, b: B, width },
     answer: (res.negative ? '-' : '') + res.digits,
     meta: { m: A, n: B, r, width },
-    hint: 'Cộng M với ' + r + "'s complement của N. Có nhớ ra ngoài ⇒ bỏ nhớ, kết quả dương; "
-      + 'không có nhớ ⇒ lấy complement của tổng, kết quả âm.',
+    hintKey: 'c1q.hSubtract',
+    hintParams: { r },
   };
 }
 
@@ -73,14 +74,14 @@ function makeSigned(rnd) {
   const format = pick(['magnitude', 'ones', 'twos'], rnd);
   const { min, max } = range(format, w);
   const v = int(min, max, rnd);
-  const label = { magnitude: 'signed-magnitude', ones: "signed 1's complement", twos: "signed 2's complement" };
+  const fmtKey = { magnitude: 'c1.fmtMagnitude', ones: 'c1.fmtOnes', twos: 'c1.fmtTwos' }[format];
   return {
     kind: 'signed',
-    text: 'Biểu diễn ' + v + ' ở dạng ' + label[format] + ' trên ' + w + ' bit.',
+    textKey: 'c1q.qSigned',
+    textParams: { value: v, format: fmtKey, w },
     answer: encode(v, format, w),
-    hint: v >= 0
-      ? 'Số dương: cả ba dạng viết giống nhau, chỉ cần đệm 0 cho đủ ' + w + ' bit.'
-      : 'Số âm: bit trái nhất là 1. Xem lại quy tắc của dạng ' + label[format] + '.',
+    hintKey: v >= 0 ? 'c1q.hSignedPos' : 'c1q.hSignedNeg',
+    hintParams: { w, format: fmtKey },
     meta: { value: v, format, w },
   };
 }
@@ -96,7 +97,7 @@ const MAKERS = {
 export function makeQuestion(kind = 'mix', rnd = Math.random) {
   const k = kind === 'mix' ? pick(KINDS, rnd) : kind;
   const make = MAKERS[k];
-  if (!make) throw new Error('dạng bài không hợp lệ: ' + kind);
+  if (!make) fail('err.badQuizKind', { kind });
   return make(rnd);
 }
 

@@ -1,10 +1,10 @@
 <!-- ============================ CHƯƠNG 3 ============================ -->
 <section class="page" id="page-ch3" role="tabpanel" aria-labelledby="tab-ch3">
   <div class="subtabs" role="tablist">
-    <button role="tab" id="sub-ch3-theory" aria-selected="true" aria-controls="pane-ch3-theory">Lý thuyết</button>
-    <button role="tab" id="sub-ch3-example" aria-selected="false" aria-controls="pane-ch3-example">Ví dụ minh hoạ</button>
-    <button role="tab" id="sub-ch3-interactive" aria-selected="false" aria-controls="pane-ch3-interactive">Tương tác</button>
-    <button role="tab" id="sub-ch3-practice" aria-selected="false" aria-controls="pane-ch3-practice">Luyện tập</button>
+    <button role="tab" id="sub-ch3-theory" aria-selected="true" aria-controls="pane-ch3-theory" data-i18n="sub.theory"></button>
+    <button role="tab" id="sub-ch3-example" aria-selected="false" aria-controls="pane-ch3-example" data-i18n="sub.example"></button>
+    <button role="tab" id="sub-ch3-interactive" aria-selected="false" aria-controls="pane-ch3-interactive" data-i18n="sub.interactive"></button>
+    <button role="tab" id="sub-ch3-practice" aria-selected="false" aria-controls="pane-ch3-practice" data-i18n="sub.practice"></button>
   </div>
 
   <div class="pane active" id="pane-ch3-theory" role="tabpanel" aria-labelledby="sub-ch3-theory">
@@ -13,12 +13,12 @@
 
   <div class="pane" id="pane-ch3-example" role="tabpanel" aria-labelledby="sub-ch3-example">
   <div class="card">
-    <h2>1. Bảng Gray code</h2>
+    <h2 data-i18n="gray.tableTitle"></h2>
     <div class="row">
-      <label class="inline">Số bit n:
+      <label class="inline"><span data-i18n="gray.bits"></span>
         <select id="g-n"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
       </label>
-      <span class="muted small">Bit <span class="bad">đỏ gạch chân</span> là bit đổi so với hàng ngay trên (hàng đầu so với hàng cuối — vòng tròn).</span>
+      <span class="muted small" data-i18n-html="gray.tableNote"></span>
     </div>
     <div class="tblbox" style="margin-top:10px;max-height:420px;overflow-y:auto">
       <table class="grid" id="g-table"></table>
@@ -27,14 +27,11 @@
   </div>
 
   <div class="card">
-    <h2>2. Xây dựng bằng “reflect and prefix”</h2>
-    <p class="small muted" style="margin-top:0">
-      Gray n bit = (Gray n−1 bit, thêm tiền tố <b>0</b>) nối với (Gray n−1 bit <b>lật ngược</b>, thêm tiền tố <b>1</b>).
-      Chỗ nối ở giữa là hai bản sao của cùng một chuỗi n−1 bit, nên chỉ khác nhau đúng ở bit tiền tố.
-    </p>
+    <h2 data-i18n="gray.buildTitle"></h2>
+    <p class="small muted" style="margin-top:0" data-i18n-html="gray.buildNote"></p>
     <div class="row">
-      <button class="btn primary" id="gb-next">Bước tiếp ▶</button>
-      <button class="btn" id="gb-reset">Về đầu</button>
+      <button class="btn primary" id="gb-next" data-i18n="gray.next"></button>
+      <button class="btn" id="gb-reset" data-i18n="gray.reset"></button>
       <span class="mono small muted" id="gb-state"></span>
     </div>
     <div class="steps-box" style="margin-top:10px"><div id="gb-msg"></div></div>
@@ -42,7 +39,7 @@
   </div>
 
   <div class="card">
-    <h2>3. Chuyển đổi hai chiều</h2>
+    <h2 data-i18n="gray.convTitle"></h2>
     <div class="row">
       <div class="seg" id="conv-dir">
         <button data-d="b2g" aria-pressed="true">Binary → Gray</button>
@@ -64,17 +61,13 @@
   </div>
 
   <div class="card">
-    <h2>4. Vì sao K-map dùng thứ tự Gray?</h2>
+    <h2 data-i18n="gray.whyTitle"></h2>
     <div class="note">
-      <p style="margin:.2em 0">
-        Vì hai ô <b>kề nhau</b> trên K-map phải khác nhau đúng <b>1 biến</b> thì mới ghép lại được:
-        <span class="mono">x′yz + xyz = yz(x′+x) = yz</span>. Thứ tự Gray đảm bảo điều đó ở mọi
-        bước, kể cả khi <b>quấn biên</b> (nhóm wrap-around như 4 góc của K-map 4 biến).
-      </p>
-      <p style="margin:.2em 0">Giải thích đầy đủ nằm ở tab <b>Lý thuyết</b>.</p>
+      <p style="margin:.2em 0" data-i18n-html="gray.why1"></p>
+      <p style="margin:.2em 0" data-i18n-html="gray.why2"></p>
       <p style="margin:.6em 0 .2em" class="row tight">
-        <button class="btn" data-goto="ch3:theory">Đọc lý thuyết ▶</button>
-        <button class="btn" data-goto="ch3:interactive">Sang phần tương tác K-map ▶</button>
+        <button class="btn" data-goto="ch3:theory" data-i18n="gray.gotoTheory"></button>
+        <button class="btn" data-goto="ch3:interactive" data-i18n="gray.gotoKmap"></button>
       </p>
     </div>
   </div>
@@ -82,23 +75,23 @@
 
   <div class="pane" id="pane-ch3-interactive" role="tabpanel" aria-labelledby="sub-ch3-interactive">
   <div class="card">
-    <h2>Nhập hàm</h2>
+    <h2 data-i18n="kmap.inputTitle"></h2>
     <div class="row">
-      <label class="inline">Số biến:
+      <label class="inline"><span data-i18n="kmap.vars"></span>
         <select id="k-n"><option>2</option><option>3</option><option selected>4</option><option>5</option></select>
       </label>
-      <button class="btn" id="k-clear">Xoá về 0</button>
-      <button class="btn" id="k-rand">Hàm ngẫu nhiên</button>
+      <button class="btn" id="k-clear" data-i18n="kmap.clear"></button>
+      <button class="btn" id="k-rand" data-i18n="kmap.random"></button>
       <span class="spacer"></span>
-      <span class="small muted">Click ô K-map hoặc hàng truth table để đổi 0 → 1 → X</span>
+      <span class="small muted" data-i18n="kmap.clickHint"></span>
     </div>
     <div class="row" style="margin-top:10px">
       <label class="inline" style="flex:1 1 320px">
-        <span class="small">Biểu thức:</span>
+        <span class="small" data-i18n="kmap.spec"></span>
         <input type="text" id="k-spec" style="flex:1 1 auto;min-width:200px" autocomplete="off" spellcheck="false"
-               placeholder="Σm(1,3,5,7) + d(0,2)   hoặc   ΠM(0,2,4)">
+               placeholder="Σm(1,3,5,7) + d(0,2)   ·   ΠM(0,2,4)">
       </label>
-      <button class="btn" id="k-apply">Áp dụng</button>
+      <button class="btn" id="k-apply" data-i18n="kmap.apply"></button>
     </div>
     <div id="k-specerr" class="small bad"></div>
   </div>
@@ -107,74 +100,71 @@
     <h2>K-map</h2>
     <div class="maps" id="k-maps"></div>
     <div class="legend" id="k-legend" style="margin-top:12px"></div>
-    <p class="small muted" style="margin-bottom:0">Viền <b>liền &amp; đậm</b> = essential prime implicant · viền <b>nét đứt</b> = prime implicant được chọn thêm.</p>
+    <p class="small muted" style="margin-bottom:0" data-i18n-html="kmap.legendNote"></p>
   </div>
 
   <div class="card">
-    <h2>Truth table</h2>
-    <p class="small muted" style="margin-top:0">Click một hàng để đổi giá trị — K-map và biểu thức tự cập nhật.</p>
-    <div class="tblbox" id="k-tt" style="max-height:430px;overflow-y:auto"></div>
-  </div>
-
-  <div class="card">
-    <h2>Kết quả rút gọn</h2>
+    <h2 data-i18n="kmap.resultTitle"></h2>
     <div class="row tight" style="align-items:flex-start"><b class="small" style="min-width:5.5em;padding-top:6px">SOP:</b>
       <div class="expr" id="k-sop"></div></div>
     <div class="row tight" style="align-items:flex-start;margin-top:6px"><b class="small" style="min-width:5.5em;padding-top:6px">POS:</b>
       <div class="expr" id="k-pos"></div></div>
     <p class="small muted" id="k-cost" style="margin-bottom:0"></p>
-    <p class="small muted" style="margin:.2em 0 0">POS được tìm bằng cách rút gọn các ô <b>0</b> thành SOP của F′ rồi lấy bù (De Morgan).</p>
+    <p class="small muted" style="margin:.2em 0 0" data-i18n-html="kmap.posNote"></p>
   </div>
 
   <div class="card">
-    <h2>Giải thích từng bước</h2>
+    <h2 data-i18n="kmap.stepsTitle"></h2>
     <div class="row">
-      <button class="btn primary" id="st-next">Next ▶</button>
-      <button class="btn" id="st-prev">◀ Back</button>
-      <button class="btn" id="st-reset">Bắt đầu lại</button>
+      <button class="btn primary" id="st-next" data-i18n="kmap.next"></button>
+      <button class="btn" id="st-prev" data-i18n="kmap.prev"></button>
+      <button class="btn" id="st-reset" data-i18n="kmap.restart"></button>
       <span class="mono small muted" id="st-count"></span>
     </div>
     <div class="steps-box" style="margin-top:10px" id="st-box"></div>
+  </div>
+
+  <div class="card">
+    <h2>Truth table</h2>
+    <p class="small muted" style="margin-top:0" data-i18n="kmap.ttNote"></p>
+    <div class="tblbox" id="k-tt" style="max-height:430px;overflow-y:auto"></div>
   </div>
   </div>
 
   <div class="pane" id="pane-ch3-practice" role="tabpanel" aria-labelledby="sub-ch3-practice">
   <div class="card">
-    <h2>Đề bài</h2>
+    <h2 data-i18n="prac.problemTitle"></h2>
     <div class="row">
-      <label class="inline">Số biến:
+      <label class="inline"><span data-i18n="kmap.vars"></span>
         <select id="p-n"><option>2</option><option>3</option><option selected>4</option></select>
       </label>
-      <label class="inline"><input type="checkbox" id="p-dc"> kèm don't care</label>
-      <button class="btn primary" id="p-gen">Tạo hàm ngẫu nhiên</button>
+      <label class="inline"><input type="checkbox" id="p-dc"> <span data-i18n="prac.withDc"></span></label>
+      <button class="btn primary" id="p-gen" data-i18n="prac.newProblem"></button>
     </div>
     <p class="mono small" id="p-spec" style="margin:.6em 0 0"></p>
   </div>
 
   <div class="card">
-    <h2>Chọn nhóm</h2>
-    <p class="small muted" style="margin-top:0">
-      <b>Kéo</b> để quét một vùng chữ nhật · <b>click</b> (hoặc Shift+click) để bật/tắt từng ô — dùng cách này cho nhóm
-      <b>wrap-around</b> · rồi bấm “Chốt nhóm”.
-    </p>
+    <h2 data-i18n="prac.groupTitle"></h2>
+    <p class="small muted" style="margin-top:0" data-i18n-html="prac.groupHint"></p>
     <div class="maps" id="p-maps"></div>
     <div class="row" style="margin-top:12px">
-      <button class="btn primary" id="p-commit">Chốt nhóm</button>
-      <button class="btn" id="p-clearsel">Bỏ chọn</button>
-      <button class="btn" id="p-undo">Xoá nhóm cuối</button>
-      <button class="btn" id="p-clearg">Xoá hết nhóm</button>
+      <button class="btn primary" id="p-commit" data-i18n="prac.commit"></button>
+      <button class="btn" id="p-clearsel" data-i18n="prac.clearSel"></button>
+      <button class="btn" id="p-undo" data-i18n="prac.undo"></button>
+      <button class="btn" id="p-clearg" data-i18n="prac.clearAll"></button>
     </div>
     <div class="legend" id="p-legend" style="margin-top:10px"></div>
   </div>
 
   <div class="card">
-    <h2>Biểu thức của bạn</h2>
+    <h2 data-i18n="prac.exprTitle"></h2>
     <div class="row">
-      <input type="text" id="p-expr" style="flex:1 1 260px" autocomplete="off" spellcheck="false" placeholder="ví dụ: w'x + xz' + y">
-      <button class="btn primary" id="p-check">Kiểm tra</button>
-      <button class="btn" id="p-show">Xem đáp án</button>
+      <input type="text" id="p-expr" style="flex:1 1 260px" autocomplete="off" spellcheck="false" data-i18n-ph="prac.exprPh">
+      <button class="btn primary" id="p-check" data-i18n="prac.check"></button>
+      <button class="btn" id="p-show" data-i18n="prac.showAnswer"></button>
     </div>
-    <p class="small muted" style="margin:.3em 0 0">Cú pháp: <span class="mono">x'</span> hoặc <span class="mono">!x</span> là NOT · viết liền là AND · <span class="mono">+</span> là OR · dùng được ngoặc.</p>
+    <p class="small muted" style="margin:.3em 0 0" data-i18n-html="prac.syntax"></p>
     <div id="p-result"></div>
   </div>
   </div>

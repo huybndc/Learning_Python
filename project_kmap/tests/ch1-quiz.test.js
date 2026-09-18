@@ -12,9 +12,9 @@ describe('makeQuestion', () => {
       for (let i = 0; i < 40; i++) {
         const q = makeQuestion(k, rnd);
         expect(q.kind, k).toBe(k);
-        expect(q.text.length).toBeGreaterThan(10);
+        expect(q.textKey.length).toBeGreaterThan(0);
         expect(String(q.answer).length).toBeGreaterThan(0);
-        expect(q.hint.length).toBeGreaterThan(10);
+        expect(q.hintKey.length).toBeGreaterThan(0);
       }
     }
   });

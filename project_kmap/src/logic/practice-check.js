@@ -15,7 +15,8 @@ export function cellsToImplicant(cells, n) {
 
 /**
  * Kiểm tra một nhóm người học khoanh.
- * Trả về {ok, size, imp, errors:[], notes:[]}
+ * Trả về {ok, size, imp, errors:[{key,params}], notes:[{key,params}]}
+ * — errors/notes là mã, ui/ dịch sang ngôn ngữ đang chọn.
  */
 export function checkGroup(cells, values, n, allPIs) {
   const errors = [], notes = [];
@@ -23,21 +24,24 @@ export function checkGroup(cells, values, n, allPIs) {
   const imp = cellsToImplicant(uniq, n);
   const size = uniq.length;
 
-  if (size === 0) { errors.push('nhóm rỗng'); return { ok: false, size, imp, errors, notes }; }
-  if ((size & (size - 1)) !== 0) errors.push('kích thước ' + size + ' không phải luỹ thừa của 2');
+  if (size === 0) {
+    errors.push({ key: 'prac.errEmpty', params: {} });
+    return { ok: false, size, imp, errors, notes };
+  }
+  if ((size & (size - 1)) !== 0) errors.push({ key: 'prac.errNotPow2', params: { size } });
   // hình chữ nhật trên mặt torus ⇔ tập ô đúng bằng implicant sinh ra nó
   const spanned = 1 << popcount(imp.d);
-  if (spanned !== size) errors.push('không phải hình chữ nhật trên mặt torus (nhóm nhỏ nhất bao nó có ' + spanned + ' ô)');
+  if (spanned !== size) errors.push({ key: 'prac.errNotRect', params: { size: spanned } });
   const zeros = uniq.filter(m => values[m] === 0);
-  if (zeros.length) errors.push('chứa ô giá trị 0: ' + zeros.join(', '));
+  if (zeros.length) errors.push({ key: 'prac.errHasZero', params: { cells: zeros.join(', ') } });
 
   if (errors.length === 0) {
     // đã hợp lệ → nhóm đã lớn nhất chưa?
     const bigger = allPIs.filter(p => impContains(p, imp) && p.d !== imp.d);
     if (bigger.length) {
-      notes.push('chưa phải nhóm lớn nhất — có thể mở rộng thành ' + bigger.map(p => implicantToSOP(p, n)).join(' hoặc '));
+      notes.push({ key: 'prac.noteBigger', params: { terms: bigger.map(p => implicantToSOP(p, n)).join(' / ') } });
     }
-    if (uniq.every(m => values[m] === 2)) notes.push('nhóm này chỉ toàn don\'t care — không cần thiết');
+    if (uniq.every(m => values[m] === 2)) notes.push({ key: 'prac.noteAllDc', params: {} });
   }
   return { ok: errors.length === 0, size, imp, errors, notes };
 }

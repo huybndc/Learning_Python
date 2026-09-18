@@ -4,6 +4,8 @@
    checkDerivation() kiểm chứng mọi bước giữ nguyên bảng chân trị.
    --------------------------------------------------------------- */
 
+import { fail } from './app-error.js';
+
 export const DERIVATIONS = [
   {
     id: '2.1a',
@@ -64,6 +66,6 @@ export const DERIVATIONS = [
 /** Tra một lời giải mẫu theo id. */
 export function derivation(id) {
   const d = DERIVATIONS.find(x => x.id === id);
-  if (!d) throw new Error('không có lời giải mẫu "' + id + '"');
+  if (!d) fail('err.noDerivation', { id });
   return d;
 }

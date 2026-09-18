@@ -32,7 +32,7 @@ describe('complementByDeMorgan (Example 2.2)', () => {
     const r = complementByDeMorgan("x + y'z", 3);
     expect(r.steps.length).toBe(2);
     expect(r.steps[0].expr).toBe("(x + y'z)'");
-    expect(r.steps.every(s => s.note.length > 0)).toBe(true);
+    expect(r.steps.every(s => s.noteKey.length > 0)).toBe(true);
   });
 });
 

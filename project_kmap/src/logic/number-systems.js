@@ -3,13 +3,15 @@
    Số được biểu diễn bằng chuỗi chữ số; cơ số r từ 2 đến 16.
    --------------------------------------------------------------- */
 
+import { fail } from './app-error.js';
+
 export const DIGITS = '0123456789ABCDEF';
 export const MAX_FRAC_STEPS = 12;          // số bước tối đa khi đổi phần lẻ
 
 /** Giá trị của một chữ số trong hệ cơ số r; ném lỗi nếu không hợp lệ. */
 export function digitValue(ch, r) {
   const v = DIGITS.indexOf(ch.toUpperCase());
-  if (v < 0 || v >= r) throw new Error('chữ số "' + ch + '" không hợp lệ trong cơ số ' + r);
+  if (v < 0 || v >= r) fail('err.badDigit', { digit: ch, radix: r });
   return v;
 }
 
@@ -18,15 +20,15 @@ export function splitNumber(text) {
   const s = text.trim().replace(/\s+/g, '');
   const dot = s.indexOf('.');
   if (dot < 0) return { intPart: s, fracPart: '' };
-  if (s.indexOf('.', dot + 1) >= 0) throw new Error('có nhiều hơn một dấu chấm thập phân');
+  if (s.indexOf('.', dot + 1) >= 0) fail('err.manyDots');
   return { intPart: s.slice(0, dot), fracPart: s.slice(dot + 1) };
 }
 
 /** Chuỗi ở cơ số r → số thập phân (Number). Chấp nhận phần lẻ. */
 export function toDecimal(text, r) {
-  if (r < 2 || r > 16) throw new Error('cơ số phải trong khoảng 2..16');
+  if (r < 2 || r > 16) fail('err.radixRange');
   const { intPart, fracPart } = splitNumber(text);
-  if (intPart === '' && fracPart === '') throw new Error('chuỗi rỗng');
+  if (intPart === '' && fracPart === '') fail('err.emptyString');
   let v = 0;
   for (const ch of intPart) v = v * r + digitValue(ch, r);
   let f = 0, w = 1 / r;
@@ -40,8 +42,8 @@ export function toDecimal(text, r) {
  * từ dưới lên sẽ ra kết quả.
  */
 export function intToBaseSteps(n, r) {
-  if (!Number.isInteger(n) || n < 0) throw new Error('phần nguyên phải là số nguyên không âm');
-  if (r < 2 || r > 16) throw new Error('cơ số phải trong khoảng 2..16');
+  if (!Number.isInteger(n) || n < 0) fail('err.needNonNegInt');
+  if (r < 2 || r > 16) fail('err.radixRange');
   const steps = [];
   if (n === 0) return { digits: '0', steps: [{ value: 0, quotient: 0, remainder: 0, digit: '0' }] };
   let v = n;
@@ -61,8 +63,8 @@ export function intToBaseSteps(n, r) {
  * Trả về { digits, steps:[{ value, product, digit, rest }], exact }.
  */
 export function fracToBaseSteps(f, r, maxSteps = MAX_FRAC_STEPS) {
-  if (!(f >= 0 && f < 1)) throw new Error('phần lẻ phải nằm trong [0, 1)');
-  if (r < 2 || r > 16) throw new Error('cơ số phải trong khoảng 2..16');
+  if (!(f >= 0 && f < 1)) fail('err.fracRange');
+  if (r < 2 || r > 16) fail('err.radixRange');
   const steps = [];
   let v = f;
   while (v > 0 && steps.length < maxSteps) {
@@ -77,7 +79,7 @@ export function fracToBaseSteps(f, r, maxSteps = MAX_FRAC_STEPS) {
 
 /** Số thập phân → chuỗi ở cơ số r (gộp phần nguyên + phần lẻ). */
 export function fromDecimal(x, r, maxFrac = MAX_FRAC_STEPS) {
-  if (x < 0) throw new Error('chỉ hỗ trợ số không âm');
+  if (x < 0) fail('err.needNonNeg');
   const i = Math.floor(x);
   const { digits: intDigits } = intToBaseSteps(i, r);
   const { digits: fracDigits } = fracToBaseSteps(x - i, r, maxFrac);
@@ -95,7 +97,7 @@ export function convertBase(text, from, to, maxFrac = MAX_FRAC_STEPS) {
  * Trả về { digits, groups:[{ bits, digit }] } cho cả hai phần.
  */
 export function binaryToGrouped(text, k) {
-  if (k !== 3 && k !== 4) throw new Error('chỉ gộp nhóm 3 bit (octal) hoặc 4 bit (hex)');
+  if (k !== 3 && k !== 4) fail('err.groupSize');
   const { intPart, fracPart } = splitNumber(text);
   for (const ch of intPart + fracPart) digitValue(ch, 2);
 
@@ -115,7 +117,7 @@ export function binaryToGrouped(text, k) {
 
 /** Bát/thập lục phân → nhị phân: mỗi chữ số bung thành k bit. */
 export function groupedToBinary(text, k) {
-  if (k !== 3 && k !== 4) throw new Error('chỉ bung nhóm 3 bit (octal) hoặc 4 bit (hex)');
+  if (k !== 3 && k !== 4) fail('err.groupSize');
   const r = 1 << k;
   const { intPart, fracPart } = splitNumber(text);
   const expand = s => [...s].map(ch => ({

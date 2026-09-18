@@ -9,6 +9,7 @@
    --------------------------------------------------------------- */
 
 import { varNames } from './quine-mccluskey.js';
+import { fail as appFail } from './app-error.js';
 
 export function parseAst(text, n) {
   const names = varNames(n);
@@ -16,7 +17,7 @@ export function parseAst(text, n) {
   let i = 0;
   const skip = () => { while (i < src.length && /\s/.test(src[i])) i++; };
   const peek = () => { skip(); return i < src.length ? src[i] : null; };
-  const fail = msg => { throw new Error(msg + ' (vị trí ' + (i + 1) + ')'); };
+  const fail = (key, params) => appFail(key, { ...params, pos: i + 1 });
 
   function parseOr() {
     const parts = [parseAnd()];
@@ -32,7 +33,7 @@ export function parseAst(text, n) {
   function parseAnd() {
     const parts = [];
     while (startsFactor()) parts.push(parseNot());
-    if (parts.length === 0) fail('thiếu toán hạng');
+    if (parts.length === 0) fail('err.missingOperand');
     return parts.length === 1 ? parts[0] : { t: 'and', parts };
   }
   function parseNot() {
@@ -45,25 +46,25 @@ export function parseAst(text, n) {
   }
   function parseAtom() {
     const c = peek();
-    if (c === null) fail('biểu thức kết thúc sớm');
+    if (c === null) fail('err.exprEndedEarly');
     if (c === '(') {
       i++;
       const x = parseOr();
-      if (peek() !== ')') fail('thiếu dấu )');
+      if (peek() !== ')') fail('err.missingParen');
       i++;
       return x;
     }
     if (c === '0') { i++; return { t: 'const', v: 0 }; }
     if (c === '1') { i++; return { t: 'const', v: 1 }; }
     const k = names.indexOf(c.toLowerCase());
-    if (k < 0) fail('ký tự không hợp lệ "' + c + '" — chỉ dùng ' + names.join(', '));
+    if (k < 0) fail('err.badVar', { ch: c, names: names.join(', ') });
     i++;
     return { t: 'var', k };
   }
 
   const ast = parseOr();
   skip();
-  if (i < src.length) fail('thừa ký tự "' + src[i] + '"');
+  if (i < src.length) fail('err.extraChar', { ch: src[i] });
   return ast;
 }
 
@@ -75,7 +76,7 @@ export function evalAst(ast, m, n) {
     case 'not': return evalAst(ast.x, m, n) ^ 1;
     case 'or': return ast.parts.some(p => evalAst(p, m, n)) ? 1 : 0;
     case 'and': return ast.parts.every(p => evalAst(p, m, n)) ? 1 : 0;
-    default: throw new Error('node lạ: ' + ast.t);
+    default: appFail('err.badNode', { t: ast.t });
   }
 }
 
@@ -101,7 +102,7 @@ export function formatAst(ast, n) {
       }
       case 'or': return node.parts.map(p => wrap(p, PREC.or)).join(' + ');
       case 'and': return node.parts.map(p => wrap(p, PREC.and + 1)).join('');
-      default: throw new Error('node lạ: ' + node.t);
+      default: appFail('err.badNode', { t: node.t });
     }
   };
   return go(ast);
@@ -115,7 +116,7 @@ export function dualAst(ast) {
     case 'not': return { t: 'not', x: dualAst(ast.x) };
     case 'or': return { t: 'and', parts: ast.parts.map(dualAst) };
     case 'and': return { t: 'or', parts: ast.parts.map(dualAst) };
-    default: throw new Error('node lạ: ' + ast.t);
+    default: appFail('err.badNode', { t: ast.t });
   }
 }
 
@@ -127,7 +128,7 @@ export function complementLiteralsAst(ast) {
     case 'not': return ast.x.t === 'var' ? { ...ast.x } : { t: 'not', x: complementLiteralsAst(ast.x) };
     case 'or': return { t: 'or', parts: ast.parts.map(complementLiteralsAst) };
     case 'and': return { t: 'and', parts: ast.parts.map(complementLiteralsAst) };
-    default: throw new Error('node lạ: ' + ast.t);
+    default: appFail('err.badNode', { t: ast.t });
   }
 }
 
@@ -139,6 +140,6 @@ export function pushNot(ast) {
     case 'not': return ast.x;                                  // (x′)′ = x
     case 'or': return { t: 'and', parts: ast.parts.map(pushNot) };
     case 'and': return { t: 'or', parts: ast.parts.map(pushNot) };
-    default: throw new Error('node lạ: ' + ast.t);
+    default: appFail('err.badNode', { t: ast.t });
   }
 }

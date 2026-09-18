@@ -1,7 +1,8 @@
 # Ôn tập Logic Circuit
 
-App học theo chương, chạy hoàn toàn offline trong trình duyệt.
+App học theo chương, **song ngữ Việt/Anh**, chạy hoàn toàn offline trong trình duyệt.
 Mỗi chương có 4 mục con: **Lý thuyết → Ví dụ minh hoạ → Tương tác → Luyện tập**.
+Nút VI/EN ở góc trên phải; lựa chọn được nhớ lại giữa các lần mở.
 
 | Chương | Nội dung | Tương ứng sách |
 |---|---|---|
@@ -53,8 +54,15 @@ Quy tắc: `logic/` **không bao giờ** import từ `ui/`.
 
 ## Sửa nội dung Lý thuyết
 
-Sửa thẳng `src/content/theory-chN.md` (Markdown thường, có thể copy từ vault
-Obsidian `CAU_1st`). Trang tự render lại khi lưu (`npm run dev`), không cần đụng code.
+Sửa thẳng `src/content/theory-chN.vi.md` (và bản `.en.md` tương ứng — Markdown
+thường, có thể copy từ vault Obsidian `CAU_1st`). Trang tự render lại khi lưu
+(`npm run dev`), không cần đụng code.
+
+## Thêm/sửa chuỗi giao diện
+
+Thêm khoá vào **cả hai** `src/i18n/vi/*.js` và `src/i18n/en/*.js`, rồi dùng
+`T('khoá')` trong `src/ui/` hoặc `data-i18n="khoá"` trong markup.
+`npm test` sẽ báo nếu hai từ điển lệch khoá hoặc lệch tham số `{…}`.
 
 ## Thêm một chương mới
 
@@ -85,7 +93,10 @@ Obsidian `CAU_1st`). Trang tự render lại khi lưu (`npm run dev`), không c�
 
 **Chương 3 — Gray code & K-map**
 - [ ] Ví dụ: bảng Gray đổi theo n = 1..5, reflect&prefix, bộ chuyển đổi hai chiều
-- [ ] Tương tác: K-map n = 2..5, click ô/hàng truth table, spec Σm/ΠM/d, giải thích từng bước
+- [ ] Biến đặt tên w, x, y, z (n=4) đúng quy ước Mano
+- [ ] Thứ tự card: K-map → Kết quả rút gọn → Giải thích → Truth table
+- [ ] Giải thích từng bước: mỗi bước một dòng `F = …` + một câu lý do
+- [ ] Tương tác: K-map n = 2..5, click ô/hàng truth table, spec Σm/ΠM/d
 - [ ] Tương tác: hover chip term làm sáng đúng nhóm trên K-map
 - [ ] Luyện tập: kéo chọn vùng, nhóm wrap-around, chấm nhóm và biểu thức, xem đáp án
 - [ ] Lý thuyết: 6 mục render đủ
@@ -95,3 +106,5 @@ Obsidian `CAU_1st`). Trang tự render lại khi lưu (`npm run dev`), không c�
 - [ ] `bash scripts/check_file_sizes.sh .` không báo file nào
 - [ ] `npm run build` chạy được và `dist/index.html` mở trực tiếp bằng `file://`
 - [ ] Hiển thị đúng ở cả light mode và dark mode
+- [ ] Chuyển VI/EN đổi hết chuỗi, không sót tiếng Việt ở bản EN
+- [ ] Lựa chọn ngôn ngữ được nhớ sau khi tải lại trang

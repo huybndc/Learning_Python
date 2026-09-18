@@ -19,12 +19,8 @@ export function complementByDeMorgan(expr, n) {
   return {
     result: formatAst(out, n),
     steps: [
-      { expr: '(' + formatAst(ast, n) + ")'", note: 'Bắt đầu: lấy bù toàn bộ hàm.' },
-      {
-        expr: formatAst(out, n),
-        note: 'DeMorgan mở rộng: mỗi dấu + thành ·, mỗi dấu · thành +, đồng thời '
-          + 'bù từng literal — dấu phủ định được đẩy xuống tận biến.',
-      },
+      { expr: '(' + formatAst(ast, n) + ")'", noteKey: 'c2.dmStart' },
+      { expr: formatAst(out, n), noteKey: 'c2.dmApply' },
     ],
   };
 }
@@ -40,9 +36,9 @@ export function complementByDual(expr, n) {
   return {
     result: formatAst(out, n),
     steps: [
-      { expr: formatAst(ast, n), note: 'Biểu thức ban đầu.' },
-      { expr: formatAst(d, n), note: 'Lấy dual: đổi + ↔ ·, 0 ↔ 1, giữ nguyên biến.' },
-      { expr: formatAst(out, n), note: 'Bù từng literal (A → A′, A′ → A) ⇒ được hàm bù.' },
+      { expr: formatAst(ast, n), noteKey: 'c2.duStart' },
+      { expr: formatAst(d, n), noteKey: 'c2.duDual' },
+      { expr: formatAst(out, n), noteKey: 'c2.duCompl' },
     ],
   };
 }

@@ -4,7 +4,7 @@
    Dùng để thay phép trừ bằng phép cộng.
    --------------------------------------------------------------- */
 
-import { DIGITS, digitValue, toDecimal, fromDecimal } from './number-systems.js';
+import { DIGITS, digitValue, toDecimal, fromDecimal } from './number-systems.js';import { fail } from './app-error.js';
 
 /**
  * (r−1)'s complement: lấy (r−1) trừ từng chữ số.
@@ -12,9 +12,9 @@ import { DIGITS, digitValue, toDecimal, fromDecimal } from './number-systems.js'
  * Trả về { digits, perDigit:[{ digit, sub, result }] } — giữ nguyên số chữ số.
  */
 export function diminishedComplement(text, r) {
-  if (r < 2 || r > 16) throw new Error('cơ số phải trong khoảng 2..16');
+  if (r < 2 || r > 16) fail('err.radixRange');
   const s = text.trim().toUpperCase();
-  if (!s.length) throw new Error('chuỗi rỗng');
+  if (!s.length) fail('err.emptyString');
   const perDigit = [...s].map(ch => {
     const v = digitValue(ch, r);
     return { digit: ch, sub: r - 1, result: DIGITS[r - 1 - v] };
@@ -72,17 +72,17 @@ export function subtractByComplement(mText, nText, r) {
   const endCarry = carry === 1 || comp.carryOut === 1;
 
   const steps = [
-    { label: 'M', value: M },
-    { label: "r's complement của N", value: compN },
-    { label: 'M + comp(N)', value: (endCarry ? '1' : '') + sum },
+    { labelKey: 'sub.m', value: M },
+    { labelKey: 'sub.compN', value: compN },
+    { labelKey: 'sub.sum', value: (endCarry ? '1' : '') + sum },
   ];
 
   if (endCarry) {
-    steps.push({ label: 'Có nhớ ra ngoài ⇒ bỏ nhớ, kết quả dương', value: sum });
+    steps.push({ labelKey: 'sub.positive', value: sum });
     return { digits: sum, negative: false, endCarry, compN, sum, steps };
   }
   const back = radixComplement(sum, r).digits;
-  steps.push({ label: "Không có nhớ ⇒ lấy r's complement của tổng, kết quả âm", value: '−' + back });
+  steps.push({ labelKey: 'sub.negative', value: '−' + back });
   return { digits: back, negative: true, endCarry, compN, sum, steps };
 }
 

@@ -4,36 +4,38 @@
    bit CAO nhất: F1 = 0001 = AND, F7 = 0111 = OR, F14 = 1110 = NAND.
    --------------------------------------------------------------- */
 
+import { fail } from './app-error.js';
+
 /** Nhóm phân loại 16 hàm. */
 export const GROUPS = {
-  constant: 'Hằng',
-  unary: 'Một biến (transfer / complement)',
-  binary: 'Toán tử hai ngôi',
+  constant: 'group.constant',
+  unary: 'group.unary',
+  binary: 'group.binary',
 };
 
 /* Tên, ký hiệu đại số và tên cổng (nếu là cổng chuẩn) của từng Fᵢ. */
 const TABLE = [
-  { i: 0, expr: '0', name: 'Null (hằng 0)', op: '0', gate: null },
-  { i: 1, expr: 'xy', name: 'AND', op: 'x · y', gate: 'AND' },
-  { i: 2, expr: "xy'", name: 'Inhibition (x nhưng không y)', op: 'x/y', gate: null },
-  { i: 3, expr: 'x', name: 'Transfer x', op: 'x', gate: 'Buffer' },
-  { i: 4, expr: "x'y", name: 'Inhibition (y nhưng không x)', op: 'y/x', gate: null },
-  { i: 5, expr: 'y', name: 'Transfer y', op: 'y', gate: 'Buffer' },
-  { i: 6, expr: "xy' + x'y", name: 'XOR (khác dấu)', op: 'x ⊕ y', gate: 'XOR' },
-  { i: 7, expr: 'x + y', name: 'OR', op: 'x + y', gate: 'OR' },
-  { i: 8, expr: "(x + y)'", name: 'NOR', op: 'x ↓ y', gate: 'NOR' },
-  { i: 9, expr: "xy + x'y'", name: 'XNOR (bằng nhau)', op: '(x ⊕ y)′', gate: 'XNOR' },
-  { i: 10, expr: "y'", name: 'Complement y', op: 'y′', gate: 'NOT' },
-  { i: 11, expr: "x + y'", name: 'Implication (y ⇒ x)', op: 'x ⊂ y', gate: null },
-  { i: 12, expr: "x'", name: 'Complement x', op: 'x′', gate: 'NOT' },
-  { i: 13, expr: "x' + y", name: 'Implication (x ⇒ y)', op: 'x ⊃ y', gate: null },
-  { i: 14, expr: "(xy)'", name: 'NAND', op: 'x ↑ y', gate: 'NAND' },
-  { i: 15, expr: '1', name: 'Identity (hằng 1)', op: '1', gate: null },
+  { i: 0, expr: '0', nameKey: 'fn.null', op: '0', gate: null },
+  { i: 1, expr: 'xy', nameKey: 'fn.and', op: 'x · y', gate: 'AND' },
+  { i: 2, expr: "xy'", nameKey: 'fn.inhibXY', op: 'x/y', gate: null },
+  { i: 3, expr: 'x', nameKey: 'fn.transferX', op: 'x', gate: 'Buffer' },
+  { i: 4, expr: "x'y", nameKey: 'fn.inhibYX', op: 'y/x', gate: null },
+  { i: 5, expr: 'y', nameKey: 'fn.transferY', op: 'y', gate: 'Buffer' },
+  { i: 6, expr: "xy' + x'y", nameKey: 'fn.xor', op: 'x ⊕ y', gate: 'XOR' },
+  { i: 7, expr: 'x + y', nameKey: 'fn.or', op: 'x + y', gate: 'OR' },
+  { i: 8, expr: "(x + y)'", nameKey: 'fn.nor', op: 'x ↓ y', gate: 'NOR' },
+  { i: 9, expr: "xy + x'y'", nameKey: 'fn.xnor', op: '(x ⊕ y)′', gate: 'XNOR' },
+  { i: 10, expr: "y'", nameKey: 'fn.complY', op: 'y′', gate: 'NOT' },
+  { i: 11, expr: "x + y'", nameKey: 'fn.implYX', op: 'x ⊂ y', gate: null },
+  { i: 12, expr: "x'", nameKey: 'fn.complX', op: 'x′', gate: 'NOT' },
+  { i: 13, expr: "x' + y", nameKey: 'fn.implXY', op: 'x ⊃ y', gate: null },
+  { i: 14, expr: "(xy)'", nameKey: 'fn.nand', op: 'x ↑ y', gate: 'NAND' },
+  { i: 15, expr: '1', nameKey: 'fn.identity', op: '1', gate: null },
 ];
 
 /** Giá trị của Fᵢ tại (x, y). Dòng xy được đánh số 0..3 theo (x<<1)|y. */
 export function evalFunction(i, x, y) {
-  if (i < 0 || i > 15) throw new Error('chỉ có F0..F15');
+  if (i < 0 || i > 15) fail('err.fRange');
   const row = (x << 1) | y;            // 0..3 theo thứ tự xy = 00, 01, 10, 11
   return (i >> (3 - row)) & 1;         // dòng 0 là bit cao nhất
 }
@@ -66,21 +68,21 @@ export function allFunctions() {
 /** Tra một hàm theo chỉ số. */
 export function functionAt(i) {
   const f = allFunctions()[i];
-  if (!f) throw new Error('chỉ có F0..F15');
+  if (!f) fail('err.fRange');
   return f;
 }
 
 /* ---------------- 8 cổng logic chuẩn (§2.8) ---------------- */
 
 export const STANDARD_GATES = [
-  { gate: 'AND', fi: 1, symbol: 'x · y', note: 'Bằng 1 khi cả hai ngõ vào bằng 1.' },
-  { gate: 'OR', fi: 7, symbol: 'x + y', note: 'Bằng 1 khi ít nhất một ngõ vào bằng 1.' },
-  { gate: 'NOT', fi: 12, symbol: "x′", note: 'Inverter — đảo giá trị ngõ vào.' },
-  { gate: 'Buffer', fi: 3, symbol: 'x', note: 'Chuyển tiếp giá trị, dùng để khuếch đại tín hiệu.' },
-  { gate: 'NAND', fi: 14, symbol: 'x ↑ y', note: 'AND rồi đảo. Cổng phổ quát.' },
-  { gate: 'NOR', fi: 8, symbol: 'x ↓ y', note: 'OR rồi đảo. Cổng phổ quát.' },
-  { gate: 'XOR', fi: 6, symbol: 'x ⊕ y', note: 'Bằng 1 khi hai ngõ vào KHÁC nhau.' },
-  { gate: 'XNOR', fi: 9, symbol: '(x ⊕ y)′', note: 'Bằng 1 khi hai ngõ vào BẰNG nhau.' },
+  { gate: 'AND', fi: 1, symbol: 'x · y', noteKey: 'gate.and' },
+  { gate: 'OR', fi: 7, symbol: 'x + y', noteKey: 'gate.or' },
+  { gate: 'NOT', fi: 12, symbol: "x′", noteKey: 'gate.not' },
+  { gate: 'Buffer', fi: 3, symbol: 'x', noteKey: 'gate.buffer' },
+  { gate: 'NAND', fi: 14, symbol: 'x ↑ y', noteKey: 'gate.nand' },
+  { gate: 'NOR', fi: 8, symbol: 'x ↓ y', noteKey: 'gate.nor' },
+  { gate: 'XOR', fi: 6, symbol: 'x ⊕ y', noteKey: 'gate.xor' },
+  { gate: 'XNOR', fi: 9, symbol: '(x ⊕ y)′', noteKey: 'gate.xnor' },
 ];
 
 /** Kết quả của cả 8 cổng chuẩn tại một cặp (x, y). */

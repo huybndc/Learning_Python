@@ -34,7 +34,7 @@ describe('sopTerms / sopToNand (Fig 2.7c)', () => {
   it('có đủ 3 bước giải thích', () => {
     const r = sopToNand('wx + yz', 4);
     expect(r.steps.length).toBe(4);
-    expect(r.steps.every(s => s.note.length > 10)).toBe(true);
+    expect(r.steps.every(s => s.noteKey.length > 0)).toBe(true);
   });
 });
 
@@ -45,9 +45,9 @@ describe('makeQuestion (Ch.2)', () => {
       for (let i = 0; i < 40; i++) {
         const q = makeQuestion(k, rnd);
         expect(q.kind).toBe(k);
-        expect(q.text.length).toBeGreaterThan(10);
+        expect(q.textKey.length).toBeGreaterThan(0);
         expect(String(q.answer).length).toBeGreaterThan(0);
-        expect(q.hint.length).toBeGreaterThan(10);
+        expect(q.hintKey.length).toBeGreaterThan(0);
         expect(q.meta).toBeTypeOf('object');
       }
     }
@@ -111,7 +111,7 @@ describe('checkAnswer', () => {
     const r = checkAnswer(q, 'wx +');
     expect(r.ok).toBe(false);
     expect(r.reason).toBe('parse');
-    expect(r.message.length).toBeGreaterThan(0);
+    expect(r.error.key).toBeTruthy();
   });
 
   it('bỏ trống báo reason = empty', () => {

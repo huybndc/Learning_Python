@@ -1,9 +1,5 @@
 # Lý thuyết Gray code & Karnaugh map
 
-Trang này là chỗ chứa ghi chú học tập. Nội dung nằm ở `src/content/theory.md` —
-sửa thẳng file đó (Markdown thường, copy được từ vault Obsidian `CAU_1st`),
-trang sẽ tự render lại.
-
 ## 1. Gray code là gì?
 
 Gray code (mã Gray, hay *reflected binary code*) là cách đánh số sao cho **hai
@@ -88,7 +84,7 @@ Quy trình rút gọn (Quine–McCluskey, cũng chính là thuật toán tab K-m
 
 ## 5. SOP và POS
 
-- **SOP** (Sum of Products, Σm): phủ các ô **1**, kết quả dạng `A'B + CD + ...`
+- **SOP** (Sum of Products, Σm): phủ các ô **1**, kết quả dạng `x'y + zw + ...`
 - **POS** (Product of Sums, ΠM): phủ các ô **0** để rút gọn `F'`, rồi lấy bù
   bằng **De Morgan** ⇒ mỗi term tích thành một tổng, mỗi literal bị đảo dấu.
 

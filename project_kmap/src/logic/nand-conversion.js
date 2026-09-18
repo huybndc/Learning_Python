@@ -6,7 +6,7 @@
    Tầng 1 là các NAND tạo tᵢ′, tầng 2 là một NAND gộp lại.
    --------------------------------------------------------------- */
 
-import { parseAst, formatAst } from './bool-ast.js';
+import { parseAst, formatAst } from './bool-ast.js';import { fail } from './app-error.js';
 
 /** Lấy danh sách term của một biểu thức SOP phẳng; ném lỗi nếu không phải SOP. */
 export function sopTerms(expr, n) {
@@ -17,7 +17,7 @@ export function sopTerms(expr, n) {
     for (const f of factors) {
       const leaf = f.t === 'not' ? f.x : f;
       if (leaf.t !== 'var' && leaf.t !== 'const') {
-        throw new Error('chưa phải SOP hai tầng — còn ngoặc lồng bên trong');
+        fail('err.notFlatSop');
       }
     }
   }
@@ -38,20 +38,16 @@ export function sopToNand(expr, n) {
     result,
     terms,
     steps: [
-      { expr: terms.join(' + '), note: 'Dạng SOP ban đầu (mạch AND-OR hai tầng).' },
+      { expr: terms.join(' + '), noteKey: 'nand.step1' },
       {
         expr: terms.map((t, i) => 't' + (i + 1) + ' = ' + t).join(',  '),
-        note: 'Đặt tên cho ngõ ra của từng cổng AND ở tầng 1.',
+        noteKey: 'nand.step2',
       },
       {
         expr: 'F = (' + terms.map((_, i) => 't' + (i + 1) + "'").join(' · ') + ")'",
-        note: 'Bù hai lần rồi áp DeMorgan cho tầng OR: t₁ + t₂ + … = (t₁′ · t₂′ · …)′.',
+        noteKey: 'nand.step3',
       },
-      {
-        expr: result,
-        note: 'Thay tᵢ′ bằng biểu thức của nó: mỗi tᵢ′ chính là một cổng NAND ở '
-          + 'tầng 1, còn dấu ngoặc ngoài cùng là cổng NAND tầng 2.',
-      },
+      { expr: result, noteKey: 'nand.step4' },
     ],
     gateCount: { level1: terms.length, level2: 1 },
   };

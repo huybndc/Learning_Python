@@ -98,7 +98,7 @@ describe('subtractByComplement', () => {
   it('có đủ các bước giải thích', () => {
     const r = subtractByComplement('72532', '3250', 10);
     expect(r.steps.length).toBe(4);
-    expect(r.steps.every(s => s.label && s.value)).toBe(true);
+    expect(r.steps.every(s => s.labelKey && s.value)).toBe(true);
   });
 
   it('kết quả luôn khớp với phép trừ thập phân, mọi cặp 6 bit', () => {

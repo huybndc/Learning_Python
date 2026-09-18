@@ -1,8 +1,8 @@
 import { $, el } from './dom-helpers.js';
-import {
-  intToBaseSteps, fracToBaseSteps, splitNumber,
+import {  intToBaseSteps, fracToBaseSteps, splitNumber,
   binaryToGrouped, MAX_FRAC_STEPS,
 } from '../logic/number-systems.js';
+import { t as T, tError, onLangChange } from '../i18n/index.js';
 
 /* Chương 1 — Ví dụ minh hoạ: tái hiện Example 1.1–1.3 và §1.4 dưới dạng
    bảng từng bước giống trong slide. */
@@ -38,21 +38,20 @@ function renderIntExample() {
 
   const n = Number(raw);
   if (raw === '' || !Number.isInteger(n) || n < 0) {
-    return fail('#e1-err', '#e1-out', 'Nhập một số nguyên không âm.', clear);
+    return fail('#e1-err', '#e1-out', T('c1.intErr'), clear);
   }
-  if (n > 1e9) return fail('#e1-err', '#e1-out', 'Số quá lớn (tối đa 1e9).', clear);
+  if (n > 1e9) return fail('#e1-err', '#e1-out', T('c1.intTooBig'), clear);
   $('#e1-err').textContent = '';
 
   const { digits, steps } = intToBaseSteps(n, r);
-  buildTable(table, ['Phép chia', 'Thương', 'Dư', 'Chữ số'],
+  buildTable(table, [T('c1.colDiv'), T('c1.colQuot'), T('c1.colRem'), T('c1.colDigit')],
     steps.map((s, i) => [
       { text: s.value + ' ÷ ' + r },
       { text: String(s.quotient) },
       { text: String(s.remainder) },
-      { text: s.digit + (i === 0 ? '  ← LSB' : i === steps.length - 1 ? '  ← MSB' : ''), cls: 'val-1' },
+      { text: s.digit + (i === 0 ? '  ' + T('c1.lsb') : i === steps.length - 1 ? '  ' + T('c1.msb') : ''), cls: 'val-1' },
     ]));
-  $('#e1-out').textContent = '(' + n + ')₁₀ = (' + digits + ')' + sub(r)
-    + '   — đọc cột "Dư" từ dưới lên.';
+  $('#e1-out').textContent = T('c1.intOut', { n, digits, sub10: sub(10), sub: sub(r) });
 }
 
 /* ---------------- Ví dụ 1.3: nhân lấy phần nguyên ---------------- */
@@ -64,21 +63,20 @@ function renderFracExample() {
 
   const f = Number(raw);
   if (raw === '' || !(f > 0 && f < 1)) {
-    return fail('#e2-err', '#e2-out', 'Nhập một số trong khoảng 0 < x < 1, ví dụ 0.6875.', clear);
+    return fail('#e2-err', '#e2-out', T('c1.fracErr'), clear);
   }
   $('#e2-err').textContent = '';
 
   const { digits, steps, exact } = fracToBaseSteps(f, r);
-  buildTable(table, ['Phép nhân', 'Kết quả', 'Phần nguyên', 'Còn lại'],
+  buildTable(table, [T('c1.colMul'), T('c1.colProd'), T('c1.colInt'), T('c1.colRest')],
     steps.map((s, i) => [
       { text: trim(s.value) + ' × ' + r },
       { text: trim(s.product) },
-      { text: s.digit + (i === 0 ? '  ← chữ số đầu' : ''), cls: 'val-1' },
+      { text: s.digit + (i === 0 ? '  ' + T('c1.firstDigit') : ''), cls: 'val-1' },
       { text: trim(s.rest) },
     ]));
-  $('#e2-out').textContent = '(' + raw + ')₁₀ = (0.' + digits + ')' + sub(r)
-    + (exact ? '   — dừng khi phần lẻ về 0.'
-      : '   — phần lẻ lặp vô hạn, đã cắt ở ' + MAX_FRAC_STEPS + ' chữ số.');
+  $('#e2-out').textContent = T('c1.fracOut', { raw, digits, sub10: sub(10), sub: sub(r) })
+    + (exact ? T('c1.fracExact') : T('c1.fracCut', { max: MAX_FRAC_STEPS }));
 }
 
 /* ---------------- §1.4: gộp nhóm bit ---------------- */
@@ -92,7 +90,7 @@ function renderGroupExample() {
   try {
     res = binaryToGrouped(raw, groupK);
   } catch (e) {
-    return fail('#e3-err', '#e3-out', 'Lỗi: ' + e.message, clear);
+    return fail('#e3-err', '#e3-out', T('err.prefix') + tError(e), clear);
   }
   $('#e3-err').textContent = '';
 
@@ -110,8 +108,8 @@ function renderGroupExample() {
     });
     host.appendChild(wrap);
   };
-  line('Phần nguyên:', res.groups.int);
-  line('Phần lẻ:', res.groups.frac);
+  line(T('c1.intPart'), res.groups.int);
+  line(T('c1.fracPart'), res.groups.frac);
 
   const { intPart, fracPart } = splitNumber(raw);
   const shown = fracPart ? intPart + '.' + fracPart : intPart;
@@ -146,6 +144,7 @@ export function setupCh1ExamplePage() {
     renderGroupExample();
   }));
 
+  onLangChange(() => { renderIntExample(); renderFracExample(); renderGroupExample(); });
   renderIntExample();
   renderFracExample();
   renderGroupExample();
