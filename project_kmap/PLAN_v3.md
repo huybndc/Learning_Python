@@ -40,29 +40,30 @@ nguyên tắc cho Chương 1 và Chương 2 (người dùng chưa thử tới n�
 
 ## Milestone
 
-### Milestone G — Đổi tên biến sang v/w/x/y/z
+### Milestone G — [x] Đổi tên biến sang v/w/x/y/z
 - `logic/quine-mccluskey.js`: `varNames(n)` theo quy ước Mano.
 - Sửa regex `[A-Ea-e]` trong `expr-parser.js`, `nand-conversion.js`.
 - Cập nhật biểu thức mẫu ở `boolean-examples.js`, `ch2-quiz.js`, placeholder HTML.
 - **Xong khi:** `npm test` pass, K-map hiện `w x y z`, parser đọc được cả hoa/thường.
 
-### Milestone H — Sắp xếp lại card & giải thích thành Boolean function
+### Milestone H — [x] Sắp xếp lại card & giải thích thành Boolean function
+*(gộp thực hiện cùng Milestone I để không phải viết chuỗi hai lần)*
 - `src/pages/ch3.html`: đổi thứ tự card trong mục Tương tác.
 - `logic/kmap-explain.js` (mới): sinh các bước dạng `{title, formula, reason}`.
 - `ui/kmap-steps.js`: render gọn lại, bỏ HTML dài.
 - Áp dụng nguyên tắc "kết quả trước dữ liệu thô" cho Ch.1 và Ch.2.
 - **Xong khi:** mỗi bước chỉ còn 1 dòng công thức + 1 câu lý do; test pass.
 
-### Milestone I — Hạ tầng song ngữ + chuỗi UI
+### Milestone I — [x] Hạ tầng song ngữ + chuỗi UI
 - `src/i18n/{index,vi,en}.js`; nút chuyển ngôn ngữ; `data-i18n` cho markup tĩnh.
 - `logic/` đổi sang ném mã lỗi; `ui/` dịch.
 - **Xong khi:** chuyển ngôn ngữ đổi hết chuỗi UI, không sót chuỗi cứng.
 
-### Milestone J — Nội dung lý thuyết EN + rút gọn VI
+### Milestone J — [x] Nội dung lý thuyết EN + rút gọn VI
 - `theory-chN.vi.md` (rút gọn) + `theory-chN.en.md` (dịch, cũng súc tích).
 - **Xong khi:** cả 3 chương đọc được ở cả hai ngôn ngữ.
 
-### Milestone K — Rà soát chéo, kiểm chứng, mở PR
+### Milestone K — [x] Rà soát chéo, kiểm chứng, mở PR
 - Đối chiếu 12 mục con ở cả 2 ngôn ngữ, light/dark, 390px.
 - `npm test` + `npm run build` + `check_file_sizes.sh`.
 - Mở pull request.
