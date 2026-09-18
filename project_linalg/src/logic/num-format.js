@@ -44,10 +44,16 @@ export function toFraction(x, maxDen = 64, eps = 1e-9) {
   return Math.abs(p1 / q1 - v) <= eps ? { num: sign * p1, den: q1 } : null;
 }
 
-/** Số → chuỗi gọn: nguyên thì để nguyên, phân số đẹp thì viết a/b, còn lại làm tròn. */
+/**
+ * Số → chuỗi gọn theo thứ tự ưu tiên:
+ *   nguyên → để nguyên (3)
+ *   thập phân ngắn → giữ thập phân (3.2, 1.25) vì đọc tự nhiên hơn 16/5
+ *   còn lại → thử phân số mẫu nhỏ (2/3, -1/6), không được thì làm tròn (3.142)
+ */
 export function fmt(x, digits = 3) {
   const c = clean(x);
   if (Number.isInteger(c)) return String(c);
+  if (Number(c.toFixed(2)) === c) return String(c);
   const f = toFraction(c);
   if (f && f.den !== 1 && f.den <= 64) return f.num + '/' + f.den;
   return String(Number(c.toFixed(digits)));
@@ -60,6 +66,12 @@ export function fmtCoef(x) {
   if (near(c, -1)) return '-';
   return fmt(c);
 }
+
+/** Số đứng trong một tích hay luỹ thừa: số âm phải có ngoặc, vì -5² đọc thành -(5²). */
+export const fmtParen = x => {
+  const s = fmt(x);
+  return s.startsWith('-') ? '(' + s + ')' : s;
+};
 
 /** Vector → "(1, 2, 3)". */
 export const fmtVec = v => '(' + v.map(x => fmt(x)).join(', ') + ')';

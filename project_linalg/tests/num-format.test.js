@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clean, near, toFraction, fmt, fmtCoef, fmtVec, signPart } from '../src/logic/num-format.js';
+import { clean, near, toFraction, fmt, fmtCoef, fmtParen, fmtVec, signPart } from '../src/logic/num-format.js';
 
 describe('clean', () => {
   it('gom về số nguyên khi đủ gần', () => {
@@ -48,10 +48,13 @@ describe('fmt', () => {
     expect(fmt(0)).toBe('0');
   });
 
-  it('phân số đẹp thì viết dạng a/b', () => {
+  it('thập phân ngắn giữ nguyên, số lặp vô hạn mới viết thành phân số', () => {
+    expect(fmt(3.2)).toBe('3.2');
+    expect(fmt(-0.5)).toBe('-0.5');
+    expect(fmt(1.25)).toBe('1.25');
     expect(fmt(2 / 3)).toBe('2/3');
-    expect(fmt(-0.5)).toBe('-1/2');
-    expect(fmt(1.25)).toBe('5/4');
+    expect(fmt(-1 / 6)).toBe('-1/6');
+    expect(fmt(5 / 7)).toBe('5/7');
   });
 
   it('số lẻ thì làm tròn', () => {
@@ -64,6 +67,14 @@ describe('fmt', () => {
     expect(fmtCoef(-1)).toBe('-');
     expect(fmtCoef(2)).toBe('2');
     expect(fmtCoef(0)).toBe('0');
+  });
+
+  it('số âm trong tích/luỹ thừa có ngoặc', () => {
+    expect(fmtParen(3)).toBe('3');
+    expect(fmtParen(-5)).toBe('(-5)');
+    expect(fmtParen(-0.5)).toBe('(-0.5)');
+    expect(fmtParen(-2 / 3)).toBe('(-2/3)');
+    expect(fmtParen(0)).toBe('0');
   });
 
   it('vector và dấu', () => {

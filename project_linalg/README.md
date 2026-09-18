@@ -71,17 +71,19 @@ Kế hoạch đầy đủ ở `PLAN.md`.
 
 - [x] **M0** — khung sườn: Vite, nav 2 cấp, song ngữ, `logic/vector.js`,
       `logic/matrix.js`, `geometry/plane2d.js` + test
-- [ ] **M1** — Ch.1 Vector
+- [x] **M1** — Ch.1 Vector
 - [ ] **M2** — Ch.2 Giải hệ Ax = b
 - [ ] **M3+** — dừng lại xin ý kiến trước khi chuyển sang Three.js (Ch.3)
 
 ## Checklist đối chiếu
 
 **Chương 1 — Vector**
-- [ ] Lý thuyết: định nghĩa vector, các phép toán, dot product, góc, span
-- [ ] Ví dụ: cộng vector bằng hình bình hành có animate
-- [ ] Tương tác: kéo mũi tên vector, toạ độ/độ dài/góc cập nhật realtime
-- [ ] Luyện tập: sinh + chấm 4 dạng bài, chấm theo giá trị số có sai số
+- [x] Lý thuyết: định nghĩa vector, các phép toán, dot product, góc, span
+- [x] Ví dụ: cộng vector bằng hình bình hành có animate
+- [x] Ví dụ: dot product minh hoạ bằng hình chiếu, xoay v để thấy dấu đổi
+- [x] Tương tác: kéo mũi tên vector, toạ độ/độ dài/góc cập nhật realtime
+- [x] Tương tác: slider hệ số tổ hợp tuyến tính, span hiện bằng chấm mờ
+- [x] Luyện tập: sinh + chấm 4 dạng bài, chấm theo giá trị số có sai số
 
 **Chương 2 — Giải hệ Ax = b**
 - [ ] Lý thuyết: biểu diễn ma trận, khử Gauss, hạng, phân loại nghiệm

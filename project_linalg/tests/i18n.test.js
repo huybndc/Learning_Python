@@ -51,11 +51,15 @@ describe('markup và mã nguồn dùng đúng khoá', () => {
     expect([...new Set(used)].filter(k => !(k in vi)), 'khoá không có trong từ điển').toEqual([]);
   });
 
-  it('mọi khoá T("…") trong src/ui đều có trong từ điển', () => {
+  it('mọi khoá i18n xuất hiện trong src/ui đều có trong từ điển', () => {
+    // bắt cả T('khoá') lẫn khoá viết trong bảng tra (STEP_KEYS, SIGN_KEYS…),
+    // vì ghép chuỗi khoá thì test không soi được — quy ước là viết thẳng ra.
+    const shaped = /'((?:app|nav|sub|common|err|c\d+q?)\.[\w.]+)'/g;
     const used = new Set();
     for (const { code } of jsFiles('../src/ui/')) {
-      for (const m of code.matchAll(/\bT\('([\w.]+)'/g)) used.add(m[1]);
+      for (const m of stripComments(code).matchAll(shaped)) used.add(m[1]);
     }
+    expect(used.size).toBeGreaterThan(20);
     expect([...used].filter(k => !(k in vi)), 'khoá dùng trong ui/ nhưng chưa khai báo').toEqual([]);
   });
 

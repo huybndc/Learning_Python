@@ -16,3 +16,15 @@ export const COLORS = ['--accent', '--warn', '--ok', '--ink-dim', '--bad'];
 /** Đọc một biến CSS đang có hiệu lực (theo light/dark mode hiện tại). */
 export const cssVar = name =>
   getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#888';
+
+/**
+ * Dựng bảng đọc số <dl class="readout"> từ danh sách [nhãn, giá trị, lớp css].
+ * Dùng chung cho mọi bảng vẽ nên chỗ nào cũng hiện số theo một kiểu.
+ */
+export function renderReadout(host, rows) {
+  host.innerHTML = '';
+  for (const [label, value, cls] of rows) {
+    host.appendChild(el('dt', null, label));
+    host.appendChild(el('dd', cls || null, String(value)));
+  }
+}
