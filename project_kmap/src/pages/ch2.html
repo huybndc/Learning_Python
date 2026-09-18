@@ -8,16 +8,53 @@
   </div>
 
   <div class="pane active" id="pane-ch2-theory" role="tabpanel" aria-labelledby="sub-ch2-theory">
-  <div class="card">
-    <h2>Lý thuyết</h2>
-    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
-  </div>
+  <div class="card theory-body" id="theory-ch2-body"></div>
   </div>
 
   <div class="pane" id="pane-ch2-example" role="tabpanel" aria-labelledby="sub-ch2-example">
   <div class="card">
-    <h2>Ví dụ minh hoạ</h2>
-    <p class="muted small" style="margin-bottom:0">Phần này sẽ được bổ sung ở milestone sau.</p>
+    <h2>Example 2.1 — Rút gọn bằng định lý</h2>
+    <div class="row">
+      <label class="inline">Chọn câu:
+        <select id="d-pick"></select>
+      </label>
+      <span class="small muted" id="d-vars"></span>
+    </div>
+    <div class="steps-box" style="margin-top:10px">
+      <div class="tblbox"><table class="grid" id="d-table"></table></div>
+      <p class="small" id="d-cost" style="margin:10px 0 0"></p>
+      <p class="small" id="d-verify" style="margin:4px 0 0"></p>
+    </div>
+    <p class="small muted" style="margin:.5em 0 0">
+      Mỗi bước được kiểm chứng tự động: biểu thức sau mỗi bước phải có
+      <b>cùng bảng chân trị</b> với biểu thức ban đầu.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Example 2.2–2.3 — Lấy hàm bù bằng hai cách</h2>
+    <div class="row">
+      <label class="inline" style="flex:1 1 280px">Hàm F:
+        <input type="text" id="c-expr" value="A + B'C" style="flex:1 1 auto;min-width:160px"
+               autocomplete="off" spellcheck="false">
+      </label>
+      <label class="inline">Số biến:
+        <select id="c-n"><option>2</option><option selected>3</option><option>4</option></select>
+      </label>
+    </div>
+    <div id="c-err" class="small bad"></div>
+    <div class="row" style="align-items:flex-start;gap:16px;margin-top:10px">
+      <div class="steps-box" style="flex:1 1 280px">
+        <h4>Cách 1 — DeMorgan mở rộng</h4>
+        <div id="c-dm"></div>
+      </div>
+      <div class="steps-box" style="flex:1 1 280px">
+        <h4>Cách 2 — qua dual</h4>
+        <div id="c-du"></div>
+      </div>
+    </div>
+    <p class="small" id="c-check" style="margin:10px 0 0"></p>
+    <div class="tblbox" style="margin-top:10px"><table class="grid" id="c-tt"></table></div>
   </div>
   </div>
 

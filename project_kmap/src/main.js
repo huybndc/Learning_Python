@@ -6,6 +6,8 @@ import { setupPracticePage } from './ui/practice-page.js';
 import { mountTheory } from './ui/theory-page.js';
 import { setupCh1ExamplePage } from './ui/ch1-example-page.js';
 import theoryCh1 from './content/theory-ch1.md?raw';
+import { setupCh2ExamplePage } from './ui/ch2-example-page.js';
+import theoryCh2 from './content/theory-ch2.md?raw';
 import theoryCh3 from './content/theory-ch3.md?raw';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -14,7 +16,9 @@ window.addEventListener('DOMContentLoaded', () => {
   setupKmapPage();
   setupPracticePage();
   setupCh1ExamplePage();
+  setupCh2ExamplePage();
   mountTheory('#theory-ch1-body', theoryCh1);
+  mountTheory('#theory-ch2-body', theoryCh2);
   mountTheory('#theory-ch3-body', theoryCh3);
   console.log('%cÔn tập Logic Circuit', 'font-weight:bold');
 });
