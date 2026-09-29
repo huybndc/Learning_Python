@@ -1,0 +1,24 @@
+/* CSS riêng của app Discrete Math — phần chung (token, nút, bảng, khung, bài học) ở shared/style/. */
+.theory-body table{font-family:var(--mono)}
+
+/* Công cụ (ui/tools.js): dòng được dùng tô xanh, dòng F ≠ G tô đỏ, cột kết quả có vạch trái */
+.steps-box tr.hit td{background:var(--ok-bg)}
+.steps-box tr.diff td{background:var(--bad-bg)}
+table.grid .fin{border-left:2px solid var(--line-strong)}
+.steps-box > p.small{margin:10px 0 0}
+
+/* Hình đồ thị (ui/graph-figure.js) */
+.graph-row{display:flex;gap:18px;flex-wrap:wrap}
+.graph-box{margin:0;text-align:center}
+.graph-box figcaption{font-family:var(--math);font-style:italic;font-size:var(--fs-md);color:var(--ink-dim)}
+.graph-fig{display:block;max-width:100%;height:auto}
+.gf-e{stroke:var(--ink-dim);stroke-width:1.8}
+.gf-e.hot{stroke:var(--bad);stroke-width:3}
+.gf-v circle{fill:var(--panel);stroke:var(--ink);stroke-width:1.6}
+.gf-v text{fill:var(--ink);font:600 13px var(--font);text-anchor:middle}
+.gf-v.c0 circle{fill:var(--accent);stroke:var(--accent)} .gf-v.c0 text{fill:var(--accent-ink)}
+.gf-v.c1 circle{fill:var(--warn-bg);stroke:var(--warn)}
+.graph-tool{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.graph-tool #t8-facts{flex:1 1 320px;min-width:0;display:grid;gap:6px}
+.gt-fact .mono{white-space:pre-wrap}
+.gt-mat{margin:6px 0 0}

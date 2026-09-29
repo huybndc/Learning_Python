@@ -1,0 +1,191 @@
+/* ===================================================================
+   BỘ CHẠY LUYỆN TẬP (shared/ui/runner.js)
+   =================================================================== */
+.run-kinds{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding-bottom:2px}
+.chip{
+  flex:0 0 auto;font:inherit;font-size:var(--fs-sm);font-weight:500;cursor:pointer;
+  padding:6px 13px;border-radius:999px;border:1px solid var(--line-strong);
+  background:var(--panel);color:var(--ink-dim);white-space:nowrap;
+}
+.chip:hover{color:var(--ink);border-color:var(--ink-dim)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+
+.run-card{padding:26px 28px;max-width:860px}
+.run-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.run-dots{list-style:none;margin:0;padding:0;display:flex;gap:4px}
+.run-dots li{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.run-dots li.now{background:var(--ink-dim)}
+.run-dots li.ok{background:var(--ok)}
+.run-dots li.bad{background:var(--bad)}
+.run-count{font:600 var(--fs-xs) var(--mono);color:var(--ink-dim)}
+.run-head .badge{margin-left:auto}
+.run-code{font:12px/1 var(--mono);color:var(--ink-dim);user-select:all}
+
+.run-q{font-size:1.25rem;font-weight:500;line-height:1.5;margin:0 0 18px;max-width:62ch}
+.run-q .mono,.run-q code{font-family:var(--mono);font-size:.95em}
+.run-format{margin:-.7rem 0 1.1rem;font-size:var(--fs-sm);color:var(--ink-dim);max-width:62ch}
+.run-work{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px 40px}
+.run-work > *{min-width:0}
+.run-work > .run-answer,.run-work > .run-choices{flex:1 1 100%}
+.run-work > .run-widget{flex:1 1 auto}
+.run-fig{margin:0 0 8px;overflow-x:auto;max-width:100%}
+.run-answer{display:flex;gap:10px;flex-wrap:wrap}
+.run-answer input{flex:1 1 260px;font-size:1.05rem;padding:11px 13px}
+.run-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.run-choices.rows{grid-template-columns:1fr}
+.run-choices.rows .choice{justify-content:flex-start;text-align:left}
+.choice{
+  display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;
+  font:inherit;font-size:var(--fs-md);padding:12px 14px;border-radius:var(--r-md);
+  border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);
+}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice .key{
+  flex:0 0 24px;height:24px;border-radius:6px;display:grid;place-items:center;
+  font:600 12px/1 var(--mono);background:var(--panel2);color:var(--ink-dim);
+}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--ok);background:var(--ok-bg)}
+.choice.right .key{background:var(--ok);color:var(--panel)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.choice.wrong .key{background:var(--bad);color:var(--panel)}
+
+.run-choices.mcq{grid-template-columns:1fr;max-width:34rem}
+.run-choices.mcq .choice{padding:.7rem .9rem}
+.choice-text.mono{font:500 var(--fs-md) var(--mono);letter-spacing:.02em;word-break:break-word}
+.choice-text.step-math{font-size:1.15rem}
+.run-tools{display:flex;gap:18px;margin-top:12px}
+button.link{font:inherit;font-size:var(--fs-sm);background:none;border:0;padding:0;cursor:pointer;color:var(--ink-dim);text-decoration:underline;text-underline-offset:3px}
+button.link:hover{color:var(--accent)}
+.run-feedback{margin-top:10px}
+.run-feedback .msg{font-size:var(--fs-md)}
+.run-ans{margin-left:4px;color:var(--ink)}
+.run-detail{display:block;margin-top:4px}
+.run-explain{margin:12px 0 0;padding:14px 16px;border-radius:var(--r-md);background:var(--panel2);font-size:var(--fs-sm);line-height:1.65}
+.run-explain b{display:block;margin-bottom:4px;font-size:var(--fs-xs);color:var(--ink-dim);font-weight:600}
+.run-next{margin-top:16px}
+.run-goal{align-items:baseline}
+.run-goal .run-next{margin-top:12px}
+.run-pass{flex-basis:100%;margin-top:10px;font-weight:600;color:var(--ok)}
+.run-learn{display:inline-block;margin-top:.3rem;font-size:var(--fs-sm);color:var(--accent);text-decoration:none}
+.run-learn:hover{text-decoration:underline}
+
+.run-score{font:700 3.2rem/1 var(--font);letter-spacing:-.03em;margin:4px 0 6px}
+.run-score span{font-size:1.6rem;color:var(--ink-dim);font-weight:600}
+.run-summary{list-style:none;padding:0;margin:18px 0 20px;display:grid;gap:6px;max-width:520px}
+.run-summary li{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-radius:var(--r-sm);background:var(--panel2);font-size:var(--fs-sm)}
+.run-summary li b{font-family:var(--mono)}
+.run-summary li > span{flex:1}
+.run-lines{margin-top:.7rem;padding-top:.7rem;border-top:1px dashed var(--line-strong);display:grid;gap:.35rem}
+.run-lines .step{line-height:1.55}
+.run-lines .step.calc{padding-left:1rem}
+.run-lines .mono{font-size:var(--fs-sm);white-space:pre-wrap}
+.step-math{font-family:var(--math);font-style:italic;font-size:1.08em;letter-spacing:.01em}
+.run-review.block{display:block;width:max-content;max-width:100%;margin-top:.9rem}
+.run-review.block.root{margin-top:.35rem;color:var(--warn)}
+.run-review{font-size:var(--fs-sm);color:var(--ink-dim);text-underline-offset:3px}
+.run-review:hover{color:var(--accent)}
+.run-summary li.bad b{color:var(--bad)}
+.run-summary li.ok b{color:var(--ok)}
+
+/* hình kèm đề: bảng chân trị nhỏ */
+.fig-truth{border-collapse:separate;border-spacing:0;font:var(--fs-sm) var(--mono)}
+.fig-truth th,.fig-truth td{padding:5px 14px;text-align:center;border-bottom:1px solid var(--line)}
+.fig-truth th{font-family:var(--font);font-weight:600;color:var(--ink-dim)}
+.fig-truth td.out,.fig-truth th.out{border-left:1px solid var(--line-strong);font-weight:700;color:var(--accent)}
+
+@media (max-width:900px){
+  .run-card{padding:18px 16px}
+  .run-q{font-size:1.1rem}
+  .run-dots li{width:14px}
+}
+
+/* ===================== biểu thức như trong sách ===================== */
+.math{font-family:var(--math);font-style:italic;font-size:1.14em;letter-spacing:.01em;white-space:nowrap}
+.run-q .math{font-size:1.2em}
+
+/* ===================== widget trả lời (shared/ui/widgets.js) ===================== */
+.run-widget{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.w-tip{margin:0 0 10px;font-size:var(--fs-sm);color:var(--ink-dim)}
+
+/* dãy bit: ô trống nét đứt, bit 1 "sáng đèn" màu môn */
+.w-bits{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.w-gap{width:10px}
+.w-bit{
+  width:42px;height:52px;border-radius:8px;cursor:pointer;
+  border:1.5px dashed var(--line-strong);background:var(--panel);
+  font:700 1.35rem/1 var(--mono);color:var(--line-strong);
+  transition:background .1s ease,border-color .1s ease,transform .08s ease;
+}
+.w-bit:hover:not(:disabled){border-color:var(--accent)}
+.w-bit:active:not(:disabled){transform:scale(.94)}
+.w-bit[data-v="0"]{border-style:solid;color:var(--ink)}
+.w-bit[data-v="1"]{border-style:solid;border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.w-bit:disabled{cursor:default;opacity:1}
+.w-bit.good{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--ok)}
+.w-bit.bad{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--bad)}
+
+/* bảng chân trị bấm được */
+.w-truth{border-collapse:separate;border-spacing:0;font:var(--fs-md) var(--mono)}
+.w-truth th,.w-truth td{padding:6px 18px;text-align:center;border-bottom:1px solid var(--line)}
+.w-truth th{font:italic 600 1.1rem var(--math);color:var(--ink-dim)}
+.w-truth tbody tr:nth-child(4n) td{border-bottom-color:var(--line-strong)}
+.w-truth .out{border-left:1.5px solid var(--line-strong);min-width:64px;font-weight:700}
+.w-truth.column td.out{cursor:pointer;color:var(--line-strong)}
+.w-truth.column td.out:hover{background:var(--panel2)}
+.w-truth td.out[data-v="0"]{color:var(--ink)}
+.w-truth td.out[data-v="1"]{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.w-truth.rows tbody tr{cursor:pointer}
+.w-truth.rows tbody tr:hover td{background:var(--panel2)}
+.w-truth.rows tr.picked td{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.w-truth.rows tr.picked td.out{color:var(--accent)}
+.w-truth td.out.bad,.w-truth tr.bad td{background:var(--bad-bg);color:var(--bad)}
+.w-truth td.out.good{color:var(--ok)}
+.w-truth tr.want td{box-shadow:inset 0 -2px 0 var(--ok)}
+.w-truth tr.want td.out::after{content:'✓';color:var(--ok)}
+.w-truth [tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* ô số có nhãn */
+.w-fields{display:flex;gap:14px;flex-wrap:wrap}
+.w-field{display:flex;flex-direction:column;gap:5px;font-size:var(--fs-sm);color:var(--ink-dim)}
+.w-field input{width:150px;font:600 1.15rem var(--mono);padding:10px 12px}
+
+/* chọn tập chỉ số */
+.w-numset{display:grid;grid-template-columns:repeat(8,46px);gap:6px}
+.w-num{
+  height:46px;border-radius:8px;cursor:pointer;border:1.5px solid var(--line-strong);
+  background:var(--panel);font:600 1rem var(--mono);color:var(--ink);
+}
+.w-num:hover:not(:disabled){border-color:var(--accent)}
+.w-num[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.w-num:disabled{cursor:default;opacity:1}
+.w-num.bad{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--bad)}
+.w-num.want{border:2px dashed var(--ok);color:var(--ok)}
+
+/* trắc nghiệm bằng hình (vd ký hiệu cổng): tên hiện sau khi trả lời */
+.run-choices:has(.visual){grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.choice.visual{flex-direction:column;align-items:center;gap:6px;padding:14px 12px 10px;position:relative}
+.choice.visual .key{position:absolute;top:8px;left:8px}
+.choice.visual svg{width:110px;height:auto;color:var(--ink)}
+.choice-label{font:600 var(--fs-sm) var(--mono);color:var(--ink-dim);min-height:1.3em}
+.choice.visual:not(:disabled) .choice-label{visibility:hidden}
+
+@media (max-width:560px){
+  .w-bit{width:34px;height:44px;font-size:1.15rem}
+  .w-numset{grid-template-columns:repeat(auto-fill,minmax(40px,1fr));width:100%}
+  .w-truth th,.w-truth td{padding:5px 12px}
+}
+/* ma trận trong lời giải / phương án (question.js mathSpan) */
+.mat{
+  display:inline-grid;vertical-align:middle;column-gap:.9em;row-gap:.1em;margin:.2em .25em;padding:.1em .45em;
+  border-left:1.5px solid currentColor;border-right:1.5px solid currentColor;border-radius:4px;
+  font-family:var(--mono);font-style:normal;font-size:var(--fs-sm);text-align:right;
+}
+.mat .bar{border-left:1px solid var(--line-strong);padding-left:.7em}
+.run-note{margin:0 0 10px;font-size:var(--fs-xs);color:var(--ink-dim)}
+/* bảng chân trị trong lời giải (tableLine): vạch ngăn cột biến | công thức, dòng cần chú ý tô đỏ */
+.step-table{margin:6px 0 4px}
+.step-table th{font-family:var(--math, var(--font));font-weight:500}
+.step-table th.sep,.step-table td.sep{border-left:1px solid var(--line-strong)}
+.step-table tr.mark td{background:color-mix(in srgb,var(--bad) 18%,transparent)}
+.step-table tr.pick td{background:color-mix(in srgb,var(--accent) 16%,transparent)}

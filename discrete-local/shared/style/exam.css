@@ -1,0 +1,99 @@
+/* ===================================================================
+   BÀI FULL 60–90 PHÚT (shared/ui/exam-screen.js, exam-run.js)
+   Phòng thi: menu trái ẩn, lưới câu bên trái dính khi cuộn, đồng hồ mono.
+   Hổ phách (--hi) chỉ dùng cho mốc thi: cờ, đồng hồ còn 5 phút.
+   =================================================================== */
+
+/* ---------------- chọn đề: 3 hàng kẻ dòng + một nút ---------------- */
+.exam-setup{border-top:1px solid var(--line);margin:0 0 1rem}
+.exam-field{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:1rem;align-items:start;padding:1.1rem .75rem;border-bottom:1px solid var(--line)}
+.exam-label{font-weight:600;font-size:var(--fs-sm);padding-top:.45rem}
+.exam-field .chapter-bar{margin:0}
+.exam-field small{display:block;margin-top:.45rem;font-size:var(--fs-xs);color:var(--ink-dim)}
+/* chọn NHIỀU chương: ô đánh dấu dạng nút (thanh phân đoạn chỉ dành cho chọn một) */
+.exam-chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.exam-chip{
+  display:inline-flex;align-items:center;gap:.5rem;font:inherit;font-size:var(--fs-sm);cursor:pointer;
+  padding:.45rem .8rem .45rem .6rem;border-radius:var(--r-md);border:1px solid var(--line-strong);background:var(--panel);color:var(--ink-dim);
+}
+.exam-chip::before{content:"";width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line-strong);flex:0 0 auto}
+.exam-chip b{font:600 var(--fs-xs) var(--mono)}
+.exam-chip:hover{border-color:var(--ink-dim);color:var(--ink)}
+.exam-chip[aria-pressed="true"]{color:var(--ink);border-color:var(--accent);background:var(--accent-soft)}
+.exam-chip[aria-pressed="true"]::before{border-color:var(--accent);background:var(--accent) center/10px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E")}
+.exam-modes{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.exam-mode{
+  text-align:left;font:inherit;padding:.8rem 1rem;border-radius:var(--r-md);cursor:pointer;
+  border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);
+}
+.exam-mode b{display:block;font-weight:600}
+.exam-mode small{font-size:var(--fs-sm);margin-top:.2rem}
+.exam-mode:hover{border-color:var(--ink-dim)}
+.exam-mode[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.exam-go{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem .75rem}
+.exam-go > span{font-size:var(--fs-sm);color:var(--ink-dim)}
+
+/* ---------------- phòng thi ---------------- */
+#app:has(> #screen-exam.active .exam-body){max-width:76rem}
+.exam-bar{display:flex;align-items:center;gap:1.2rem;padding:0 0 1rem;margin:0 0 1.4rem;border-bottom:1px solid var(--line)}
+.exam-bar .back{margin:0}
+.exam-name{font-weight:600}
+.exam-clock{
+  min-width:6.4rem;padding:.3rem .8rem;border-radius:var(--r-md);cursor:pointer;
+  font:600 1.3rem/1.3 var(--mono);letter-spacing:.02em;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink);
+}
+.exam-clock.hidden{font:500 var(--fs-sm)/1.9 var(--font);color:var(--ink-dim);letter-spacing:0}
+.exam-clock.low{color:var(--hi);border-color:var(--hi);background:var(--hi-bg)}
+
+.exam-body{display:grid;grid-template-columns:12.5rem minmax(0,1fr);gap:1.8rem;align-items:start}
+.exam-pal{position:sticky;top:1.4rem}
+.exam-pal small{display:block;margin:.9rem 0 .35rem;font-size:var(--fs-xs);color:var(--ink-dim)}
+.exam-pal small:first-child{margin-top:0}
+.pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.pal{
+  position:relative;height:2.1rem;border-radius:var(--r-sm);cursor:pointer;
+  font:500 var(--fs-xs) var(--mono);color:var(--ink-dim);
+  border:1px solid var(--line-strong);background:var(--panel);
+}
+.pal:hover{border-color:var(--ink-dim);color:var(--ink)}
+.pal.done{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 40%,var(--line));color:var(--ink)}
+.pal.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.pal.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+/* cờ: góc hổ phách */
+.pal.flag::after{content:"";position:absolute;top:2px;right:2px;border-style:solid;border-width:0 8px 8px 0;border-color:transparent var(--hi) transparent transparent}
+.pal[aria-current="true"]{outline:2px solid var(--accent);outline-offset:1px;color:var(--ink);font-weight:700}
+.pal-note{margin:1rem 0 0;font-size:var(--fs-xs);color:var(--ink-dim)}
+
+.exam-q{max-width:none;margin:0}
+.exam-flag[aria-pressed="true"]{color:var(--hi);text-decoration-color:var(--hi);font-weight:600}
+.exam-nav{display:flex;justify-content:space-between;margin-top:1.6rem;padding-top:1rem;border-top:1px solid var(--line)}
+/* thi thử: phương án đang chọn (chưa chấm) */
+.choice.picked{border-color:var(--accent);background:var(--accent-soft)}
+.choice.picked .key{background:var(--accent);color:var(--accent-ink)}
+
+.exam-dialog{
+  max-width:30rem;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);
+  box-shadow:0 24px 60px -20px rgb(0 0 0 / .45);
+}
+.exam-dialog::backdrop{background:rgb(10 12 16 / .35)}
+.exam-dialog p{margin:0 0 1.2rem;line-height:1.6}
+.exam-dialog-actions{display:flex;justify-content:flex-end;gap:.6rem}
+
+/* ---------------- kết quả ---------------- */
+.exam-score{display:flex;align-items:center;gap:1.4rem;margin:.8rem 0 .4rem;padding:0 0 1.4rem;border-bottom:1px solid var(--line)}
+.exam-score > b{font:600 3.4rem/1 var(--mono);letter-spacing:-.04em}
+.exam-score > b span{font-size:1.6rem;color:var(--ink-dim)}
+.exam-score strong{display:block;font-size:var(--fs-xl);font-weight:650}
+.exam-score small{display:block;font-size:var(--fs-sm);color:var(--ink-dim)}
+.tag.bad{color:var(--bad);background:var(--bad-bg)}
+.reviews{border-top:1px solid var(--line)}
+.review{border-bottom:1px solid var(--line)}
+.review summary{display:flex;align-items:center;gap:.9rem;padding:.7rem .75rem;cursor:pointer;list-style:none}
+.review summary::-webkit-details-marker{display:none}
+.review summary:hover{background:var(--panel2)}
+.review summary b{min-width:1.8rem;color:var(--ink-dim);font-weight:500}
+.review summary .tag{margin-left:auto}
+.review-body{padding:.4rem .75rem 1.4rem 3.45rem}
+.review-body .run-q{font-size:1.05rem}

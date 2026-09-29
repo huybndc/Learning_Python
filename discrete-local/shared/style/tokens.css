@@ -1,0 +1,58 @@
+/* ===================================================================
+   TOKENS — nguồn duy nhất của màu, chữ, khoảng cách cho cả 3 app.
+   Hướng "tài liệu kỹ thuật" (D19): nền trắng lạnh, cột menu xám nhạt, chữ màu
+   mực; mỗi môn MỘT màu nhấn cùng độ đậm; hổ phách chỉ cho "cần nhất" và mốc thi.
+   Chữ hệ thống (SF trên Mac — đủ dấu tiếng Việt, không phải tải), số và bit
+   dùng SF Mono, biểu thức dùng STIX như sách.
+   Tên biến cũ (--panel, --ink-dim, --accent…) giữ nguyên vì canvas của linalg
+   và K-map của logic đọc thẳng các biến này.
+   Sáng/tối: index.html luôn đặt data-theme trước lần vẽ đầu.
+   =================================================================== */
+@import '@fontsource/stix-two-text/400-italic.css';
+@import '@fontsource/stix-two-text/500.css';
+
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --math:"STIX Two Text",Georgia,"Times New Roman",serif;
+
+  --fs-xs:.75rem; --fs-sm:.8125rem; --fs-md:.9375rem; --fs-lg:1.0625rem; --fs-xl:1.625rem; --fs-2xl:2.25rem;
+  --r-sm:5px; --r-md:8px; --r-lg:10px;
+
+  --bg:#fbfbfc;          /* nền trang */
+  --side:#f2f3f6;        /* cột menu */
+  --panel:#ffffff;       /* mặt làm bài */
+  --panel2:#f3f4f7;      /* nền phụ (bảng, bước giải, hàng đang trỏ) */
+  --ink:#161b24;
+  --ink-dim:#5d6574;
+  --line:#e4e7ec;
+  --line-strong:#cfd4dc;
+  --ok:#1f7a4d; --warn:#9a6414; --bad:#b3412e;
+  --ok-bg:#e9f5ef; --warn-bg:#fbf1e0; --bad-bg:#fbeceb;
+  --hi:#b7791f; --hi-bg:#fbf1e0;       /* hổ phách: cần nhất, mốc thi */
+  --cell-x:#f3ead6;
+  --proj:#8a4fd8;
+  --grp-l:42%; --grp-s:72%; --grp-a:.15;
+
+  --accent:#1f7a64; --accent-ink:#ffffff;
+  --accent-soft:color-mix(in srgb,var(--accent) 8%,var(--panel));
+  --cell-1:color-mix(in srgb,var(--accent) 15%,var(--panel));
+}
+
+/* mỗi môn một màu nhấn — cùng độ sáng, khác sắc */
+[data-subject="logic"]{ --accent:#1f7a64; }
+[data-subject="linalg"]{ --accent:#2d5fb0; }
+[data-subject="discrete"]{ --accent:#6a4bb0; }
+
+:root[data-theme="dark"]{
+  --bg:#111317; --side:#15181d; --panel:#181b21; --panel2:#1e2229;
+  --ink:#e8eaee; --ink-dim:#9aa2b1; --line:#272c34; --line-strong:#363c47;
+  --ok:#4cb982; --warn:#e0a64a; --bad:#ef8a73;
+  --ok-bg:#132a1f; --warn-bg:#2e2412; --bad-bg:#33191a;
+  --hi:#e0a64a; --hi-bg:#2e2412;
+  --cell-x:#33301f; --proj:#c39bff;
+  --grp-l:66%; --grp-s:85%; --grp-a:.20;
+  --accent:#3fb592; --accent-ink:#0e1013;
+}
+:root[data-theme="dark"] [data-subject="linalg"],:root[data-theme="dark"][data-subject="linalg"]{--accent:#6f9ce6}
+:root[data-theme="dark"] [data-subject="discrete"],:root[data-theme="dark"][data-subject="discrete"]{--accent:#a58be0}

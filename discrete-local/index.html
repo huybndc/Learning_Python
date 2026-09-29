@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi" data-subject="discrete">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Discrete Math</title>
+<script>
+  /* đặt sáng/tối TRƯỚC lần vẽ đầu để không nháy trắng (theo lựa chọn đã lưu, không có thì theo máy) */
+  try {
+    const t = localStorage.getItem('study-theme');
+    document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch { document.documentElement.dataset.theme = 'light'; }
+</script>
+<link rel="stylesheet" href="/shared/style/app.css">
+<link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+<aside class="appnav">
+  <div class="appnav-foot">
+    <div class="seg" id="lang-switch">
+      <button data-lang="vi" aria-pressed="true">VI</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" data-i18n-title="shell.theme"></button>
+  </div>
+  <a class="nav-brand" href="/" data-i18n-title="shell.home"><b data-i18n="app.short"></b><small data-i18n="app.book"></small></a>
+  <nav class="tabs" data-i18n-title="shell.menu">
+    <a class="tab" href="#/" data-nav="home" data-i18n="nav.home"></a>
+    <a class="tab" href="#/learn" data-nav="learn" data-i18n="nav.learn"></a>
+    <a class="tab" href="#/tools" data-nav="tools" data-i18n="nav.tools"></a>
+    <a class="tab" href="#/practice" data-nav="practice" data-i18n="nav.practice"></a>
+  </nav>
+</aside>
+
+<main id="app">
+  <section class="screen" data-screen="home" id="screen-home"></section>
+  <section class="screen" data-screen="learn" id="screen-learn"></section>
+  <section class="screen" data-screen="tools" id="screen-tools"></section>
+  <section class="screen" data-screen="practice" id="screen-practice"></section>
+  <section class="screen" data-screen="run" id="screen-run"><header id="run-head"></header><div id="run-host"></div></section>
+  <section class="screen" data-screen="exam" id="screen-exam"></section>
+  <section class="screen wide" data-screen="pane" id="screen-pane">
+    <header id="pane-head"></header>
+<!--#include src/pages/ch1.html -->
+<!--#include src/pages/ch2.html -->
+<!--#include src/pages/ch3.html -->
+<!--#include src/pages/ch4.html -->
+<!--#include src/pages/ch5.html -->
+<!--#include src/pages/ch6.html -->
+<!--#include src/pages/ch7.html -->
+<!--#include src/pages/ch8.html -->
+  </section>
+</main>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
